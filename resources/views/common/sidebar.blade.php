@@ -3,9 +3,8 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
         <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-university"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Admin</div>
+        <div class="sidebar-brand-text mx-3">Aplikasi E-CASH</div>
     </a>
 
     <!-- Divider -->
@@ -49,7 +48,7 @@
     @hasrole('Admin')
         <!-- Heading -->
         <div class="sidebar-heading">
-            Admin Section
+            Bagian Admin
         </div>
 
         <!-- Nav Item - Pages Collapse Menu -->
