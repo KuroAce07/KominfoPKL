@@ -21,4 +21,8 @@ class DPA extends Model
     {
         return $this->hasMany(SubDPA::class, 'dpa_id');
     }
+    public function assignedDpas()
+    {
+        return $this->hasMany(AssignedDpa::class);
+    }
 }

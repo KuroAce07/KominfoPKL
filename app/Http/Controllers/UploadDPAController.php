@@ -66,6 +66,7 @@ class UploadDPAController extends Controller
             // Save the extracted sub data into the database using the DPA model (assuming you have a model for it)
             // Assuming the DPA model has a relationship to the SubDPA model (one-to-many relationship)
             if (!empty($tableSubData['Sub Kegiatan'])) {
+                //dd($tableSubData);
                 $subKegiatanArray = explode(PHP_EOL, $tableSubData['Sub Kegiatan']);
                 $kodeRekeningArray = explode(PHP_EOL, $tableSubData['Kode Rekening']);
                 $uraianArray = explode(PHP_EOL, $tableSubData['Uraian']);
@@ -94,6 +95,18 @@ class UploadDPAController extends Controller
                     $subDpa->save();
                 }
             }
+            $dpaId = $dpa->id;
+            $dpaFolder = public_path('uploads/' . $dpaId);
+            if (!file_exists($dpaFolder)) {
+            mkdir($dpaFolder, 0777, true);
+            }
+            // Rename the PDF and text files using the DPA ID
+            $newPdfPath = $dpaFolder . '/' . $dpaId . '.pdf';
+            $newTxtPath = $dpaFolder . '/' . $dpaId . '.txt';
+            
+            // Move the uploaded files to the newly created folder
+            rename($pdfPath, $newPdfPath);
+            rename($txtPath, $newTxtPath);
             return redirect()->back()->with('success', 'Upload DPA Success');
         } else {
             // If the extracted text does not contain a table, return the path to the extracted text file to the view
@@ -265,6 +278,9 @@ class UploadDPAController extends Controller
         // Remove lines containing 'Rincian Perhitungan' and 'Koefisien Satuan Harga PPN'
         $uraianData = preg_replace('/\b(Rincian Perhitungan|Koefisien Satuan Harga PPN)\b.*$/m', '', $uraianData);
         $tableSubData['Uraian'] = trim($uraianData);
+        $tableSubData['Uraian'] = str_replace("\r\n", "\n", $tableSubData['Uraian']);
+        // Remove extra newlines
+        $tableSubData['Uraian'] = preg_replace('/\n+/', "\n", $tableSubData['Uraian']);
     } else {
         $tableSubData['Uraian'] = "";
     }

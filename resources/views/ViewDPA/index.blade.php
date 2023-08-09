@@ -29,7 +29,7 @@
                     <tbody>
                         @foreach ($dpaData as $index => $dpa)
                             <tr class="clickable-row" data-toggle="modal" data-target="#detailModal{{ $index }}">
-                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $dpa->id }}</td>
                                 <td>{{ $dpa->nomor_dpa }}</td>
                                 <td>{{ $dpa->urusan_pemerintahan }}</td>
                                 <td>{{ $dpa->bidang_urusan }}</td>
@@ -42,7 +42,23 @@
                                         {{ $dpa->dana }}
                                     @endif
                                 </td>
+                                <td>
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                    Assign
+                </button>
+                <div class="dropdown-menu">
+                    @foreach ($users as $user)
+                        <a class="dropdown-item" href="{{ route('assignDpa', ['dpaId' => $dpa->id, 'userId' => $user->id]) }}">
+                            {{ $user->first_name }} {{ $user->last_name }}
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </td>
+    </tr>
                             </tr>
+                            
                         @endforeach
                     </tbody>
                 </table>
@@ -50,31 +66,61 @@
         </div>
     </div>
 </div>
-
-@foreach ($dpaData as $index => $dpa)
+@foreach ($dpaData as $dpa)
     <!-- Modal for Details -->
-    <div class="modal fade" id="detailModal{{ $index }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel{{ $index }}" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="detailModal{{ $dpa->id }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel{{ $dpa->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detailModalLabel{{ $index }}">Detail DPA</h5>
+                    <h5 class="modal-title" id="detailModalLabel{{ $dpa->id }}">Detail DPA</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-2"><strong>Nomor DPA:</strong> {{ $dpa->nomor_dpa }}</p>
-                    <p class="mb-2"><strong>Urusan Pemerintahan:</strong> {{ $dpa->urusan_pemerintahan }}</p>
-                    <p class="mb-2"><strong>Bidang Urusan:</strong> {{ $dpa->bidang_urusan }}</p>
-                    <p class="mb-2"><strong>Program:</strong> {{ $dpa->program }}</p>
-                    <p class="mb-2"><strong>Kegiatan:</strong> {{ $dpa->kegiatan }}</p>
-                    <p class="mb-0"><strong>Dana Yang Dibutuhkan:</strong> 
-                        @if (is_numeric($dpa->dana))
-                            Rp{{ number_format(floatval($dpa->dana), 2, ',', '.') }}
-                        @else
-                            {{ $dpa->dana }}
-                        @endif
-                    </p>
+                    @if (count($dpa->subDPA) > 0)
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Kode Rekening</th>
+                                    <th>Uraian</th>
+                                    <th>Rincian Perhitungan</th>
+                                    <th>Jumlah</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($dpa->subDPA as $sub_dpa)
+                                    @php
+                                        $kodeRekeningLines = explode("\n", $sub_dpa->kode_rekening);
+                                        $uraianLines = explode("\n", $sub_dpa->uraian);
+                                        $jumlahLines = explode("\n", $sub_dpa->jumlah);
+                                        $maxRows = max(count($kodeRekeningLines), count($uraianLines), count($jumlahLines));
+                                    @endphp
+
+                                    @for ($index = 0; $index < $maxRows; $index++)
+                                        <tr>
+                                            <td>{{ $kodeRekeningLines[$index] ?? '' }}</td>
+                                            <td>{{ $uraianLines[$index] ?? '' }}</td>
+                                            <td></td>
+                                            <td>{{ $jumlahLines[$index] ?? '' }}</td>
+                                        </tr>
+                                        @if ($index === (count($uraianLines) - 1))
+                                            <tr>
+                                                <td></td>
+                                                <td colspan="3">
+                                                    <strong>Sumber Dana:</strong><br>
+                                                    {!! str_replace("\n", '<br>', $sub_dpa->sumber_dana) !!}
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endfor
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <p><strong>Jenis Barang:</strong> {!! str_replace("\n", '<br />', $dpa->subDPA[0]->jenis_barang) !!}</p>
+                    @else
+                        <p>No Sub DPA available for this entry.</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -83,6 +129,7 @@
 
 @endsection
 <style>
+    
     .custom-table {
         border: 1px solid #000 !important; /* Set the border color to black (#000) with !important */
         border-collapse: collapse; /* Collapse borders into a single line */
@@ -141,4 +188,37 @@
     .modal-body p.mb-2 {
         margin-bottom: 0.5rem;
     }
+    .separator-row td {
+        border-bottom: 1px solid #ddd;
+    }
+    .table-bordered tr:not(:last-child) {
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 10px;
+    }
+    <style>
+    .custom-table {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .custom-table__column {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+    }
+
+    .custom-table__column--uraian {
+        flex-basis: 70%;
+    }
+
+    .custom-table__column--jumlah {
+        flex-basis: 30%;
+    }
+</style>
 </style>

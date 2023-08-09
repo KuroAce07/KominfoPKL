@@ -67,6 +67,8 @@ Route::get('/test-excel', function () {
     // Display the data
     dd($data);
 });
+//dpa and user
+Route::get('/assign-dpa/{dpaId}/{userId}', [Assig::class, 'assignDpa'])->name('assignDpa');
 
 // Users 
 Route::middleware('auth')->prefix('users')->name('users.')->group(function(){
