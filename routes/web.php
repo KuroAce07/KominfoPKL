@@ -69,6 +69,11 @@ Route::get('/test-excel', function () {
 });
 //dpa and user
 Route::get('/assign-dpa/{dpaId}/{userId}', [Assig::class, 'assignDpa'])->name('assignDpa');
+// Upload berkas Bendahara
+Route::resource('bendahara', App\Http\Controllers\BendaharaController::class);
+// Lihat folder
+Route::get('/files/{folder}', 'App\Http\Controllers\ShowfolderController@showFilesInFolder')->name('showfolder.index');
+
 
 // Users 
 Route::middleware('auth')->prefix('users')->name('users.')->group(function(){
@@ -86,5 +91,6 @@ Route::middleware('auth')->prefix('users')->name('users.')->group(function(){
 
     Route::get('export/', [UserController::class, 'export'])->name('export');
     //Route::post('/uploadDPA', [FileController::class, 'store'])->name('file.store');
+    
 });
 

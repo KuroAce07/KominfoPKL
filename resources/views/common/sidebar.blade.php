@@ -76,7 +76,22 @@
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
+    @endhasrole
 
+    @hasrole('Bendahara')
+         <!-- Heading -->
+         <li class="nav-item active">
+            <a class="nav-link" href="{{ route('bendahara.index') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Upload Berkas</span></a>
+        </li>
+
+        <li class="nav-item active">
+            <a class="nav-link" href="{{ route('showfolder.index', ['folder' => 'DPA']) }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Lihat</span>
+            </a>
+        </li>
     @endhasrole
 
     <li class="nav-item">
