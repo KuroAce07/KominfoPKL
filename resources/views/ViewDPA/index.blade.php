@@ -3,18 +3,24 @@
 @section('title', 'View DPA')
 
 @section('content')
-<div class="container">
-    <h2 class="text-center mt-4">Daftar DPA</h2>
-    @if (session('success'))
-        <div class="alert alert-success alert-block mt-4">
-            <strong>{{ session('success') }}</strong>
-        </div>
-    @endif
+<div class="container-fluid">
 
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="table-responsive mt-4">
-                <table class="table table-bordered custom-table">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">View DPA</h1>
+    </div>
+
+    {{-- Alert Messages --}}
+    @include('common.alert')
+   
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">List of DPAs</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -24,11 +30,12 @@
                             <th>Program</th>
                             <th>Kegiatan</th>
                             <th>Dana Yang Dibutuhkan</th>
+                            <th>PPTK</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($dpaData as $index => $dpa)
-                            <tr class="clickable-row" data-toggle="modal" data-target="#detailModal{{ $index }}">
+                        @foreach ($dpaData as $dpa)
+                            <tr>
                                 <td>{{ $dpa->id }}</td>
                                 <td>{{ $dpa->nomor_dpa }}</td>
                                 <td>{{ $dpa->urusan_pemerintahan }}</td>
@@ -43,28 +50,31 @@
                                     @endif
                                 </td>
                                 <td>
-            <div class="btn-group">
-                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
-                    Assign
-                </button>
-                <div class="dropdown-menu">
-                    @foreach ($users as $user)
-                        <a class="dropdown-item" href="{{ route('assignDpa', ['dpaId' => $dpa->id, 'userId' => $user->id]) }}">
-                            {{ $user->first_name }} {{ $user->last_name }}
-                        </a>
-                    @endforeach
-                </div>
-            </div>
-        </td>
-    </tr>
+                                    @if ($dpa->assignedUser)
+                                        {{ $dpa->assignedUser->first_name }} {{ $dpa->assignedUser->last_name }}
+                                    @else
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                                                Assign
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                @foreach ($users as $user)
+                                                    <a class="dropdown-item" href="{{ route('ViewDPA.assignDpa', ['dpaId' => $dpa->id, 'userId' => $user->id]) }}">
+                                                        {{ $user->first_name }} {{ $user->last_name }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
+                                </td>
                             </tr>
-                            
                         @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
 </div>
 @foreach ($dpaData as $dpa)
     <!-- Modal for Details -->

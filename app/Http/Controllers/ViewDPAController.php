@@ -11,9 +11,14 @@ class ViewDPAController extends Controller
     public function index()
     {
         $dpaData = DPA::with('subDPA')->get();
-        $users = User::where('role_id', 2)->get(); // Assuming role_id 2 represents TA/TP users
+        $users = User::where('role_id', 3)->get();
 
-        return view('ViewDPA.index', ['dpaData' => $dpaData, 'users' => $users]);
+        // Filter DPAs based on user access
+        $accessibleDpaData = $dpaData->filter(function ($dpa) {
+            return $this->canViewDpa($dpa);
+        });
+
+        return view('ViewDPA.index', ['dpaData' => $accessibleDpaData, 'users' => $users]);
     }
 
     public function assignDpa($dpaId, $userId)
@@ -21,8 +26,15 @@ class ViewDPAController extends Controller
         $user = User::findOrFail($userId);
         $dpa = DPA::findOrFail($dpaId);
 
-        $user->assignedDpas()->syncWithoutDetaching([$dpa->id]);
+        $dpa->user_id = $user->id;
+        $dpa->save();
 
         return redirect()->back()->with('success', 'DPA assigned successfully.');
+    }
+
+    public function canViewDpa($dpa)
+    {
+        // Check if the logged-in user is assigned to this DPA
+        return auth()->user()->id === $dpa->user_id;
     }
 }

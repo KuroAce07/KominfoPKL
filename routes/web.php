@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ViewDPAController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -47,7 +48,7 @@ Route::resource('permissions', App\Http\Controllers\PermissionsController::class
 Route::resource('UploadDPA', App\Http\Controllers\UploadDPAController::class);
 Route::get('/UploadDpa', [UploadDPAController::class, 'index'])->name('UploadDpa.index');
 Route::post('/UploadDpa', [UploadDPAController::class, 'store'])->name('UploadDpa.store');
-Route::get('/ViewDpa', [ViewDPAController::class, 'index'])->name('view_dpa.index');
+//Route::get('/ViewDpa', [ViewDPAController::class, 'index'])->name('ViewDPA.index');
 //Route::get('/', [UploadDPAController::class, 'index'])->name('upload_dpa.index');
 //Route::post('/store', [UploadDPAController::class, 'store'])->name('upload_dpa.store');
 
@@ -55,8 +56,9 @@ Route::get('/ViewDpa', [ViewDPAController::class, 'index'])->name('view_dpa.inde
 Route::resource('ViewDPA', App\Http\Controllers\ViewDPAController::class);
 
 // Route to view the uploaded PDF data (ViewDPA site)
-Route::get('/view', [ViewDPAController::class, 'index']);
-
+//Route::get('/View', [ViewDPAController::class, 'index']);
+//dpa and user
+Route::get('/ViewDPA/{dpaId}/{userId}', [ViewDPAController::class, 'assignDpa'])->name('ViewDPA.assignDpa');
 //tes excel
 Route::get('/test-excel', function () {
     $file_path = 'D:/arsip_lama.xlsx';
@@ -67,8 +69,6 @@ Route::get('/test-excel', function () {
     // Display the data
     dd($data);
 });
-//dpa and user
-Route::get('/assign-dpa/{dpaId}/{userId}', [Assig::class, 'assignDpa'])->name('assignDpa');
 // Upload berkas Bendahara
 Route::resource('bendahara', App\Http\Controllers\BendaharaController::class);
 // Lihat folder
