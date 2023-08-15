@@ -24,7 +24,6 @@
                         name="file" 
                         id="inputFile"
                         class="form-control @error('file') is-invalid @enderror">
-
                     @error('file')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror

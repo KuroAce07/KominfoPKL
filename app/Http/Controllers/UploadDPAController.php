@@ -65,6 +65,7 @@ class UploadDPAController extends Controller
             // Show the success message
             // Save the extracted sub data into the database using the DPA model (assuming you have a model for it)
             // Assuming the DPA model has a relationship to the SubDPA model (one-to-many relationship)
+            //$subDpaSections = preg_split('/(?=Sub Kegiatan)/', $pdfText);
             if (!empty($tableSubData['Sub Kegiatan'])) {
                 //dd($tableSubData);
                 $subKegiatanArray = explode(PHP_EOL, $tableSubData['Sub Kegiatan']);

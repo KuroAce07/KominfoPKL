@@ -49,4 +49,53 @@ class ViewDPAController extends Controller
 
     return view('ViewDPA.show', ['dpa' => $dpa]);
 }
+
+public function edit($dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+    $users = User::where('role_id', 3)->get(); // Adjust the query based on your needs
+
+    return view('ViewDPA.edit', ['dpa' => $dpa, 'users' => $users]);
+}
+
+
+public function pdf($dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+    $pdfFilePath = public_path('uploads/' . $dpa->id . '/' . $dpa->id . '.pdf');
+
+    if (file_exists($pdfFilePath)) {
+        // Generate PDF view
+        $pdf = PDF::loadView('ViewDPA.pdf', ['dpa' => $dpa]);
+
+        // Return PDF download response
+        return $pdf->download('dpa_' . $dpa->id . '.pdf');
+    } else {
+        return redirect()->back()->with('error', 'PDF file not found for this DPA.');
+    }
+}
+
+public function update(Request $request, $dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+    
+    // Update the DPA fields based on the form inputs
+    $dpa->nomor_dpa = $request->input('nomor_dpa');
+    $dpa->urusan_pemerintahan = $request->input('urusan_pemerintahan');
+    $dpa->bidang_urusan = $request->input('bidang_urusan');
+    $dpa->program = $request->input('program');
+    $dpa->kegiatan = $request->input('kegiatan');
+    $dpa->dana = $request->input('dana');
+    
+    // Update PPTK (if applicable)
+    if ($request->has('pptk')) {
+        $user = User::findOrFail($request->input('pptk'));
+        $dpa->user_id = $user->id;
+    }
+
+    $dpa->save();
+
+    return redirect()->route('ViewDPA.index')->with('success', 'DPA updated successfully.');
+}
+
 }

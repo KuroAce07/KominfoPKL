@@ -31,6 +31,7 @@
                             <th>Kegiatan</th>
                             <th>Dana Yang Dibutuhkan</th>
                             <th>PPTK</th>
+                            <th>Actions</th> <!-- Add this column -->
                         </tr>
                     </thead>
                     <tbody>
@@ -67,6 +68,18 @@
                                         </div>
                                     @endif
                                 </td>
+                                <td>
+    <div class="btn-group">
+        <!-- Edit Button -->
+        @hasrole('Admin')
+        <a href="{{ route('editDPA', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Edit</a>
+        @endhasrole
+        <!-- View PDF Button -->
+        <a href="{{ asset('uploads/'.$dpa->id.'/'.$dpa->id.'.pdf') }}" class="btn btn-info view-pdf-btn" target="_blank">View PDF</a>
+    </div>
+</td>
+
+
                             </tr>
                         @endforeach
                     </tbody>
@@ -88,8 +101,24 @@
                 }
             });
         });
+
+        // Prevent click event propagation for Edit and View PDF buttons
+        const editButtons = document.querySelectorAll('.edit-btn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+        });
+
+        const viewPdfButtons = document.querySelectorAll('.view-pdf-btn');
+        viewPdfButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+        });
     });
 </script>
+
 <!--
 @foreach ($dpaData as $dpa)
 -->
