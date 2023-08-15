@@ -35,7 +35,7 @@
                     </thead>
                     <tbody>
                         @foreach ($dpaData as $dpa)
-                            <tr>
+                            <tr class="row-clickable" data-dpa-id="{{ $dpa->id }}">
                                 <td>{{ $dpa->id }}</td>
                                 <td>{{ $dpa->nomor_dpa }}</td>
                                 <td>{{ $dpa->urusan_pemerintahan }}</td>
@@ -54,7 +54,7 @@
                                         {{ $dpa->assignedUser->first_name }} {{ $dpa->assignedUser->last_name }}
                                     @else
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
                                                 Assign
                                             </button>
                                             <div class="dropdown-menu">
@@ -74,10 +74,26 @@
             </div>
         </div>
     </div>
-
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('.row-clickable');
+        rows.forEach(row => {
+            row.addEventListener('click', function (event) {
+                // Check if the clicked element is not the "Assign" button
+                if (!event.target.classList.contains('assign-btn')) {
+                    const dpaId = row.getAttribute('data-dpa-id');
+                    window.location.href = `{{ route('ViewDPA.show', ['dpa' => ':dpaId']) }}`.replace(':dpaId', dpaId);
+                }
+            });
+        });
+    });
+</script>
+<!--
 @foreach ($dpaData as $dpa)
-    <!-- Modal for Details -->
+-->
+    <!--
     <div class="modal fade" id="detailModal{{ $dpa->id }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel{{ $dpa->id }}" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -136,7 +152,7 @@
         </div>
     </div>
 @endforeach
-
+-->
 @endsection
 <style>
     
@@ -210,7 +226,6 @@
         grid-template-columns: 1fr 1fr;
         grid-gap: 10px;
     }
-    <style>
     .custom-table {
         display: flex;
         flex-direction: row;

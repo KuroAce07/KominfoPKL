@@ -54,6 +54,8 @@ Route::post('/UploadDpa', [UploadDPAController::class, 'store'])->name('UploadDp
 
 // View List DPA
 Route::resource('ViewDPA', App\Http\Controllers\ViewDPAController::class);
+//view sub DPA
+Route::get('/ViewDPA/{dpa}', 'ViewDPAController@show')->name('ViewDPA.show');
 
 // Route to view the uploaded PDF data (ViewDPA site)
 //Route::get('/View', [ViewDPAController::class, 'index']);

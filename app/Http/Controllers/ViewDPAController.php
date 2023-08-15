@@ -18,6 +18,11 @@ class ViewDPAController extends Controller
             return $this->canViewDpa($dpa);
         });
 
+        // Check if the logged-in user has role_id 1 (admin) and allow access to all DPAs
+        if (auth()->user()->role_id === 1) {
+            $accessibleDpaData = $dpaData;
+        }
+
         return view('ViewDPA.index', ['dpaData' => $accessibleDpaData, 'users' => $users]);
     }
 
@@ -37,4 +42,11 @@ class ViewDPAController extends Controller
         // Check if the logged-in user is assigned to this DPA
         return auth()->user()->id === $dpa->user_id;
     }
+    
+    public function show($dpaId)
+{
+    $dpa = DPA::with('subDPA')->findOrFail($dpaId);
+
+    return view('ViewDPA.show', ['dpa' => $dpa]);
+}
 }
