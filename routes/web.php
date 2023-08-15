@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ViewDPAController;
+use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -37,10 +38,14 @@ Route::prefix('profile')->name('profile.')->middleware('auth')->group(function()
 // Roles
 Route::resource('roles', App\Http\Controllers\RolesController::class);
 
-//arsip lama
+//arsip
 Route::get('/imported-data', [ImportController::class, 'showImportedData'])->name('imported.data');
-
-
+Route::resource('/Arsip', App\Http\Controllers\ArsipController::class);
+Route::get('/Arsip', [ArsipController::class, 'index'])->name('Arsip.index');
+Route::get('/Arsip/{id}/edit', [ArsipController::class, 'edit'])->name('Arsip.edit');
+Route::put('/Arsip/{id}', [ArsipController::class, 'update'])->name('Arsip.update');
+Route::get('/Arsip/create', [ArsipController::class, 'create'])->name('Arsip.create');
+Route::post('/Arsip/store', [ArsipController::class, 'store'])->name('Arsip.store');
 // Permissions
 Route::resource('permissions', App\Http\Controllers\PermissionsController::class);
 

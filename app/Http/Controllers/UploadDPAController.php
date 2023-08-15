@@ -49,8 +49,8 @@ class UploadDPAController extends Controller
 
         // Extract tabular data from the PDF text
         $tableData = $this->extractTableData($pdfText);
-        $tableSubData = $this->extractTableSubData($pdfText);
-
+        $tableSubDataSections = $this->extractTableSubDataSections($pdfText);
+        //$tableSubData = $this->extractTableSubData($pdfText);
         if (!empty($tableData)) {
             //dd($tableData);
             // Save the extracted data into the database using the DPA model
@@ -65,7 +65,9 @@ class UploadDPAController extends Controller
             // Show the success message
             // Save the extracted sub data into the database using the DPA model (assuming you have a model for it)
             // Assuming the DPA model has a relationship to the SubDPA model (one-to-many relationship)
-            //$subDpaSections = preg_split('/(?=Sub Kegiatan)/', $pdfText);
+            //dd($tableSubDataSections);
+            foreach ($tableSubDataSections as $section) {
+            $tableSubData = $this->extractTableSubData($section);
             if (!empty($tableSubData['Sub Kegiatan'])) {
                 //dd($tableSubData);
                 $subKegiatanArray = explode(PHP_EOL, $tableSubData['Sub Kegiatan']);
@@ -77,25 +79,39 @@ class UploadDPAController extends Controller
                 //$jmlh = $tableSubData['jmlh'];
                 $koefisienArray = explode(PHP_EOL, $tableSubData['Koefisien']);
                 $satuanArray = explode(PHP_EOL, $tableSubData['Satuan']);
-                $hargaArray = explode(PHP_EOL, $tableSubData['Harga']);
-                
-                // Assuming the arrays have the same length, iterate over one of them
-                foreach ($subKegiatanArray as $index => $subKegiatan) {
-                    $subDpa = new SubDPA();
-                    $subDpa->dpa_id = $dpa->id; // Assign the DPA ID to connect the sub data to the main data
-                    $subDpa->sub_kegiatan = $subKegiatan;
-                    $subDpa->kode_rekening = $kodeRekeningArray[$index];
-                    $subDpa->uraian = $uraianArray[$index];
-                    $subDpa->jumlah = $jumlahArray[$index];
-                    $subDpa->sumber_dana = $sumberDana;
-                    $subDpa->jenis_barang = $jenisBarang;
-                    //$subDpa->jmlh = $jmlh;
-                    $subDpa->koefisien = $koefisienArray[$index];
-                    $subDpa->satuan = $satuanArray[$index];
-                    $subDpa->harga = $hargaArray[$index];
-                    $subDpa->save();
+                if (isset($tableSubData['Harga'])) {
+                    $hargaArray = explode(PHP_EOL, $tableSubData['Harga']);
+                } else {
+                    $hargaArray = []; // Empty array if "Harga" key doesn't exist
                 }
+                $arrayLength = count($subKegiatanArray);
+                // Assuming the arrays have the same length, iterate over one of them
+                // Inside the loop where you are saving sub_dpa records
+for ($index = 0; $index < $arrayLength; $index++) {
+    $subDpa = new SubDPA();
+    $subDpa->dpa_id = $dpa->id;
+    $subDpa->sub_kegiatan = $subKegiatanArray[$index];
+    $subDpa->kode_rekening = $kodeRekeningArray[$index];
+    $subDpa->uraian = $uraianArray[$index];
+    $subDpa->jumlah = $jumlahArray[$index];
+    $subDpa->sumber_dana = $sumberDana;
+    $subDpa->jenis_barang = $jenisBarang;
+    $subDpa->koefisien = $koefisienArray[$index];
+    $subDpa->satuan = $satuanArray[$index];
+
+    // Handle the "Harga" value
+    if (isset($hargaArray[$index])) {
+        $subDpa->harga = $hargaArray[$index];
+    } else {
+        // Set a default value (e.g., 0) if "Harga" value doesn't exist
+        $subDpa->harga = 0;
+    }
+
+    $subDpa->save();
+}
+
             }
+        }
             $dpaId = $dpa->id;
             $dpaFolder = public_path('uploads/' . $dpaId);
             if (!file_exists($dpaFolder)) {
@@ -391,8 +407,31 @@ class UploadDPAController extends Controller
         $tableSubData['Koefisien'] = "";
         $tableSubData['jmlh'] = "";
     }
-
     return $tableSubData;
 }
 
+private function extractTableSubDataSections(string $pdfText): array
+{
+    // Split the PDF text into sections based on the keyword "Sub Kegiatan Sumber Pendanaan Lokasi Keluaran Sub Kegiatan"
+    $sections = explode("Sub Kegiatan Sumber Pendanaan Lokasi Keluaran Sub Kegiatan", $pdfText);
+
+    // Remove the first section (which contains the keyword)
+    array_shift($sections);
+
+    // Initialize the final sections array
+    $finalSections = [];
+
+    foreach ($sections as $section) {
+        // Trim the section to remove leading and trailing whitespace
+        $trimmedSection = trim($section);
+
+        // Skip empty sections
+        if (!empty($trimmedSection)) {
+            // Add back the keyword to each section
+            $finalSections[] = "Sub Kegiatan Sumber Pendanaan Lokasi Keluaran Sub Kegiatan" . $trimmedSection;
+        }
+    }
+
+    return $finalSections;
+}
 }

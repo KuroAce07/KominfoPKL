@@ -16,6 +16,21 @@
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
+    
+    <li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#arsipLamaDropDown"
+        aria-expanded="true" aria-controls="arsipLamaDropDown">
+        <i class="fas fa-archive"></i>
+        <span>Arsip Keuangan</span>
+    </a>
+    <div id="arsipLamaDropDown" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Arsip:</h6>
+            <a class="collapse-item" href="{{ route('Arsip.index') }}">List Arsip</a>
+            <a class="collapse-item" href="{{ route('Arsip.create') }}">Tambahkan Arsip</a>
+        </div>
+    </div>
+</li>
 
     <!-- Divider -->
     
@@ -28,8 +43,15 @@
     </div>
 -->
     <!-- Nav Item - Pages Collapse Menu -->
-    <!--
-    <li class="nav-item">
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    @hasrole('Admin')
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Bagian Admin
+        </div>
+        <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#taTpDropDown"
             aria-expanded="true" aria-controls="taTpDropDown">
             <i class="fas fa-user-alt"></i>
@@ -43,17 +65,7 @@
                 <a class="collapse-item" href="{{ route('users.import') }}">Import Data</a>
             </div>
         </div>
-    </li> -->
-
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
-    @hasrole('Admin')
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Bagian Admin
-        </div>
-
+    </li> 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"

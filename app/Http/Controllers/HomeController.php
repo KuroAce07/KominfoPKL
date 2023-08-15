@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\ArsipLama;
+use App\Models\DPA;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Rules\MatchOldPassword;
@@ -26,10 +27,16 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
-        return view('home');
-    }
+    
+     public function index()
+{
+    $arsipCount = ArsipLama::count(); // Get the count of all records
+
+    // Establish connection to the 'dpa' database
+    $dpaCount = DPA::count();
+
+    return view('home', compact('arsipCount', 'dpaCount'));
+}
 
     /**
      * User Profile
