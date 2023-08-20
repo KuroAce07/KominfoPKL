@@ -18,6 +18,8 @@ class CreateDpaTable extends Migration
             $table->string('dana');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('rekanan_id')->nullable();
+            $table->foreign('rekanan_id')->references('id')->on('rekanans');
             $table->timestamps();
         });
     }

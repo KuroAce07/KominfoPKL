@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Imports\ArsipLamaImport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Controllers\RekananController;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,12 +46,22 @@ Route::resource('roles', App\Http\Controllers\RolesController::class);
 Route::get('/imported-data', [ImportController::class, 'showImportedData'])->name('imported.data');
 Route::resource('/Arsip', App\Http\Controllers\ArsipController::class);
 Route::get('/Arsip', [ArsipController::class, 'index'])->name('Arsip.index');
-Route::get('/Arsip/{id}/edit', [ArsipController::class, 'edit'])->name('Arsip.edit');
+Route::get('/Arsip/{id}/Edit', [ArsipController::class, 'edit'])->name('Arsip.edit');
 Route::put('/Arsip/{id}', [ArsipController::class, 'update'])->name('Arsip.update');
-Route::get('/Arsip/create', [ArsipController::class, 'create'])->name('Arsip.create');
-Route::post('/Arsip/store', [ArsipController::class, 'store'])->name('Arsip.store');
+Route::get('/Arsip/Create', [ArsipController::class, 'create'])->name('Arsip.create');
+Route::post('/Arsip/Store', [ArsipController::class, 'store'])->name('Arsip.store');
 // Permissions
 Route::resource('permissions', App\Http\Controllers\PermissionsController::class);
+//rekanan
+Route::resource('rekanan', RekananController::class);
+Route::get('/Rekanan', [RekananController::class, 'index'])->name('rekanan.index');
+Route::get('/Rekanan/Create', [RekananController::class, 'create'])->name('rekanan.create');
+Route::post('/Rekanan/Store', [RekananController::class, 'store'])->name('rekanan.store');
+Route::get('/Rekanan/{id}/Edit', [RekananController::class, 'edit'])->name('rekanan.edit');
+Route::put('/Rekanan/{id}', [RekananController::class, 'update'])->name('rekanan.update');
+
+
+
 
 // Upload DPA
 Route::resource('UploadDPA', App\Http\Controllers\UploadDPAController::class);

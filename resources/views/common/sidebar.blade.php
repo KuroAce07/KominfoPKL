@@ -87,6 +87,13 @@
                     <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
                 </div>
             </div>
+            <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Rekanan</h6>
+                    <a class="collapse-item" href="{{ route('rekanan.create') }}">Buat Rekanan</a>
+                    <a class="collapse-item" href="{{ route('rekanan.index') }}">Lihat List Rekanan</a>
+                </div>
+            </div>
         </li>
 
         <!-- Divider -->
