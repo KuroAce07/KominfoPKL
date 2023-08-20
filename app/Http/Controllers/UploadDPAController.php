@@ -262,19 +262,30 @@ for ($index = 0; $index < $arrayLength; $index++) {
 
     // Find the index of 'Sub Kegiatan Sumber Pendanaan Lokasi Keluaran Sub Kegiatan'
     $subKegiatanIndex = strpos($pdfText, 'Sub Kegiatan Sumber Pendanaan Lokasi Keluaran Sub Kegiatan');
-    if ($subKegiatanIndex !== false) {
-        $subKegiatanIndex += strlen('Sub Kegiatan Sumber Pendanaan Lokasi Keluaran Sub Kegiatan'); // Move to the end of the keyword
-        // Find the next colon (:) after the 'Sub Kegiatan Sumber Pendanaan Lokasi Keluaran Sub Kegiatan'
-        $colonIndex = strpos($pdfText, ':', $subKegiatanIndex);
-        if ($colonIndex !== false) {
-            // Find the next line break after the colon
-            $lineBreakIndex = strpos($pdfText, "\r\n", $colonIndex);
-            if ($lineBreakIndex !== false) {
-                // Extract the data between the colon and the line break
-                $tableSubData['Sub Kegiatan'] = trim(substr($pdfText, $colonIndex + 1, $lineBreakIndex - $colonIndex - 1));
+if ($subKegiatanIndex !== false) {
+    $subKegiatanIndex += strlen('Sub Kegiatan Sumber Pendanaan Lokasi Keluaran Sub Kegiatan'); // Move to the end of the keyword
+    // Find the next colon (:) after the 'Sub Kegiatan Sumber Pendanaan Lokasi Keluaran Sub Kegiatan'
+    $colonIndex = strpos($pdfText, ':', $subKegiatanIndex);
+    if ($colonIndex !== false) {
+        // Find the next line break after the colon
+        $lineBreakIndex = strpos($pdfText, "\r\n", $colonIndex);
+        if ($lineBreakIndex !== false) {
+            // Extract the data between the colon and the line break
+            $extractedText = trim(substr($pdfText, $colonIndex + 1, $lineBreakIndex - $colonIndex - 1));
+
+            // Find the first colon (:) after the extracted text
+            $colonAfterExtractedIndex = strpos($extractedText, ':');
+            if ($colonAfterExtractedIndex !== false) {
+                // Extract the text before the first colon in the extracted text
+                $tableSubData['Sub Kegiatan'] = trim(substr($extractedText, 0, $colonAfterExtractedIndex));
+            } else {
+                // No colon found after the extracted text, use the extracted text as is
+                $tableSubData['Sub Kegiatan'] = $extractedText;
             }
         }
     }
+}
+
 
     // Use regular expressions to extract the 'Kode Rekening' data
     preg_match_all('/(?:Kode Rekening|\G(?!\A))\s*((?:\d+(?:\.\d+)*\s*)+)/', $pdfText, $matches);
@@ -431,7 +442,6 @@ private function extractTableSubDataSections(string $pdfText): array
             $finalSections[] = "Sub Kegiatan Sumber Pendanaan Lokasi Keluaran Sub Kegiatan" . $trimmedSection;
         }
     }
-
     return $finalSections;
 }
 }

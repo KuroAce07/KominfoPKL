@@ -44,7 +44,7 @@ Route::resource('roles', App\Http\Controllers\RolesController::class);
 
 //arsip
 Route::get('/imported-data', [ImportController::class, 'showImportedData'])->name('imported.data');
-Route::resource('/Arsip', App\Http\Controllers\ArsipController::class);
+Route::resource('/arsip', App\Http\Controllers\ArsipController::class);
 Route::get('/Arsip', [ArsipController::class, 'index'])->name('Arsip.index');
 Route::get('/Arsip/{id}/Edit', [ArsipController::class, 'edit'])->name('Arsip.edit');
 Route::put('/Arsip/{id}', [ArsipController::class, 'update'])->name('Arsip.update');
