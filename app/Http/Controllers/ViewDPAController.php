@@ -10,20 +10,22 @@ class ViewDPAController extends Controller
 {
     public function index()
     {
-        $dpaData = DPA::with('subDPA')->get();
+        $dpaData = DPA::with('subDPA', 'pejabatPengadaanUser')->get();
         $users = User::where('role_id', 3)->get();
-
+        $pejabatPengadaanUsers = User::where('role_id', 4)->get();
+        $pembantupptkUsers = User::where('role_id', 5)->get();
+    
         // Filter DPAs based on user access
         $accessibleDpaData = $dpaData->filter(function ($dpa) {
             return $this->canViewDpa($dpa);
         });
-
+    
         // Check if the logged-in user has role_id 1 (admin) and allow access to all DPAs
         if (auth()->user()->role_id === 1) {
             $accessibleDpaData = $dpaData;
         }
-
-        return view('ViewDPA.index', ['dpaData' => $accessibleDpaData, 'users' => $users]);
+    
+        return view('ViewDPA.index', ['dpaData' => $accessibleDpaData, 'users' => $users, 'pejabatPengadaanUsers' => $pejabatPengadaanUsers, 'pembantupptkUsers' => $pembantupptkUsers]);
     }
 
     public function assignDpa($dpaId, $userId)
@@ -37,11 +39,34 @@ class ViewDPAController extends Controller
         return redirect()->back()->with('success', 'DPA assigned successfully.');
     }
 
+    public function assignPP($dpaId, $userId)
+    {
+    $user = User::findOrFail($userId);
+    $dpa = DPA::findOrFail($dpaId);
+
+        $dpa->user_id2 = $user->id;
+        $dpa->save();
+
+        return redirect()->back()->with('success', 'Pejabat Pengadaan assigned successfully.');
+    }
+
+    public function assignPPPTK($dpaId, $userId)
+    {
+    $user = User::findOrFail($userId);
+    $dpa = DPA::findOrFail($dpaId);
+
+        $dpa->user_id3 = $user->id;
+        $dpa->save();
+
+        return redirect()->back()->with('success', 'Pembantu PPTK assigned successfully.');
+    }
+
     public function canViewDpa($dpa)
     {
-        // Check if the logged-in user is assigned to this DPA
-        return auth()->user()->id === $dpa->user_id;
+        // Check if the logged-in user is assigned to this DPA as PPTK or Pembantu PPTK
+        return auth()->user()->id === $dpa->user_id || auth()->user()->id === $dpa->user_id2|| auth()->user()->id === $dpa->user_id3;
     }
+    
     
     public function show($dpaId)
 {

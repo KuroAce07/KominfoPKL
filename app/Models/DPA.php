@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\SubDPA;
 use Illuminate\Database\Eloquent\Model;
 
 class DPA extends Model
@@ -17,12 +16,63 @@ class DPA extends Model
         'dana',
     ];
 
-    public function SubDpa()
+    public function subDpa()
     {
         return $this->hasMany(SubDPA::class, 'dpa_id');
     }
+
     public function assignedUser()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function pejabatPengadaanUser()
+    {
+        return $this->belongsTo(User::class, 'user_id2');
+    }
+
+    public function pembantupptkUsers()
+    {
+        return $this->belongsTo(User::class, 'user_id3');
+    }
+
+    public function dokumenKontraks()
+    {
+        return $this->hasMany(DokumenKontrak::class, 'dpa_id');
+    }
+
+    public function dokumenJustifikasis()
+    {
+        return $this->hasMany(DokumenJustifikasi::class, 'dpa_id');
+    }
+
+    public function epurchasings()
+    {
+        return $this->hasMany(EPurchasing::class, 'dpa_id');
+    }
+    
+    public function dokumenPendukungs()
+    {
+        return $this->hasMany(DokumenPendukung::class, 'dpa_id');
+    }
+    
+    public function basts()
+    {
+        return $this->hasMany(Bast::class, 'dpa_id');
+    }
+
+    public function bap()
+    {
+        return $this->hasMany(Bap::class, 'dpa_id');
+    }
+
+    public function baph()
+    {
+        return $this->hasMany(Baph::class, 'dpa_id');
+    }
+
+    public function pilihrekanan()
+    {
+        return $this->hasMany(PilihRekanan::class, 'dpa_id');
     }
 }

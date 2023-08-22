@@ -100,6 +100,56 @@
         <hr class="sidebar-divider d-none d-md-block">
     @endhasrole
 
+    @hasrole('Pembantu PPTK')
+        <!-- Pembantu PPTK Form Dropdown -->
+        <div class="sidebar-heading">
+            Pembantu PPTK
+        </div>
+
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-fw fa-folder"></i>
+                <span>DPA</span>
+            </a>
+            <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">DPA</h6>
+                    <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
+                </div>
+            </div>
+            <a class="nav-link" href="{{ route('PembantuPPTKView.dokumenpembantupptk') }}">
+                <i class="fas fa-folder"></i>
+                <span>Dokumen Pembantu PPTK</span>
+            </a>
+        </li>
+    @endhasrole
+
+    @hasrole('Pejabat Pengadaan')
+      <!-- Heading -->
+      <div class="sidebar-heading">
+            PPTK
+        </div>
+
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-fw fa-folder"></i>
+                <span>DPA</span>
+            </a>
+            <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">DPA</h6>
+                    <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+    @endhasrole
+
     @hasrole('Bendahara')
          <!-- Heading -->
          <li class="nav-item active">
@@ -140,6 +190,7 @@
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
     @endhasrole
+    
     <li class="nav-item">
         <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
             <i class="fas fa-sign-out-alt"></i>

@@ -4,16 +4,12 @@
 
 @section('content')
 <div class="container-fluid">
-
-    <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">View DPA</h1>
     </div>
 
-    {{-- Alert Messages --}}
     @include('common.alert')
-   
-    <!-- DataTales Example -->
+
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">List of DPAs</h6>
@@ -31,7 +27,14 @@
                             <th>Kegiatan</th>
                             <th>Dana Yang Dibutuhkan</th>
                             <th>PPTK</th>
-                            <th>Actions</th> <!-- Add this column -->
+                            <th>Actions</th>
+                            @hasrole('PPTK')
+                            <th>Pejabat Pengadaan</th>
+                            <th>Pembantu PPTK</th>
+                            @endhasrole
+                            @hasrole('Pembantu PPTK')
+                            <th>Kelengkapan Dokumen</th>
+                            @endhasrole
                         </tr>
                     </thead>
                     <tbody>
@@ -52,34 +55,79 @@
                                 </td>
                                 <td>
                                     @if ($dpa->assignedUser)
-                                        {{ $dpa->assignedUser->first_name }} {{ $dpa->assignedUser->last_name }}
+                                        {{ $dpa->assignedUser->full_name }}
                                     @else
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
-                                                Assign
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                @foreach ($users as $user)
-                                                    <a class="dropdown-item" href="{{ route('ViewDPA.assignDpa', ['dpaId' => $dpa->id, 'userId' => $user->id]) }}">
-                                                        {{ $user->first_name }} {{ $user->last_name }}
-                                                    </a>
-                                                @endforeach
-                                            </div>
+                                        <button type="button" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
+                                            Assign PPTK
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            @foreach ($users as $user)
+                                                <a class="dropdown-item" href="{{ route('ViewDPA.assignDpa', ['dpaId' => $dpa->id, 'userId' => $user->id]) }}">
+                                                    {{ $user->first_name }} {{ $user->last_name }}
+                                                </a>
+                                            @endforeach
                                         </div>
                                     @endif
                                 </td>
                                 <td>
-    <div class="btn-group">
-        <!-- Edit Button -->
-        @hasrole('Admin')
-        <a href="{{ route('editDPA', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Edit</a>
-        @endhasrole
-        <!-- View PDF Button -->
-        <a href="{{ asset('uploads/'.$dpa->id.'/'.$dpa->id.'.pdf') }}" class="btn btn-info view-pdf-btn" target="_blank">View PDF</a>
-    </div>
-</td>
+                                    <div class="btn-group">
+                                        @hasrole('Admin')
+                                        <a href="{{ route('editDPA', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Edit</a>
+                                        @endhasrole
+                                        <a href="{{ asset('uploads/'.$dpa->id.'/'.$dpa->id.'.pdf') }}" class="btn btn-info view-pdf-btn" target="_blank">View PDF</a>
+                                    </div>
+                                </td>
 
-
+                                @hasrole('PPTK')
+                                <td>
+                                    <!-- Assign PPTK -->
+                                    <div class="btn-group">
+                                        @if ($dpa->user_id2 && $dpa->pejabatPengadaanUser)
+                                            {{ $dpa->pejabatPengadaanUser->first_name }} {{ $dpa->pejabatPengadaanUser->last_name }}
+                                        @else
+                                            <button type="button" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
+                                                Assign Pejabat Pengadaan
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                @foreach ($pejabatPengadaanUsers as $pejabatPengadaanUser)
+                                                    <a class="dropdown-item" href="{{ route('ViewDPA.assignPP', ['dpaId' => $dpa->id, 'userId' => $pejabatPengadaanUser->id]) }}">
+                                                        {{ $pejabatPengadaanUser->first_name }} {{ $pejabatPengadaanUser->last_name }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td>
+                                    <!-- Assign Pembantu PPTK -->
+                                    <div class="btn-group">
+                                        @if ($dpa->user_id3 && $dpa->pembantupptkUsers)
+                                            {{ $dpa->pembantupptkUsers->first_name }} {{ $dpa->pembantupptkUsers->last_name }}
+                                        @else
+                                            <button type="button" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
+                                                Assign Pembantu PPTK
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                @foreach ($pembantupptkUsers as $pembantupptkUser)
+                                                    <a class="dropdown-item" href="{{ route('ViewDPA.assignPPPTK', ['dpaId' => $dpa->id, 'userId' => $pembantupptkUser->id]) }}">
+                                                        {{ $pembantupptkUser->first_name }} {{ $pembantupptkUser->last_name }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                </td>
+                                @endhasrole
+                                @hasrole('Pembantu PPTK')
+                                <td>
+                                <!-- Lihat Kelengkapan -->
+                                    <div class="btn-group">
+                                        <a href="{{ route('PembantuPPTKView.dokumenpembantupptk') }}" class="btn btn-info lihat-kelengkapan-btn">
+                                        Lihat Kelengkapan
+                                        </a>
+                                    </div>
+                                </td>
+                                @endhasrole
                             </tr>
                         @endforeach
                     </tbody>
@@ -91,17 +139,30 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const rows = document.querySelectorAll('.row-clickable');
-        rows.forEach(row => {
-            row.addEventListener('click', function (event) {
-                // Check if the clicked element is not the "Assign" button
-                if (!event.target.classList.contains('assign-btn')) {
-                    const dpaId = row.getAttribute('data-dpa-id');
-                    window.location.href = `{{ route('ViewDPA.show', ['dpa' => ':dpaId']) }}`.replace(':dpaId', dpaId);
-                }
-            });
-        });
+    const rows = document.querySelectorAll('.row-clickable');
+    rows.forEach(row => {
+        row.addEventListener('click', function (event) {
+            const dpaId = row.getAttribute('data-dpa-id');
+            const assignBtn = row.querySelector('.assign-btn');
 
+            if (event.target.classList.contains('assign-btn')) {
+                if (assignBtn.classList.contains('assigned')) {
+                    // Handle Pejabat Pengadaan button click
+                    const assignedName = row.querySelector('.assigned-name');
+                    const userFullName = assignedName.textContent.trim();
+                    alert(`Assigned Pejabat Pengadaan: ${userFullName}`);
+                } else {
+                    // Handle PPTK button click
+                    const userLink = assignBtn.nextElementSibling.querySelector('.assign-user-link');
+                    const userId = getUserIdFromLink(userLink.getAttribute('href'));
+                    alert(`Assigned PPTK: UserID - ${userId}`);
+                }
+            } else {
+                // Handle row click to navigate to the DPA detail page
+                window.location.href = `{{ route('ViewDPA.show', ['dpa' => ':dpaId']) }}`.replace(':dpaId', dpaId);
+            }
+        });
+    });
         // Prevent click event propagation for Edit and View PDF buttons
         const editButtons = document.querySelectorAll('.edit-btn');
         editButtons.forEach(button => {
@@ -119,69 +180,6 @@
     });
 </script>
 
-<!--
-@foreach ($dpaData as $dpa)
--->
-    <!--
-    <div class="modal fade" id="detailModal{{ $dpa->id }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel{{ $dpa->id }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="detailModalLabel{{ $dpa->id }}">Detail DPA</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    @if (count($dpa->subDPA) > 0)
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Kode Rekening</th>
-                                    <th>Uraian</th>
-                                    <th>Rincian Perhitungan</th>
-                                    <th>Jumlah</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($dpa->subDPA as $sub_dpa)
-                                    @php
-                                        $kodeRekeningLines = explode("\n", $sub_dpa->kode_rekening);
-                                        $uraianLines = explode("\n", $sub_dpa->uraian);
-                                        $jumlahLines = explode("\n", $sub_dpa->jumlah);
-                                        $maxRows = max(count($kodeRekeningLines), count($uraianLines), count($jumlahLines));
-                                    @endphp
-
-                                    @for ($index = 0; $index < $maxRows; $index++)
-                                        <tr>
-                                            <td>{{ $kodeRekeningLines[$index] ?? '' }}</td>
-                                            <td>{{ $uraianLines[$index] ?? '' }}</td>
-                                            <td></td>
-                                            <td>{{ $jumlahLines[$index] ?? '' }}</td>
-                                        </tr>
-                                        @if ($index === (count($uraianLines) - 1))
-                                            <tr>
-                                                <td></td>
-                                                <td colspan="3">
-                                                    <strong>Sumber Dana:</strong><br>
-                                                    {!! str_replace("\n", '<br>', $sub_dpa->sumber_dana) !!}
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    @endfor
-                                @endforeach
-                            </tbody>
-                        </table>
-                        <p><strong>Jenis Barang:</strong> {!! str_replace("\n", '<br />', $dpa->subDPA[0]->jenis_barang) !!}</p>
-                    @else
-                        <p>No Sub DPA available for this entry.</p>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-@endforeach
--->
 @endsection
 <style>
     
