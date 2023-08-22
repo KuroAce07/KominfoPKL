@@ -25,6 +25,7 @@ class CreateSubDpasTable extends Migration
             $table->integer('harga');
             $table->text('sumber_dana');
             $table->string('jenis_barang');
+            $table->string('jumlah_anggaran_sub_kegiatan');
             // Add the missing column definition
             $table->timestamps();
 
