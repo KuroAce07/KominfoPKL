@@ -5,12 +5,13 @@
 @section('content')
 <div class="container-fluid">
 
-    <div class="panel panel-primary">
-        <div class="panel-body">
+    <div class="card shadow mb-4">
+        <div class="card-body">
 
             @if ($message = Session::get('success'))
-                <div class="alert alert-success alert-block">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <strong>{{ $message }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
 
@@ -18,20 +19,19 @@
                 @csrf
 
                 <div class="mb-3">
-                    <label class="form-label" for="inputFile">File:</label>
+                    <label class="form-label" for="inputFile">Choose File:</label>
                     <input 
                         type="file" 
                         name="file" 
                         id="inputFile"
                         class="form-control @error('file') is-invalid @enderror">
-
                     @error('file')
-                        <span class="text-danger">{{ $message }}</span>
+                        <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <button type="submit" class="btn btn-success">Upload</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
                 </div>
 
             </form>

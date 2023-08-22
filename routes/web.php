@@ -1,9 +1,17 @@
 <?php
 
+use App\Http\Controllers\ViewDPAController;
+use App\Http\Controllers\ArsipController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Imports\ArsipLamaImport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Controllers\RekananController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -34,14 +42,63 @@ Route::prefix('profile')->name('profile.')->middleware('auth')->group(function()
 // Roles
 Route::resource('roles', App\Http\Controllers\RolesController::class);
 
+//arsip
+Route::get('/imported-data', [ImportController::class, 'showImportedData'])->name('imported.data');
+Route::resource('/arsip', App\Http\Controllers\ArsipController::class);
+Route::get('/Arsip', [ArsipController::class, 'index'])->name('Arsip.index');
+Route::get('/Arsip/{id}/Edit', [ArsipController::class, 'edit'])->name('Arsip.edit');
+Route::put('/Arsip/{id}', [ArsipController::class, 'update'])->name('Arsip.update');
+Route::get('/Arsip/Create', [ArsipController::class, 'create'])->name('Arsip.create');
+Route::post('/Arsip/Store', [ArsipController::class, 'store'])->name('Arsip.store');
 // Permissions
 Route::resource('permissions', App\Http\Controllers\PermissionsController::class);
+//rekanan
+Route::resource('rekanan', RekananController::class);
+Route::get('/Rekanan', [RekananController::class, 'index'])->name('rekanan.index');
+Route::get('/Rekanan/Create', [RekananController::class, 'create'])->name('rekanan.create');
+Route::post('/Rekanan/Store', [RekananController::class, 'store'])->name('rekanan.store');
+Route::get('/Rekanan/{id}/Edit', [RekananController::class, 'edit'])->name('rekanan.edit');
+Route::put('/Rekanan/{id}', [RekananController::class, 'update'])->name('rekanan.update');
+
+
+
 
 // Upload DPA
 Route::resource('UploadDPA', App\Http\Controllers\UploadDPAController::class);
+Route::get('/UploadDpa', [UploadDPAController::class, 'index'])->name('UploadDpa.index');
+Route::post('/UploadDpa', [UploadDPAController::class, 'store'])->name('UploadDpa.store');
+//Route::get('/ViewDpa', [ViewDPAController::class, 'index'])->name('ViewDPA.index');
+//Route::get('/', [UploadDPAController::class, 'index'])->name('upload_dpa.index');
+//Route::post('/store', [UploadDPAController::class, 'store'])->name('upload_dpa.store');
 
 // View List DPA
 Route::resource('ViewDPA', App\Http\Controllers\ViewDPAController::class);
+//view sub DPA
+Route::get('/ViewDPA/{dpa}', 'ViewDPAController@show')->name('ViewDPA.show');
+Route::get('/EditDPA/{id}', [ViewDPAController::class, 'edit'])->name('editDPA');
+Route::get('/ViewPDF/{id}', [ViewDPAController::class, 'viewPDF'])->name('viewPDF');
+Route::put('/DPA/{dpa}', [ViewDPAController::class, 'update'])->name('updateDPA');
+
+
+// Route to view the uploaded PDF data (ViewDPA site)
+//Route::get('/View', [ViewDPAController::class, 'index']);
+//dpa and user
+Route::get('/ViewDPA/{dpaId}/{userId}', [ViewDPAController::class, 'assignDpa'])->name('ViewDPA.assignDpa');
+//tes excel
+Route::get('/test-excel', function () {
+    $file_path = 'D:/arsip_lama.xlsx';
+
+    // Load the Excel file and get all the rows from the first sheet
+    $data = Excel::toArray(new ArsipLamaImport, $file_path);
+
+    // Display the data
+    dd($data);
+});
+// Upload berkas Bendahara
+Route::resource('bendahara', App\Http\Controllers\BendaharaController::class);
+// Lihat folder
+Route::get('/files/{folder}', 'App\Http\Controllers\ShowfolderController@showFilesInFolder')->name('showfolder.index');
+
 
 // Users 
 Route::middleware('auth')->prefix('users')->name('users.')->group(function(){
@@ -58,9 +115,7 @@ Route::middleware('auth')->prefix('users')->name('users.')->group(function(){
     Route::post('/upload-users', [UserController::class, 'uploadUsers'])->name('upload');
 
     Route::get('export/', [UserController::class, 'export'])->name('export');
-    //Route::get('pdf/view_dpa', 'DPAController@viewDPA')->name('pdf.view_dpa');
-    //Route::post('upload-pdf', 'PdfController@uploadPdf')->name('upload.pdf');
-    //Route::get('/uploadDPA', [FileController::class, 'index']);
-    Route::post('/uploadDPA', [FileController::class, 'store'])->name('file.store');
+    //Route::post('/uploadDPA', [FileController::class, 'store'])->name('file.store');
+    
 });
 
