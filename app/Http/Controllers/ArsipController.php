@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\ArsipLama;
+use App\Imports\ArsipLamaImport;
 
 class ArsipController extends Controller
 {
@@ -24,12 +25,27 @@ class ArsipController extends Controller
         $arsip = ArsipLama::findOrFail($id);
         $arsip->update($request->all());
 
-        return redirect()->route('Arsip.index')->with('success', 'Arsip updated successfully.');
+        return redirect()->route('Arsip.index')->with('success', 'Document updated successfully.');
     }
     public function create()
 {
     return view('Arsip.create'); // Assuming your view file is named create.blade.php
 }
+
+public function importfile()
+{
+    return view('Arsip.importfile'); // Assuming your view file is named create.blade.php
+}
+
+public function destroy($id)
+    {
+        // Find the Arsip record by ID and delete it
+        $arsip = Arsiplama::findOrFail($id);
+        $arsip->delete();
+
+        return redirect()->route('Arsip.index')->with('success', 'Document record deleted successfully');
+    }
+
 public function store(Request $request)
     {
         // Validate the incoming request data
@@ -66,6 +82,25 @@ public function store(Request $request)
         // Save the new ArsipLama instance to the database
         $arsip->save();
 
-        return redirect()->route('Arsip.index')->with('success', 'Arsip data created successfully.');
+        return redirect()->route('Arsip.index')->with('success', 'Document data created successfully.');
+    }
+    
+    public function import(Request $request)
+    {
+        // Validate the uploaded file
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+    
+        try {
+            $file = $request->file('file');
+    
+            // Import the data from the Excel file using the ArsipLamaImport class
+            Excel::import(new ArsipLamaImport, $file);
+    
+            return redirect()->route('Arsip.index')->with('success', 'File imported successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('Arsip.index')->with('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
 }

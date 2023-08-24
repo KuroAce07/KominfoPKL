@@ -28,12 +28,12 @@
 
                     {{-- First Name --}}
                     <div class="col-sm-6 mb-3 mt-3 mb-sm-0">
-                        <span style="color:red;">*</span>First Name</label>
+                        <span style="color:red;">*</span>Nama Depan</label>
                         <input 
                             type="text" 
                             class="form-control form-control-user @error('first_name') is-invalid @enderror" 
                             id="exampleFirstName"
-                            placeholder="First Name" 
+                            placeholder="Masukkan Nama Depan" 
                             name="first_name" 
                             value="{{ old('first_name') }}">
 
@@ -44,12 +44,12 @@
 
                     {{-- Last Name --}}
                     <div class="col-sm-6 mb-3 mt-3 mb-sm-0">
-                        <span style="color:red;">*</span>Last Name</label>
+                        <span style="color:red;">*</span>Nama Belakang</label>
                         <input 
                             type="text" 
                             class="form-control form-control-user @error('last_name') is-invalid @enderror" 
                             id="exampleLastName"
-                            placeholder="Last Name" 
+                            placeholder="Masukkan Nama Belakang" 
                             name="last_name" 
                             value="{{ old('last_name') }}">
 
@@ -65,7 +65,7 @@
                             type="email" 
                             class="form-control form-control-user @error('email') is-invalid @enderror" 
                             id="exampleEmail"
-                            placeholder="Email" 
+                            placeholder="Masukkan Email" 
                             name="email" 
                             value="{{ old('email') }}">
 
@@ -76,12 +76,12 @@
 
                     {{-- Mobile Number --}}
                     <div class="col-sm-6 mb-3 mt-3 mb-sm-0">
-                        <span style="color:red;">*</span>Mobile Number</label>
+                        <span style="color:red;">*</span>Nomor HP</label>
                         <input 
                             type="text" 
                             class="form-control form-control-user @error('mobile_number') is-invalid @enderror" 
                             id="exampleMobile"
-                            placeholder="Mobile Number" 
+                            placeholder="Masukkan Nomor HP" 
                             name="mobile_number" 
                             value="{{ old('mobile_number') }}">
 
@@ -94,7 +94,7 @@
                     <div class="col-sm-6 mb-3 mt-3 mb-sm-0">
                         <span style="color:red;">*</span>Role</label>
                         <select class="form-control form-control-user @error('role_id') is-invalid @enderror" name="role_id">
-                            <option selected disabled>Select Role</option>
+                            <option selected disabled>Pilih Role</option>
                             @foreach ($roles as $role)
                                 <option value="{{$role->id}}">{{$role->name}}</option>
                             @endforeach
@@ -108,7 +108,7 @@
                     <div class="col-sm-6 mb-3 mt-3 mb-sm-0">
                         <span style="color:red;">*</span>Status</label>
                         <select class="form-control form-control-user @error('status') is-invalid @enderror" name="status">
-                            <option selected disabled>Select Status</option>
+                            <option selected disabled>Pilih Status</option>
                             <option value="1" selected>Active</option>
                             <option value="0">Inactive</option>
                         </select>

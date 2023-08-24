@@ -7,7 +7,7 @@
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Add New Arsip</h1>
+            <h1 class="h3 mb-0 text-gray-800">Dokumen Keuangan</h1>
         </div>
 
         {{-- Alert Messages --}}
@@ -16,7 +16,7 @@
         <!-- Form to Add New Arsip -->
         <div class="card shadow mb-4">
         <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Add New Arsip</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Tambahkan Dokumen Baru</h6>
                 </div>
                 <div class="card-body">
                 <form action="{{ route('Arsip.store') }}" method="POST">

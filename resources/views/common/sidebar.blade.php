@@ -20,14 +20,17 @@
     <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#arsipLamaDropDown"
         aria-expanded="true" aria-controls="arsipLamaDropDown">
-        <i class="fas fa-archive"></i>
-        <span>Arsip Keuangan</span>
+        <i class="fas fa-folder-open"></i>
+
+
+        <span>Dokumen Keuangan</span>
     </a>
     <div id="arsipLamaDropDown" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Arsip:</h6>
-            <a class="collapse-item" href="{{ route('Arsip.index') }}">List Arsip</a>
-            <a class="collapse-item" href="{{ route('Arsip.create') }}">Tambahkan Arsip</a>
+            <h6 class="collapse-header">Dokumen:</h6>
+            <a class="collapse-item" href="{{ route('Arsip.index') }}">List Dokumen</a>
+            <a class="collapse-item" href="{{ route('Arsip.create') }}">Tambahkan Dokumen</a>
+            <a class="collapse-item" href="{{ route('Arsip.importfile') }}">Import Dokumen</a>
         </div>
     </div>
 </li>
@@ -61,8 +64,8 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">User Management:</h6>
                 <a class="collapse-item" href="{{ route('users.index') }}">List</a>
-                <a class="collapse-item" href="{{ route('users.create') }}">Add New</a>
-                <a class="collapse-item" href="{{ route('users.import') }}">Import Data</a>
+                <a class="collapse-item" href="{{ route('users.create') }}">Buat User</a>
+                <a class="collapse-item" href="{{ route('users.import') }}">Import User</a>
             </div>
         </div>
     </li> 

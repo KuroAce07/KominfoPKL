@@ -558,6 +558,7 @@ $tableSubData['Jumlah'] .= "\n" . implode("\n", $rpValues);
             }
             $bantuankoefisien1 = "4 Orang / Kali";
             $bantuansatuan1 = "Orang / Kali";
+            $bantuanharga0 = 400;
             $bantuanharga1 = 242;
             $bantuankoefisien2 = "4 Orang / Hari";
             $bantuansatuan2 = "Orang / Hari";
@@ -574,7 +575,7 @@ $tableSubData['Jumlah'] .= "\n" . implode("\n", $rpValues);
             else{
                 $tableSubData['Satuan'] = 'Lembar' . "\n" . $bantuansatuan1 . "\n" . $bantuansatuan2  ;
             }
-            $tableSubData['Harga'] = $bantuanharga1 . $bantuanharga2;
+            $tableSubData['Harga'] = $bantuanharga0 . $bantuanharga1 . $bantuanharga2;
             
             // Extract the next word after Koefisien as Harga
             $nextWordPos = strpos($pdfText, $uniqueKoefisienData . ' ', $nextLineBreakPos);

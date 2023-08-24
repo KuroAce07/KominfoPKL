@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\DPA;
 use App\Models\User;
-
+use App\Traits\WablasTrait;
 class ViewDPAController extends Controller
 {
     public function index()
@@ -35,7 +35,14 @@ class ViewDPAController extends Controller
 
         $dpa->user_id = $user->id;
         $dpa->save();
-
+        
+        $whatsappData = [];
+        $whatsappData['phone'] = $user->mobile_number; // Assuming mobile_number is the column name in the users table
+        $whatsappData['message'] = "Ada DPA Baru yang harus dikerjakan dengan Nomor DPA : {$dpa->nomor_dpa} ";
+        $whatsappData['secret'] = false;
+        $whatsappData['retry'] = false;
+        $whatsappData['isGroup'] = false;
+        WablasTrait::sendText([$whatsappData]);
         return redirect()->back()->with('success', 'DPA assigned successfully.');
     }
 

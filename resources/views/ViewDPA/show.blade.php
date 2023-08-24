@@ -5,12 +5,14 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Sub DPA</h1>
+        <h1 class="h3 mb-0 text-gray-800">Sub Kegiatan DPA</h1>
     </div>
 
     {{-- Alert Messages --}}
     @include('common.alert')
-    
+    @php
+        $totalJASKSum = 0; // Initialize the sum of all JASK values
+    @endphp
     <!-- Display Sub Kegiatan -->
     @foreach ($dpa->subDPA as $index => $sub_dpa)
         @php
@@ -25,6 +27,8 @@
             $jenisbarang = $sub_dpa->jenis_barang;
             $JASK = $sub_dpa->jumlah_anggaran_sub_kegiatan;
             $maxRows = max(count($kodeRekeningLines), count($uraianLines), count($koefisienLines), count($satuanLines), count($hargaLines), count($jumlahLines));
+            $jaskNumericValue = (int) preg_replace('/[^0-9]/', '', $JASK);
+            $totalJASKSum += $jaskNumericValue;
         @endphp
         
         <!-- DataTales Example -->
@@ -79,25 +83,72 @@
                                         {{ substr($sumberDana, 0, strpos($sumberDana, '[#]')) }}
                                         @elseif ($rowIndex === 6)
                                         @php
-    $startPos = strpos($jenisbarang, 'Fotocopy F4/A4 70 Gram');
-    $endPos = strpos($jenisbarang, 'FotoCopySpesifikasi ', $startPos);
-    if ($startPos !== false && $endPos !== false) {
-        $extractedText = substr($jenisbarang, $startPos, $endPos - $startPos);
-    } else {
-        $extractedText = $jenisbarang;
-    }
-@endphp
+                                        $startPos = strpos($jenisbarang, 'Fotocopy F4/A4 70 Gram');
+                                        $endPos = strpos($jenisbarang, 'FotoCopySpesifikasi ', $startPos);
+                                        if ($startPos !== false && $endPos !== false) {
+                                            $extractedText = substr($jenisbarang, $startPos, $endPos - $startPos);
+                                        } else {
+                                            $extractedText = $jenisbarang;
+                                        }
+                                    @endphp
 
-{{ $extractedText }}
-
-
+                                    {{ $extractedText }}
                                         @elseif ($rowIndex === 10 && strpos($sumberDana, '[#]') !== false)
                                         {{ substr($sumberDana, strpos($sumberDana, '[#]') + 4) }}
                                         @elseif ($rowIndex === 11)
-                                        Spesifikasi: Biaya Transportasi Darat Dari Kota Batu Ke Kota Surabaya Dalam Provinsi Yang Sama One Way
+                                        @php
+                                        $jenisbarang = $sub_dpa->jenis_barang;
+
+                                        // Find the position of the first occurrence of "FotoCopySpesifikasi"
+                                        $startPos = strpos($jenisbarang, 'FotoCopySpesifikasi');
+
+                                        if ($startPos !== false) {
+                                            // Find the position of the second occurrence of "Spesifikasi :" starting from the first occurrence of "FotoCopySpesifikasi"
+                                            $endPos = strpos($jenisbarang, 'Spesifikasi :', $startPos + 1);
+
+                                            if ($endPos === false) {
+                                                // If there's no second occurrence, extract text from the first occurrence to the end
+                                                $extractedText = substr($jenisbarang, $startPos + strlen('FotoCopySpesifikasi'));
+                                            } else {
+                                                // Extract text between the first occurrence of "FotoCopySpesifikasi" and the second occurrence of "Spesifikasi :"
+                                                $extractedText = substr($jenisbarang, $startPos + strlen('FotoCopySpesifikasi'), $endPos - ($startPos + strlen('FotoCopySpesifikasi')));
+                                            }
+
+                                            // Remove leading and trailing spaces and colons
+                                            $extractedText = trim($extractedText, " :");
+
+                                            // Remove any trailing text after "Spesifikasi :"
+                                            $endSpesifikasiPos = strpos($extractedText, 'Spesifikasi :');
+                                            if ($endSpesifikasiPos !== false) {
+                                                $extractedText = substr($extractedText, 0, $endSpesifikasiPos);
+                                            }
+                                        } else {
+                                            $extractedText = '';
+                                        }
+                                    @endphp
+
+                                    {{ $extractedText }}
+
                                         @elseif ($rowIndex === 12)
-                                        Spesifikasi: Uang Harian Perjalanan Dinas Dalam Negeri Luar Kota - Jawa Timur
-                                        @elseif ($rowIndex === 7)
+                                        @php
+                                        $jenisbarang = $sub_dpa->jenis_barang;
+
+                                        // Find the position of "Uang Harian"
+                                        $startPos = strpos($jenisbarang, 'Uang Harian');
+
+                                        if ($startPos !== false) {
+                                            // Extract text from "Uang Harian" to the end
+                                            $extractedText = substr($jenisbarang, $startPos);
+
+                                            // Remove any leading or trailing spaces and colons
+                                            $extractedText = trim($extractedText, " :");
+                                        } else {
+                                            $extractedText = '';
+                                        }
+                                    @endphp
+                                    {{ $extractedText }}
+
+                                    @elseif ($rowIndex === 7)
                                     @php
                                     $kr = 5
                                     @endphp
@@ -112,35 +163,157 @@
                                     $kr = 7
                                     @endphp
                                     {!! $uraianLines[$kr] ?? '' !!}
-                                        @else
-                                        {!! $uraianLines[$rowIndex] ?? '' !!}
-                                        @endif
-                                    </td>
-                                    <td>
-                                    @if ($rowIndex === 6)
-                                    3125 Lembar
-                                    @elseif($rowIndex === 11)
-                                    4 Orang / Kali
-                                    @elseif($rowIndex === 12)
-                                    4 Orang / Hari
+                                    @else
+                                    {!! $uraianLines[$rowIndex] ?? '' !!}
                                     @endif
                                     </td>
                                     <td>
                                     @if ($rowIndex === 6)
-                                    Lembar
+                                    @php
+                                    $koefisien = $sub_dpa->koefisien;
+
+                                    // Split the content by line breaks
+                                    $lines = explode("\n", $koefisien);
+
+                                    // Get the first line
+                                    $firstLine = trim($lines[0]); // Remove leading and trailing spaces
+
+                                    // Remove any leading or trailing spaces and colons
+                                    $extractedText = trim($firstLine, " :");
+                                @endphp
+
+                                {{ $extractedText }}
+
                                     @elseif($rowIndex === 11)
-                                    Orang / Kali
+                                    @php
+    $koefisien = $sub_dpa->koefisien;
+
+    // Split the content by line breaks
+    $lines = explode("\n", $koefisien);
+
+    // Check if there is a second line
+    if (isset($lines[1])) {
+        $secondLine = trim($lines[1]); // Remove leading and trailing spaces
+
+        // Remove any leading or trailing spaces and colons
+        $extractedText = trim($secondLine, " :");
+    } else {
+        $extractedText = '';
+    }
+@endphp
+
+{{ $extractedText }}
+
                                     @elseif($rowIndex === 12)
-                                    Orang / Hari
+                                    @php
+                                    $koefisien = $sub_dpa->koefisien;
+
+                                    // Split the content by line breaks
+                                    $lines = explode("\n", $koefisien);
+
+                                    // Check if there is a third line
+                                    if (isset($lines[2])) {
+                                        $thirdLine = trim($lines[2]); // Remove leading and trailing spaces
+
+                                        // Remove any leading or trailing spaces and colons
+                                        $extractedText = trim($thirdLine, " :");
+                                    } else {
+                                        $extractedText = '';
+                                    }
+                                @endphp
+
+                                {{ $extractedText }}
+
+                                    @endif
+                                    </td>
+                                    <td>
+                                    @if ($rowIndex === 6)
+                                    @php
+                                    $satuan = $sub_dpa->satuan;
+                                    // Split the content by line breaks
+                                    $lines = explode("\n", $satuan);
+
+                                    // Check if there is a third line
+                                    if (isset($lines[0])) {
+                                        $line = trim($lines[0]); // Remove leading and trailing spaces
+
+                                        // Remove any leading or trailing spaces and colons
+                                        $extractedText = trim($line, " :");
+                                    } else {
+                                        $extractedText = '';
+                                    }
+                                @endphp
+                                {{ $extractedText }}
+                                    @elseif($rowIndex === 11)
+                                    @php
+                                    $satuan = $sub_dpa->satuan;
+                                    // Split the content by line breaks
+                                    $lines = explode("\n", $satuan);
+
+                                    // Check if there is a third line
+                                    if (isset($lines[1])) {
+                                        $line = trim($lines[1]); // Remove leading and trailing spaces
+
+                                        // Remove any leading or trailing spaces and colons
+                                        $extractedText = trim($line, " :");
+                                    } else {
+                                        $extractedText = '';
+                                    }
+                                @endphp
+                                {{ $extractedText }}
+                                    @elseif($rowIndex === 12)
+                                    @php
+                                    $satuan = $sub_dpa->satuan;
+                                    // Split the content by line breaks
+                                    $lines = explode("\n", $satuan);
+
+                                    // Check if there is a third line
+                                    if (isset($lines[2])) {
+                                        $line = trim($lines[2]); // Remove leading and trailing spaces
+
+                                        // Remove any leading or trailing spaces and colons
+                                        $extractedText = trim($line, " :");
+                                    } else {
+                                        $extractedText = '';
+                                    }
+                                @endphp
+                                {{ $extractedText }}
                                     @endif
                                     </td>
                                     <td> 
                                     @if ($rowIndex === 6)
-                                    400
+                                    @php
+                                    $harga = $sub_dpa->harga;
+                                    // Convert the integer to a string
+                                    $hargaString = (string) $harga;
+                                    // Extract the first 3 characters
+                                    $firstThreeDigits = substr($hargaString, 0, 3);
+                                    // Convert the extracted string back to an integer
+                                    $extractedNumber = (int) $firstThreeDigits;
+                                @endphp
+                                {{ $extractedNumber }}
                                     @elseif($rowIndex === 11)
-                                    242.000
+                                    @php
+                                        $harga = $sub_dpa->harga;
+                                        // Convert the integer to a string
+                                        $hargaString = (string) $harga;
+                                        // Extract the characters from positions 3 to 5 (0-based indexing)
+                                        $extractedDigits = substr($hargaString, 3, 3);
+                                        // Convert the extracted string to an integer if needed
+                                        $extractedNumber = (int) $extractedDigits;
+                                    @endphp
+                                    {{ $extractedNumber }}.000
                                     @elseif($rowIndex === 12)
-                                    410.000
+                                    @php
+                                    $harga = $sub_dpa->harga;
+                                    // Convert the integer to a string
+                                    $hargaString = (string) $harga;
+                                    // Extract the characters from positions 6 to 8 (0-based indexing)
+                                    $extractedDigits = substr($hargaString, 6, 3);
+                                    // Convert the extracted string to an integer if needed
+                                    $extractedNumber = (int) $extractedDigits;
+                                @endphp
+                                {{ $extractedNumber }}.000
                                     @endif
                                     </td>
                                     <td></td>
@@ -176,5 +349,16 @@
             </div>
         </div>
     @endforeach
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Total Jumlah Anggaran</h1>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Total Jumlah Anggaran Sub Kegiatan :</h5>
+                <h4 class="text-primary">Rp{{ number_format($totalJASKSum, 0, ',', '.') }}</h4>
+            </div>
+        </div>
+    </div>    
 </div>
 @endsection

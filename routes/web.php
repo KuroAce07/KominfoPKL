@@ -47,11 +47,14 @@ Route::resource('roles', App\Http\Controllers\RolesController::class);
 //arsip
 Route::get('/imported-data', [ImportController::class, 'showImportedData'])->name('imported.data');
 Route::resource('/arsip', App\Http\Controllers\ArsipController::class);
-Route::get('/Arsip', [ArsipController::class, 'index'])->name('Arsip.index');
-Route::get('/Arsip/{id}/Edit', [ArsipController::class, 'edit'])->name('Arsip.edit');
-Route::put('/Arsip/{id}', [ArsipController::class, 'update'])->name('Arsip.update');
-Route::get('/Arsip/Create', [ArsipController::class, 'create'])->name('Arsip.create');
-Route::post('/Arsip/Store', [ArsipController::class, 'store'])->name('Arsip.store');
+Route::get('/Dokumen', [ArsipController::class, 'index'])->name('Arsip.index');
+Route::get('/Dokumen/Import-file', [ArsipController::class, 'importfile'])->name('Arsip.importfile');
+Route::post('/Dokumen/Import', [ArsipController::class, 'import'])->name('Arsip.import');
+Route::get('/Dokumen/{id}/Edit', [ArsipController::class, 'edit'])->name('Arsip.edit');
+Route::put('/Dokumen/{id}', [ArsipController::class, 'update'])->name('Arsip.update');
+Route::get('/Dokumen/Create', [ArsipController::class, 'create'])->name('Arsip.create');
+Route::post('/Dokumen/Store', [ArsipController::class, 'store'])->name('Arsip.store');
+Route::delete('/Dokumen/{id}', [ArsipController::class, 'destroy'])->name('Arsip.destroy');
 // Permissions
 Route::resource('permissions', App\Http\Controllers\PermissionsController::class);
 //rekanan
@@ -142,16 +145,6 @@ Route::get('/assignPPPTK/{dpaId}/{userId}', [ViewDPAController::class, 'assignPP
 //Route::get('/View', [ViewDPAController::class, 'index']);
 //dpa and user
 Route::get('/ViewDPA/{dpaId}/{userId}', [ViewDPAController::class, 'assignDpa'])->name('ViewDPA.assignDpa');
-//tes excel
-Route::get('/test-excel', function () {
-    $file_path = 'D:/arsip_lama.xlsx';
-
-    // Load the Excel file and get all the rows from the first sheet
-    $data = Excel::toArray(new ArsipLamaImport, $file_path);
-
-    // Display the data
-    dd($data);
-});
 // Upload berkas Bendahara
 Route::resource('bendahara', App\Http\Controllers\BendaharaController::class);
 // Lihat folder

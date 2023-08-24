@@ -61,7 +61,7 @@ class HomeController extends Controller
         $request->validate([
             'first_name'    => 'required',
             'last_name'     => 'required',
-            'mobile_number' => 'required|numeric|digits:10',
+            'mobile_number' => 'required|numeric|digits_between:10,13',
         ]);
 
         try {

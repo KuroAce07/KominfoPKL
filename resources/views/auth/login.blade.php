@@ -68,7 +68,7 @@
         </div>
     </div>
     <div class="text-center mt-5">
-        <h6 class="text-white">Developed By : <a class="text-white" >Trio wek wek</a></h6>
+        <h6 class="text-white">Developed By : <a class="text-white" >Trio PKL UB</a></h6>
     </div>
 
 </div>

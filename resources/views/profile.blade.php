@@ -36,9 +36,9 @@
                         @csrf
                         <div class="row mt-2">
                             <div class="col-md-4">
-                                <label class="labels">First Name</label>
+                                <label class="labels">Nama Depan</label>
                                 <input type="text" class="form-control @error('first_name') is-invalid @enderror"
-                                    name="first_name" placeholder="First Name"
+                                    name="first_name" placeholder="Masukkan Nama Depan"
                                     value="{{ old('first_name') ? old('first_name') : auth()->user()->first_name }}">
 
                                 @error('first_name')
@@ -46,21 +46,21 @@
                                 @enderror
                             </div>
                             <div class="col-md-4">
-                                <label class="labels">Last Name</label>
+                                <label class="labels">Nama Belakang</label>
                                 <input type="text" name="last_name"
                                     class="form-control @error('last_name') is-invalid @enderror"
                                     value="{{ old('last_name') ? old('last_name') : auth()->user()->last_name }}"
-                                    placeholder="Last Name">
+                                    placeholder="Masukkan Nama Belakang">
 
                                 @error('last_name')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col-md-4">
-                                <label class="labels">Mobile Number</label>
+                                <label class="labels">Nomor HP</label>
                                 <input type="text" class="form-control @error('mobile_number') is-invalid @enderror" name="mobile_number"
                                     value="{{ old('mobile_number') ? old('mobile_number') : auth()->user()->mobile_number }}"
-                                    placeholder="Mobile Number">
+                                    placeholder="Masukkan Nomor HP">
                                 @error('mobile_number')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror

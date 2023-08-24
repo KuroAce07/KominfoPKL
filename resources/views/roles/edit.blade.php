@@ -29,7 +29,7 @@
 
                     {{-- Name --}}
                     <div class="col-sm-6 mb-3 mb-sm-0">
-                        <span style="color:red;">*</span>Name</label>
+                        <span style="color:red;">*</span>Nama</label>
                         <input 
                             type="text" 
                             class="form-control form-control-user @error('name') is-invalid @enderror" 
@@ -46,9 +46,9 @@
 
                     {{-- Guard Name --}}
                     <div class="col-sm-6 mb-3 mb-sm-0">
-                        <span style="color:red;">*</span>Guard Name</label>
+                        <span style="color:red;">*</span>Nama Guard</label>
                         <select class="form-control form-control-user @error('guard_name') is-invalid @enderror" name="guard_name">
-                            <option selected disabled>Select Guard Name</option>
+                            <option selected disabled>Pilih Nama Guard</option>
                             <option value="web" {{old('guard_name') ? ((old('guard_name') == 'web') ? 'selected' : '') : (($role->guard_name == 'web') ? 'selected' : '')}}>Web</option>
                             <option value="api" {{old('guard_name') ? ((old('guard_name') == 'api') ? 'selected' : '') : (($role->guard_name == 'api') ? 'selected' : '')}}>Api</option>
                         </select>
