@@ -139,8 +139,7 @@ Route::get('/ViewPDF/{id}', [ViewDPAController::class, 'viewPDF'])->name('viewPD
 Route::put('/DPA/{dpa}', [ViewDPAController::class, 'update'])->name('updateDPA');
 Route::get('/assignPP/{dpaId}/{userId}', [ViewDPAController::class, 'assignPP'])->name('ViewDPA.assignPP');
 Route::get('/assignPPPTK/{dpaId}/{userId}', [ViewDPAController::class, 'assignPPPTK'])->name('ViewDPA.assignPPPTK');
-
-
+Route::get('/Track', [ViewDPAController::class, 'tracking'])->name('ViewDPA.track');
 // Route to view the uploaded PDF data (ViewDPA site)
 //Route::get('/View', [ViewDPAController::class, 'index']);
 //dpa and user

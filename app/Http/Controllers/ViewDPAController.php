@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\DPA;
 use App\Models\User;
 use App\Traits\WablasTrait;
+
 class ViewDPAController extends Controller
 {
     public function index()
@@ -130,4 +131,10 @@ public function update(Request $request, $dpaId)
     return redirect()->route('ViewDPA.index')->with('success', 'DPA updated successfully.');
 }
 
+public function tracking()
+{
+    $dpaData = DPA::all();
+
+    return view('ViewDPA.track', ['dpaData' => $dpaData]);
+}
 }

@@ -88,6 +88,7 @@
                     <h6 class="collapse-header">DPA</h6>
                     <a class="collapse-item" href="{{ route('UploadDPA.index') }}">Upload DPA</a>
                     <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
+                    <a class="collapse-item" href="{{ route('ViewDPA.track') }}">Tracking DPA</a>
                 </div>
             </div>
             <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
