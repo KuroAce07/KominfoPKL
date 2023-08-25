@@ -1,31 +1,3 @@
-## Features
-
-- Mobile Responsive Bootstrap 4 Design
-- User Management with Roles
-- Role Management
-- Permissions Management
-- Access Control List (ACL)
-- Laravel 8 + Bootstrap 4
-
-
-## Tech Stack
-
-**Client:** HTML, CSS, JavaScript, jQuery, VueJs, Bootstrap 4
-
-**Server:** PHP, Laravel 8
-
-**DataBase:** MySql
-
-
-## Installation
-
-Install Tech-Admin With Simple Steps
-
-```bash
-git clone https://github.com/TechTool-India/techtool-laravel-admin.git
-cd techtool-laravel-admin
-```
-
 Install All Packages of laravel
 ```bash
 composer install
@@ -71,9 +43,9 @@ Password - Admin@123#
 
 ![App Screenshot](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/v5p71gck63r039mk6jix.png)
 
-## Feedback
-
-If you have any feedback, please reach out to us at techtoolindia@gmail.com
+add ini di .env untuk Bot WA
+SECURITY_TOKEN_WABLAS=d9No4d296O16A0kJZiCXfJqPWKPt4yrHD6w0qvWPhhm2gIWy9RxPaeYxtTDXGB6V
+DOMAIN_SERVER_WABLAS=https://solo.wablas.com
 
 
 ## Support
