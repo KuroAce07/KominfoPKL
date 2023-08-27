@@ -34,7 +34,7 @@
                 </div>
             </div>
             @endhasrole
-            @hasrole('PPTK')
+            @hasrole(['Bendahara', 'PPTK'])
             <div class="mb-3">
                 <a class="btn btn-secondary btn-block" href="{{ route('PembantuPPTKView.dokumenkontrak.show', ['dpaId' => request()->query('dpaId')]) }}">
                     <i class="fas fa-eye"></i>
@@ -69,7 +69,7 @@
                 </div>
             </div>
             @endhasrole
-            @hasrole('PPTK')
+            @hasrole(['Bendahara', 'PPTK'])
             <div class="mb-3">
                 <a class="btn btn-secondary btn-block" href="{{ (route('PembantuPPTKView.dokumenpendukung.index', ['dpaId' => request()->query('dpaId')])) }}">
                     <i class="fas fa-eye"></i>
@@ -105,7 +105,7 @@
             @endhasrole
 
             <!-- Second set of buttons -->
-            @hasrole('PPTK')
+            @hasrole(['Bendahara', 'PPTK'])
             <div class="mb-3">
             <a class="btn btn-secondary btn-block" href="{{ route('PembantuPPTKView.epurchaseview.index', ['dpaId' => request()->query('dpaId')]) }}">
                     <i class="fas fa-eye"></i>
@@ -141,7 +141,7 @@
             @endhasrole
 
             <!-- Second set of buttons -->
-            @hasrole('PPTK')
+            @hasrole(['Bendahara', 'PPTK'])
             <div class="mb-3">
             <a class="btn btn-secondary btn-block" href="{{ route('PembantuPPTKView.dokumenjustifikasi.index', ['dpaId' => request()->query('dpaId')]) }}">
                     <i class="fas fa-eye"></i>
@@ -177,7 +177,7 @@
             @endhasrole
 
             <!-- Second set of buttons -->
-            @hasrole('PPTK')
+            @hasrole(['Bendahara', 'PPTK'])
             <div class="mb-3">
             <a class="btn btn-secondary btn-block" href="{{ route('PembantuPPTKView.bast.index', ['dpaId' => request()->query('dpaId')]) }}">
                     <i class="fas fa-eye"></i>
@@ -212,7 +212,7 @@
             </div>
             @endhasrole
             <!-- Second set of buttons -->
-            @hasrole('PPTK')
+            @hasrole(['Bendahara', 'PPTK'])
             <div class="mb-3">
             <a class="btn btn-secondary btn-block" href="{{ route('PembantuPPTKView.bap.index', ['dpaId' => request()->query('dpaId')]) }}">
                     <i class="fas fa-eye"></i>
@@ -247,7 +247,7 @@
             </div>
             @endhasrole
             <!-- Second set of buttons -->
-            @hasrole('PPTK')
+            @hasrole(['Bendahara', 'PPTK'])
             <div class="mb-3">
             <a class="btn btn-secondary btn-block" href="{{ route('PembantuPPTKView.baph.index', ['dpaId' => request()->query('dpaId')]) }}">
                     <i class="fas fa-eye"></i>
@@ -282,7 +282,7 @@
             </div>
             @endhasrole
             <!-- Second set of buttons -->
-            @hasrole('PPTK')
+            @hasrole(['Bendahara', 'PPTK'])
             <div class="mb-3">
             <a class="btn btn-secondary btn-block" href="{{ route('PembantuPPTKView.pilihrekanan.index', ['dpaId' => request()->query('dpaId')]) }}">
                     <i class="fas fa-eye"></i>

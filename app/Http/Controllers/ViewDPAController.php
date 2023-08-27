@@ -15,6 +15,7 @@ class ViewDPAController extends Controller
         $users = User::where('role_id', 3)->get();
         $pejabatPengadaanUsers = User::where('role_id', 4)->get();
         $pembantupptkUsers = User::where('role_id', 5)->get();
+        $bendaharaUsers = User::where('role_id', 6)->get();
     
         // Filter DPAs based on user access
         $accessibleDpaData = $dpaData->filter(function ($dpa) {
@@ -26,7 +27,13 @@ class ViewDPAController extends Controller
             $accessibleDpaData = $dpaData;
         }
     
-        return view('ViewDPA.index', ['dpaData' => $accessibleDpaData, 'users' => $users, 'pejabatPengadaanUsers' => $pejabatPengadaanUsers, 'pembantupptkUsers' => $pembantupptkUsers]);
+        return view('ViewDPA.index', [
+            'dpaData' => $accessibleDpaData,
+            'users' => $users,
+            'pejabatPengadaanUsers' => $pejabatPengadaanUsers,
+            'pembantupptkUsers' => $pembantupptkUsers,
+            'bendaharaUsers' => $bendaharaUsers,
+        ]);
     }
 
     public function assignDpa($dpaId, $userId)
@@ -85,10 +92,47 @@ class ViewDPAController extends Controller
         return redirect()->back()->with('success', 'Pembantu PPTK assigned successfully.');
     }
 
+    public function assignBendahara($dpaId, $userId)
+{
+    $user = User::findOrFail($userId);
+    $dpa = DPA::findOrFail($dpaId);
+
+    $dpa->user_id4 = $user->id;
+    $dpa->save();
+
+    $whatsappData = [];
+    $whatsappData['phone'] = $user->mobile_number; // Assuming mobile_number is the column name in the users table
+    $whatsappData['message'] = "Ada DPA Baru yang harus dilengkapi dokumennya dari Bendahara dengan Nomor DPA: {$dpa->nomor_dpa}";
+    $whatsappData['secret'] = false;
+    $whatsappData['retry'] = false;
+    $whatsappData['isGroup'] = false;
+    WablasTrait::sendText([$whatsappData]);
+
+    return redirect()->back()->with('success', 'Bendahara assigned successfully.');
+}
+
+public function showDeskripsiBendahara($dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+
+    return view('ViewDPA.deskripsibendahara', compact('dpa'));
+}
+
+public function updateDescription(Request $request, $dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+    
+    $dpa->description = $request->input('description');
+    $dpa->save();
+
+    return redirect()->route('deskripsiBendahara', ['dpaId' => $dpaId])
+                     ->with('success', 'Description updated successfully.');
+}
+
     public function canViewDpa($dpa)
     {
         // Check if the logged-in user is assigned to this DPA as PPTK or Pembantu PPTK
-        return auth()->user()->id === $dpa->user_id || auth()->user()->id === $dpa->user_id2|| auth()->user()->id === $dpa->user_id3;
+        return auth()->user()->id === $dpa->user_id || auth()->user()->id === $dpa->user_id2|| auth()->user()->id === $dpa->user_id3 || auth()->user()->id === $dpa->user_id4;
     }
     
     

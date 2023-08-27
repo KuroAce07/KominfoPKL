@@ -32,7 +32,10 @@
                             <th>Pejabat Pengadaan</th>
                             <th>Pembantu PPTK</th>
                             @endhasrole
-                            @hasrole(['Pembantu PPTK', 'PPTK'])
+                            @hasrole(['Bendahara', 'PPTK'])
+                            <th>Disposisi Bendahara</th>
+                            @endhasrole
+                            @hasrole(['Pembantu PPTK', 'PPTK', 'Bendahara'])
                             <th>Kelengkapan Dokumen</th>
                             @endhasrole
                         </tr>
@@ -82,7 +85,6 @@
                                     </div>
                                 </td>                                
                                                                 
-
                                 @hasrole('PPTK')
                                 <td>
                                     <!-- Assign Pejabat pengadaan -->
@@ -106,6 +108,7 @@
                                             <a href="#" class="btn btn-info lihat-deskripsi-btn">Lihat Deskripsi</a>
                                         </div>
                                 </td>
+
                                 <td>
                                     <!-- Assign Pembantu PPTK -->
                                     <div class="btn-group">
@@ -126,8 +129,31 @@
                                     </div>
                                 </td>
                                 @endhasrole
-                                
-                                @hasrole(['Pembantu PPTK', 'PPTK'])
+                                @hasrole(['PPTK', 'Bendahara'])
+                                    <td>
+                                        <div class="btn-group">
+                                            @if ($dpa->user_id4 && $dpa->bendaharaUsers)
+                                                {{ $dpa->bendaharaUsers->first_name }} {{ $dpa->bendaharaUsers->last_name }}
+                                            @else
+                                                <button type="button" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
+                                                    Assign Bendahara
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    @foreach ($bendaharaUsers as $bendaharaUser)
+                                                        <a class="dropdown-item" href="{{ route('ViewDPA.assignBendahara', ['dpaId' => $dpa->id, 'userId' => $bendaharaUser->id]) }}">
+                                                            {{ $bendaharaUser->first_name }} {{ $bendaharaUser->last_name }}
+                                                        </a>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
+                                            <div class="btn-group d-flex justify-content-center mt-4">
+                                            <a href="{{ route('deskripsiBendahara', ['dpaId' => $dpa->id]) }}" class="btn btn-info lihat-deskripsi-btn">Lihat Deskripsi</a>
+                                        </div>
+                                    </td>
+                             @endhasrole  
+
+                                @hasrole(['Pembantu PPTK', 'PPTK', 'Bendahara'])
                                     <td>
                                         <!-- Lihat Kelengkapan -->
                                         <div class="btn-group">
