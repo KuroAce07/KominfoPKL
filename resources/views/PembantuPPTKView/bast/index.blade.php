@@ -5,18 +5,26 @@
 @section('content')
 <div class="container-fluid">
     <h1>View Berita Acara Serah Terima Hasil Pekerjaan (BAST)</h1>
-
     <div class="card">
         <div class="card-header">
             BAST Details
         </div>
         <div class="card-body">
             @if ($bast)
-                <div>
+                <div class="mb-3">
                     <p><strong>Nomor:</strong> {{ $bast->nomor }}</p>
                     <p><strong>Tanggal:</strong> {{ $bast->tanggal }}</p>
                     <p><strong>Keterangan:</strong> {{ $bast->keterangan }}</p>
-                    <p><strong>Dokumen:</strong> <a href="{{ asset('storage/' . $bast->upload_dokumen) }}" target="_blank">View Dokumen</a></p>
+                    <p><strong>Dokumen:</strong> <a href="{{ url('uploads/' . $dpaId . '/' . basename($bast->upload_dokumen)) }}" download>View Dokumen</a></p>
+                    <p><strong>Status Persetujuan:</strong>
+                        @if ($bast->approval === 1)
+                            <span class="text-success">Dokumen Disetujui</span>
+                        @elseif ($bast->approval === 2)
+                            <span class="text-danger">Dokumen Ditolak</span>
+                        @else
+                            <span class="text-warning">Dokumen Belum Disetujui</span>
+                        @endif
+                    </p>
                 </div>
             @else
                 <p>No BAST available</p>

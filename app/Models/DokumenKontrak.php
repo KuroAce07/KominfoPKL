@@ -20,6 +20,7 @@ class DokumenKontrak extends Model
         'jumlah_total',
         'keterangan',
         'upload_dokumen',
+        'approval',
     ];
 
     public function dpa()

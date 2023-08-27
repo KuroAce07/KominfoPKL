@@ -28,14 +28,11 @@
                             <th>Dana Yang Dibutuhkan</th>
                             <th>PPTK</th>
                             <th>Actions</th>
-                            @hasrole('Bendahara')
-                            <th>Action (Bendahara)</th>
-                            @endhasrole
                             @hasrole('PPTK')
                             <th>Pejabat Pengadaan</th>
                             <th>Pembantu PPTK</th>
                             @endhasrole
-                            @hasrole('Pembantu PPTK')
+                            @hasrole(['Pembantu PPTK', 'PPTK'])
                             <th>Kelengkapan Dokumen</th>
                             @endhasrole
                         </tr>
@@ -78,27 +75,12 @@
                                         <a href="{{ route('editDPA', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Edit</a>
                                         @endhasrole
                                         <a href="{{ asset('uploads/'.$dpa->id.'/'.$dpa->id.'.pdf') }}" class="btn btn-info view-pdf-btn" target="_blank">View PDF</a>
-                                        @hasrole('Pejabat Pengadaan')
-                                        <a href="{{ route('pengadaan.create_pengadaan', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Buat Dokumen Pemilihan</button> </a>
-                                        @endhasrole
                                     </div>
                                 </td>
-                                <td>
-                                    @hasrole('Bendahara')
-                                    <div class="btn-group">
-                                        <a href="{{ route('ceklisform.index', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Ceklis</a>
-                                        <a href="{{ route('bendahara.create_spp', ['id' => $dpa->id]) }}" class="btn btn-success edit-btn">SPP</a>
-                                        <a href="{{ route('bendahara.create_spm', ['id' => $dpa->id]) }}" class="btn btn-warning edit-btn">SPM</a>
-                                        <a href="{{ route('bendahara.create_sp2d', ['id' => $dpa->id]) }}" class="btn btn-danger edit-btn">SP2D</a>
-                                        
-                                    @endhasrole
-                                </div>
-                                </td>
-
 
                                 @hasrole('PPTK')
                                 <td>
-                                    <!-- Assign PPTK -->
+                                    <!-- Assign Pejabat pengadaan -->
                                     <div class="btn-group">
                                         @if ($dpa->user_id2 && $dpa->pejabatPengadaanUser)
                                             {{ $dpa->pejabatPengadaanUser->first_name }} {{ $dpa->pejabatPengadaanUser->last_name }}
@@ -115,6 +97,9 @@
                                             </div>
                                         @endif
                                     </div>
+                                        <div class="btn-group d-flex justify-content-center mt-4">
+                                            <a href="#" class="btn btn-info lihat-deskripsi-btn">Lihat Deskripsi</a>
+                                        </div>
                                 </td>
                                 <td>
                                     <!-- Assign Pembantu PPTK -->
@@ -136,15 +121,16 @@
                                     </div>
                                 </td>
                                 @endhasrole
-                                @hasrole('Pembantu PPTK')
-                                <td>
-                                <!-- Lihat Kelengkapan -->
-                                    <div class="btn-group">
-                                        <a href="{{ route('PembantuPPTKView.dokumenpembantupptk') }}" class="btn btn-info lihat-kelengkapan-btn">
-                                        Lihat Kelengkapan
-                                        </a>
-                                    </div>
-                                </td>
+                                
+                                @hasrole(['Pembantu PPTK', 'PPTK'])
+                                    <td>
+                                        <!-- Lihat Kelengkapan -->
+                                        <div class="btn-group">
+                                            <a href="{{ route('PembantuPPTKView.dokumenpembantupptk', ['dpaId' => $dpa->id]) }}" class="btn btn-info lihat-kelengkapan-btn">
+                                                Lihat Kelengkapan
+                                            </a>
+                                        </div>
+                                    </td>
                                 @endhasrole
                             </tr>
                         @endforeach
@@ -178,6 +164,7 @@
             } else {
                 // Handle row click to navigate to the DPA detail page
                 window.location.href = `{{ route('ViewDPA.show', ['dpa' => ':dpaId']) }}`.replace(':dpaId', dpaId);
+                window.location.href = `{{ route('PembantuPPTKView.dokumenpembantupptk', ['dpaId' => ':dpaId']) }}`.replace(':dpaId', dpaId);
             }
         });
     });

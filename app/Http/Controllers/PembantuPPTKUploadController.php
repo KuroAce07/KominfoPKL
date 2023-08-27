@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\EPurchase;
 use App\Models\DokumenKontrak;
 use App\Models\DokumenPendukung;
 use App\Models\EPurchasing;
@@ -15,15 +14,30 @@ use App\Models\PilihRekanan;
 use App\Models\DPA;
 use App\Models\Rekanan;
 
-
-
 class PembantuPPTKUploadController extends Controller
 {
 
 //=====================DOKUMEN KONTRAK==========================================================
+
+public function createDokumenKontrak()
+{
+    $dpas = DPA::all(); // Fetch the list of DPAs
+    $dpaId = request()->query('dpaId'); // Get the value of dpaId from the URL parameter
+    return view('PembantuPPTKView.dokumenkontrak.create', compact('dpas', 'dpaId'));
+}
+
+public function showDokumenKontrak($dpaId)
+{
+    $dokumenKontrak = DokumenKontrak::where('dpa_id', $dpaId)->firstOrFail();
+    $dpas = DPA::all();
+    return view('PembantuPPTKView.dokumenkontrak.show', ['dokumenKontrak' => $dokumenKontrak,'dpaId' => $dpaId,]);
+}
+
+
 public function storeDokumenKontrak(Request $request)
 {
     $validatedData = $request->validate([
+        'dpa_id' => 'required|numeric', // Validate the selected DPA
         'jenis_kontrak' => 'required',
         'nama_kegiatan_transaksi' => 'required',
         'tanggal_kontrak' => 'required|date',
@@ -32,52 +46,49 @@ public function storeDokumenKontrak(Request $request)
         'pph' => 'nullable|numeric',
         'jumlah_potongan' => 'nullable|numeric',
         'jumlah_total' => 'required|numeric',
-        'keterangan' => 'nullable',
+        'keterangan' => 'nullable|string',
         'upload_dokumen' => 'nullable|file',
-        'dpa_id' => 'required|numeric', // Validate the selected DPA
-    ]);    
+    ]);
 
-    // Handle file upload and storage here
-
-    // Create the DokumenKontrak instance with the provided validated data
     $dokumenKontrak = new DokumenKontrak($validatedData);
-
-    // Manually set the dpa_id value
     $dokumenKontrak->dpa_id = $request->input('dpa_id');
 
-    // Save the DokumenKontrak instance
+    // Process and store the uploaded file
+    if ($request->hasFile('upload_dokumen')) {
+        $uploadedFile = $request->file('upload_dokumen');
+
+        // Create a directory path based on the dpa_id
+        $directoryPath = public_path('uploads') . DIRECTORY_SEPARATOR . $dokumenKontrak->dpa_id;
+
+        // Make sure the directory exists, if not, create it
+        if (!file_exists($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
+        }
+
+        // Move the uploaded file to the directory
+        $fileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+        $uploadedFile->move($directoryPath, $fileName);
+
+        // Update the dokumenKontrak with the file information
+        $dokumenKontrak->upload_dokumen = $directoryPath . DIRECTORY_SEPARATOR . $fileName;
+    }
+
     $dokumenKontrak->save();
 
-    return redirect()->route('PembantuPPTKView.dokumenkontrak.create')->with('success', 'Dokumen Kontrak saved successfully.'); 
+    return redirect()->route('PembantuPPTKView.dokumenkontrak.create')->with('success', 'Dokumen Kontrak saved successfully.');
 }
-    
-    public function showDokumenKontrak($id)
-    {
-        $dokumenKontrak = DokumenKontrak::findOrFail($id);
-        return view('PembantuPPTKView.dokumenkontrak.show', ['dokumenKontrak' => $dokumenKontrak]);
-    }
 
-    public function createDokumenKontrak()
-    {
-        $dpas = DPA::all(); // Fetch the list of DPAs
-
-        return view('PembantuPPTKView.dokumenkontrak.create', ['dpas' => $dpas]);
-    }
-    
-    public function editDokumenKontrak($id)
+public function editDokumenKontrak($id)
 {
     $dokumenKontrak = DokumenKontrak::findOrFail($id);
     $dpas = DPA::all(); // Fetch the list of DPAs
-
-    return view('PembantuPPTKView.dokumenkontrak.edit', [
-        'dokumenKontrak' => $dokumenKontrak,
-        'dpas' => $dpas,
-    ]);
+    return view('PembantuPPTKView.dokumenkontrak.edit', ['dokumenKontrak' => $dokumenKontrak, 'dpas' => $dpas]);
 }
 
 public function updateDokumenKontrak(Request $request, $id)
 {
     $validatedData = $request->validate([
+        'dpa_id' => 'required|numeric', // Validate the selected DPA
         'jenis_kontrak' => 'required',
         'nama_kegiatan_transaksi' => 'required',
         'tanggal_kontrak' => 'required|date',
@@ -86,41 +97,45 @@ public function updateDokumenKontrak(Request $request, $id)
         'pph' => 'nullable|numeric',
         'jumlah_potongan' => 'nullable|numeric',
         'jumlah_total' => 'required|numeric',
-        'keterangan' => 'nullable',
+        'keterangan' => 'nullable|string',
         'upload_dokumen' => 'nullable|file',
-        'dpa_id' => 'required|numeric', // Validate the selected DPA
-    ]);    
+    ]);
 
-    // Handle file upload and storage here
-
-    // Retrieve the existing DokumenKontrak instance
     $dokumenKontrak = DokumenKontrak::findOrFail($id);
-
-    // Update the DokumenKontrak instance with the provided validated data
     $dokumenKontrak->fill($validatedData);
 
-    // Manually set the dpa_id value
-    $dokumenKontrak->dpa_id = $request->input('dpa_id');
+    // Set the approval value based on checkbox
+    if ($request->has('approval')) {
+        $dokumenKontrak->approval = 1;
+    } elseif ($request->has('reject')) {
+        $dokumenKontrak->approval = 2;
+    } else {
+        $dokumenKontrak->approval = 0; // Default value if neither checkbox is checked
+    }
 
-    // Save the updated DokumenKontrak instance
+
+    $dpaId = $request->input('dpa_id'); 
     $dokumenKontrak->save();
+    $dpa_id = $request->input('dpa_id'); // Retrieve the value of 'dpa_id' from the request
 
-    return redirect()->route('PembantuPPTKView.dokumenkontrak.show', ['id' => $id])->with('success', 'Dokumen Kontrak updated successfully.'); 
+    return redirect()->route('PembantuPPTKView.dokumenkontrak.show', ['dpaId' => $dpa_id])->with('success', 'Dokumen Kontrak updated successfully.');
 }
 
     //=====================DOKUMEN JUSTIFIKASI==========================================================
     public function createDokumenJustifikasi()
     {
         $dpas = DPA::all(); // Fetch the list of DPAs
-
-        return view('PembantuPPTKView.dokumenjustifikasi.create', ['dpas' => $dpas]);
+        $dpaId = request()->query('dpaId');
+        return view('PembantuPPTKView.dokumenjustifikasi.create', compact('dpas', 'dpaId'));
     }
-
-    public function indexDokumenJustifikasi()
+    
+    public function indexDokumenJustifikasi($dpaId)
     {
-        $dokumenJustifikasi = DokumenJustifikasi::all();
-        return view('PembantuPPTKView.dokumenjustifikasi.index', ['dokumenJustifikasi' => $dokumenJustifikasi]);
-    }
+    $dokumenJustifikasi = DokumenJustifikasi::where('dpa_id', $dpaId)->get();
+    $dpas = DPA::all();
+    return view('PembantuPPTKView.dokumenjustifikasi.index', ['dokumenJustifikasi' => $dokumenJustifikasi, 'dpas' => $dpas, 'dpaId' => $dpaId,]);
+
+    }  
 
     public function storeDokumenJustifikasi(Request $request)
     {
@@ -131,18 +146,28 @@ public function updateDokumenKontrak(Request $request, $id)
             'upload_dokumen' => 'nullable|file',
             'dpa_id' => 'required|numeric', // Validate the selected DPA
         ]);
-
-        // Handle file upload and storage here
-
-        // Create the DokumenJustifikasi instance with the provided validated data
+    
         $dokumenJustifikasi = new DokumenJustifikasi($validatedData);
-
-        // Manually set the dpa_id value
         $dokumenJustifikasi->dpa_id = $request->input('dpa_id');
-
-        // Save the DokumenJustifikasi instance
+    
+        // Process and store the uploaded file
+        if ($request->hasFile('upload_dokumen')) {
+            $uploadedFile = $request->file('upload_dokumen');
+    
+            $directoryPath = public_path('uploads') . DIRECTORY_SEPARATOR . $dokumenJustifikasi->dpa_id;
+    
+            if (!file_exists($directoryPath)) {
+                mkdir($directoryPath, 0777, true);
+            }
+    
+            $fileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+            $uploadedFile->move($directoryPath, $fileName);
+    
+            $dokumenJustifikasi->upload_dokumen = $directoryPath . DIRECTORY_SEPARATOR . $fileName;
+        }
+    
         $dokumenJustifikasi->save();
-
+    
         return redirect()->route('PembantuPPTKView.dokumenjustifikasi.create')->with('success', 'Dokumen Justifikasi saved successfully.');
     }
 
@@ -151,37 +176,35 @@ public function updateDokumenKontrak(Request $request, $id)
         $dokumenJustifikasi = DokumenJustifikasi::findOrFail($id);
         $dpas = DPA::all(); // Fetch the list of DPAs
 
-        return view('PembantuPPTKView.dokumenjustifikasi.edit', [
-            'dokumenJustifikasi' => $dokumenJustifikasi,
-            'dpas' => $dpas,
-        ]);
+        return view('PembantuPPTKView.dokumenjustifikasi.edit', ['dokumenJustifikasi' => $dokumenJustifikasi,'dpas' => $dpas,]);
     }
 
     public function updateDokumenJustifikasi(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'nama' => 'required',
-            'tanggal' => 'required|date',
+            'nama' => 'nullable',
+            'tanggal' => 'nullable|date',
             'keterangan' => 'nullable',
             'upload_dokumen' => 'nullable|file',
-            'dpa_id' => 'required|numeric', // Validate the selected DPA
         ]);
 
-        // Handle file upload and storage here
-
-        // Retrieve the existing DokumenJustifikasi instance
         $dokumenJustifikasi = DokumenJustifikasi::findOrFail($id);
-
-        // Update the DokumenJustifikasi instance with the provided validated data
         $dokumenJustifikasi->fill($validatedData);
-
-        // Manually set the dpa_id value
-        $dokumenJustifikasi->dpa_id = $request->input('dpa_id');
-
-        // Save the updated DokumenJustifikasi instance
+    
+        
+        if ($request->has('approval')) {
+            $dokumenJustifikasi->approval = 1;
+        } elseif ($request->has('reject')) {
+            $dokumenJustifikasi->approval = 2;
+        } else {
+            $dokumenJustifikasi->approval = 0; 
+        }
+    
+        $dpaId = $request->input('dpa_id'); 
+        $dokumenJustifikasi->dpa_id = $dpaId;
         $dokumenJustifikasi->save();
-
-        return redirect()->route('PembantuPPTKView.dokumenjustifikasi.index')->with('success', 'Dokumen Justifikasi updated successfully.');
+    
+        return redirect()->route('PembantuPPTKView.dokumenjustifikasi.index', ['dpaId' => $dpaId])->with('success', 'E-Purchasing data updated successfully.');
     }
 
     //=====================E-PURCHASING==========================================================
@@ -193,11 +216,12 @@ public function updateDokumenKontrak(Request $request, $id)
             return view('PembantuPPTKView.epurchaseview.create', ['dpas' => $dpas]);
         }
     
-        public function indexEPurchasing()
+        public function indexEPurchasing($dpaId)
         {
-            $ePurchasing = EPurchasing::first(); // Retrieve the first E-Purchasing instance
+            $ePurchasing = EPurchasing::where('dpa_id', $dpaId)->firstOrFail();
+
             return view('PembantuPPTKView.epurchaseview.index', ['ePurchasing' => $ePurchasing]);
-        }           
+        }               
     
         public function storeEPurchasing(Request $request)
         {
@@ -211,145 +235,178 @@ public function updateDokumenKontrak(Request $request, $id)
                 'nama_pejabat_pengadaan' => 'required',
                 'nama_penyedia' => 'required',
                 'dpa_id' => 'required|numeric', // Validate the selected DPA
+                'upload_dokumen' => 'nullable|file', // Add file validation
             ]);
         
-            // Handle file upload and storage here
-        
-            // Create the EPurchasing instance with the provided validated data
             $ePurchasing = new EPurchasing($validatedData);
-        
-            // Manually set the dpa_id value
             $ePurchasing->dpa_id = $request->input('dpa_id');
         
-            // Save the EPurchasing instance
+            // Process and store the uploaded file
+            if ($request->hasFile('upload_dokumen')) {
+                $uploadedFile = $request->file('upload_dokumen');
+        
+                $directoryPath = public_path('uploads') . DIRECTORY_SEPARATOR . $ePurchasing->dpa_id;
+        
+                if (!file_exists($directoryPath)) {
+                    mkdir($directoryPath, 0777, true);
+                }
+        
+                $fileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+                $uploadedFile->move($directoryPath, $fileName);
+        
+                $ePurchasing->upload_dokumen = $directoryPath . DIRECTORY_SEPARATOR . $fileName;
+            }
+        
             $ePurchasing->save();
         
             return redirect()->route('PembantuPPTKView.epurchaseview.create')->with('success', 'E-Purchasing data saved successfully.');
-        }
+        }    
         
         public function editEPurchasing($id)
         {
-            $ePurchasing = EPurchasing::findOrFail($id);
+            $ePurchasing = DokumenPendukung::findOrFail($id);
             $dpas = DPA::all(); // Fetch the list of DPAs
-            return view('PembantuPPTKView.epurchaseview.edit', ['ePurchasing' => $ePurchasing, 'dpas' => $dpas]);
-        }        
+            return view('PembantuPPTKView.epurchaseview.edit', ['ePurchasing' => $ePurchasing,'dpas' => $dpas]);
+        }
         
 
         public function updateEPurchasing(Request $request, $id)
         {
+            // Validate the incoming request data
             $validatedData = $request->validate([
-                'e_commerce' => 'required',
-                'id_paket' => 'required',
-                'jumlah' => 'required|numeric',
-                'harga_total' => 'required|numeric',
-                'tanggal_buat' => 'required|date',
-                'tanggal_ubah' => 'required|date',
-                'nama_pejabat_pengadaan' => 'required',
-                'nama_penyedia' => 'required',
+                'e_commerce' => 'nullable',
+                'id_paket' => 'nullable',
+                'jumlah' => 'nullable|numeric',
+                'harga_total' => 'nullable|numeric',
+                'tanggal_buat' => 'nullable|date',
+                'tanggal_ubah' => 'nullable|date',
+                'nama_pejabat_pengadaan' => 'nullable',
+                'nama_penyedia' => 'nullable',
                 'dpa_id' => 'required|numeric', // Validate the selected DPA
+
             ]);
         
-            // Handle file upload and storage here
-        
-            // Retrieve the existing EPurchasing instance
             $ePurchasing = EPurchasing::findOrFail($id);
-        
-            // Update the EPurchasing instance with the provided validated data
             $ePurchasing->fill($validatedData);
         
-            // Manually set the dpa_id value
-            $ePurchasing->dpa_id = $request->input('dpa_id');
+            // Set the approval value based on checkbox
+            if ($request->has('approval')) {
+                $ePurchasing->approval = 1;
+            } elseif ($request->has('reject')) {
+                $ePurchasing->approval = 2;
+            } else {
+                $ePurchasing->approval = 0; // Default value if neither checkbox is checked
+            }
         
-            // Save the updated EPurchasing instance
+            $dpaId = $request->input('dpa_id'); // Retrieve dpaId from the input
+            $ePurchasing->dpa_id = $dpaId;
             $ePurchasing->save();
         
-            return redirect()->route('PembantuPPTKView.epurchaseview.index')->with('success', 'E-Purchasing data updated successfully.');
+            return redirect()->route('PembantuPPTKView.epurchaseview.index', ['dpaId' => $dpaId])->with('success', 'E-Purchasing data updated successfully.');
         }
-
+    
 //=====================DOKUMEN PENDUKUNG==========================================================
 
-    public function createDokumenPendukung()
-    {
-        $dpas = DPA::all(); // Fetch the list of DPAs
-        return view('PembantuPPTKView.dokumenpendukung.create', ['dpas' => $dpas]);
+public function createDokumenPendukung()
+{
+    $dpas = DPA::all(); 
+    $dpaId = request()->query('dpaId');
+    return view('PembantuPPTKView.dokumenpendukung.create', compact('dpas', 'dpaId'));
+}
+
+public function indexDokumenPendukung($dpaId)
+{
+    $dokumenPendukung = DokumenPendukung::where('dpa_id', $dpaId)->firstOrFail();
+    return view('PembantuPPTKView.dokumenpendukung.index', ['dokumenPendukung' => $dokumenPendukung, 'dpaId' => $dpaId,]);
+}
+
+public function storeDokumenPendukung(Request $request)
+{
+    $validatedData = $request->validate([
+        'nama' => 'required',
+        'tanggal' => 'required|date',
+        'keterangan' => 'nullable',
+        'upload_dokumen' => 'nullable|file',
+        'dpa_id' => 'required|numeric',
+    ]);
+
+    $dokumenPendukung = new DokumenPendukung($validatedData);
+    $dokumenPendukung->dpa_id = $request->input('dpa_id');
+
+    // Process and store the uploaded file
+    if ($request->hasFile('upload_dokumen')) {
+        $uploadedFile = $request->file('upload_dokumen');
+        
+        // Create a directory path based on the dpa_id
+        $directoryPath = public_path('uploads') . DIRECTORY_SEPARATOR . $dokumenPendukung->dpa_id;
+
+        // Make sure the directory exists, if not, create it
+        if (!file_exists($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
+        }
+
+        // Move the uploaded file to the directory
+        $fileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+        $uploadedFile->move($directoryPath, $fileName);
+
+        // Update the dokumenPendukung with the file information
+        $dokumenPendukung->upload_dokumen = $directoryPath . DIRECTORY_SEPARATOR . $fileName;
     }
 
-    public function indexDokumenPendukung()
-    {
-        $dokumenPendukung = DokumenPendukung::first(); // Retrieve the first DokumenPendukung instance
-        return view('PembantuPPTKView.dokumenpendukung.index', ['dokumenPendukung' => $dokumenPendukung]);
+    $dokumenPendukung->save();
+
+    return redirect()->route('PembantuPPTKView.dokumenpendukung.create')->with('success', 'Dokumen Pendukung saved successfully.');
+}
+
+
+public function editDokumenPendukung($id)
+{
+    $dokumenPendukung = DokumenPendukung::findOrFail($id);
+    $dpas = DPA::all(); // Fetch the list of DPAs
+    return view('PembantuPPTKView.dokumenpendukung.edit', ['dokumenPendukung' => $dokumenPendukung,'dpas' => $dpas]);
+}
+
+public function updateDokumenPendukung(Request $request, $id)
+{
+    $validatedData = $request->validate([
+        'nama' => 'nullable',
+        'tanggal' => 'nullable|date',
+        'keterangan' => 'nullable',
+        'upload_dokumen' => 'nullable|file',
+    ]);
+
+    $dokumenPendukung = DokumenPendukung::findOrFail($id);
+    $dokumenPendukung->fill($validatedData);
+
+    if ($request->has('approval')) {
+        $dokumenPendukung->approval = 1;
+    } elseif ($request->has('reject')) {
+        $dokumenPendukung->approval = 2;
+    } else {
+        $dokumenPendukung->approval = 0; // Default value if neither checkbox is checked
     }
 
-    public function storeDokumenPendukung(Request $request)
-    {
-        $validatedData = $request->validate([
-            'nama' => 'required',
-            'tanggal' => 'required|date',
-            'keterangan' => 'nullable',
-            'upload_dokumen' => 'nullable|file',
-            'dpa_id' => 'required|numeric', // Validate the selected DPA
-        ]);
+    $dpaId = $request->input('dpa_id'); // Retrieve dpaId from the input
+    $dokumenPendukung->save();
+    $dpa_id = $request->input('dpa_id');
 
-        // Handle file upload and storage here
-
-        $dokumenPendukung = new DokumenPendukung($validatedData);
-
-        // Manually set the dpa_id value
-        $dokumenPendukung->dpa_id = $request->input('dpa_id');
-
-        // Save the DokumenPendukung instance
-        $dokumenPendukung->save();
-
-        return redirect()->route('PembantuPPTKView.dokumenpendukung.create')->with('success', 'Dokumen Pendukung saved successfully.');
-    }
-
-    public function editDokumenPendukung($id)
-    {
-        $dokumenPendukung = DokumenPendukung::findOrFail($id);
-        $dpas = DPA::all(); // Fetch the list of DPAs
-        return view('PembantuPPTKView.dokumenpendukung.edit', ['dokumenPendukung' => $dokumenPendukung, 'dpas' => $dpas]);
-    }
-
-    public function updateDokumenPendukung(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'nama' => 'required',
-            'tanggal' => 'required|date',
-            'keterangan' => 'nullable',
-            'upload_dokumen' => 'nullable|file',
-            'dpa_id' => 'required|numeric', // Validate the selected DPA
-        ]);
-
-        // Handle file upload and storage here
-
-        // Retrieve the existing DokumenPendukung instance
-        $dokumenPendukung = DokumenPendukung::findOrFail($id);
-
-        // Update the DokumenPendukung instance with the provided validated data
-        $dokumenPendukung->fill($validatedData);
-
-        // Manually set the dpa_id value
-        $dokumenPendukung->dpa_id = $request->input('dpa_id');
-
-        // Save the updated DokumenPendukung instance
-        $dokumenPendukung->save();
-
-        return redirect()->route('PembantuPPTKView.dokumenpendukung.index')->with('success', 'Dokumen Pendukung data updated successfully.');
-    }
+    return redirect()->route('PembantuPPTKView.dokumenpendukung.index', ['dpaId' => $dpaId])->with('success', 'Dokumen Pendukung data updated successfully.');
+}
 
     //=====================BAST==========================================================
 
     public function createBast()
     {
-        $dpas = DPA::all(); // Fetch the list of DPAs
-
-        return view('PembantuPPTKView.bast.create', ['dpas' => $dpas]);
+        $dpas = DPA::all();
+        $dpaId = request()->query('dpaId');
+        return view('PembantuPPTKView.bast.create', compact('dpas', 'dpaId'));
     }
 
-    public function indexBast($id)
+    public function indexBast($dpaId)
     {
-    $bast = Bast::findOrFail($id); // Fetch the specific BAST instance by its ID
-    return view('PembantuPPTKView.bast.index', ['bast' => $bast]);
+    $bast = Bast::where('dpa_id', $dpaId)->firstOrFail();
+    $dpas = DPA::all();
+    return view('PembantuPPTKView.bast.index', ['bast' => $bast, 'dpaId' => $dpaId,]);
     }
 
     public function storeBast(Request $request)
@@ -359,243 +416,274 @@ public function updateDokumenKontrak(Request $request, $id)
             'tanggal' => 'required|date',
             'keterangan' => 'nullable',
             'upload_dokumen' => 'nullable|file',
-            'dpa_id' => 'required|numeric', // Validate the selected DPA
+            'dpa_id' => 'required|numeric',
         ]);
-
-        // Handle file upload and storage here
-
-        // Create the Bast instance with the provided validated data
+    
         $bast = new Bast($validatedData);
-
-        // Manually set the dpa_id value
         $bast->dpa_id = $request->input('dpa_id');
-
-        // Save the Bast instance
+    
+        // Process and store the uploaded file
+        if ($request->hasFile('upload_dokumen')) {
+            $uploadedFile = $request->file('upload_dokumen');
+    
+            $directoryPath = public_path('uploads') . DIRECTORY_SEPARATOR . $bast->dpa_id;
+    
+            if (!file_exists($directoryPath)) {
+                mkdir($directoryPath, 0777, true);
+            }
+    
+            $fileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+            $uploadedFile->move($directoryPath, $fileName);
+    
+            $bast->upload_dokumen = $directoryPath . DIRECTORY_SEPARATOR . $fileName;
+        }
+    
         $bast->save();
-
+    
         return redirect()->route('PembantuPPTKView.bast.create')->with('success', 'BAST saved successfully.');
     }
 
     public function editBast($id)
     {
         $bast = Bast::findOrFail($id);
-        $dpas = DPA::all(); // Fetch the list of DPAs
+        $dpas = DPA::all(); 
         return view('PembantuPPTKView.bast.edit', ['bast' => $bast, 'dpas' => $dpas]);
     }
-
+    
     public function updateBast(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'nomor' => 'required',
-            'tanggal' => 'required|date',
+            'nomor' => 'nullable',
+            'tanggal' => 'nullable|date',
             'keterangan' => 'nullable',
             'upload_dokumen' => 'nullable|file',
-            'dpa_id' => 'required|numeric', // Validate the selected DPA
+            'dpa_id' => 'required|numeric',
         ]);
+    
 
-        // Handle file upload and storage here
-
-        // Retrieve the existing Bast instance
         $bast = Bast::findOrFail($id);
-
-        // Update the Bast instance with the provided validated data
         $bast->fill($validatedData);
-
-        // Manually set the dpa_id value
-        $bast->dpa_id = $request->input('dpa_id');
-
-        // Save the updated Bast instance
+    
+        if ($request->has('approval')) {
+            $bast->approval = 1;
+        } elseif ($request->has('reject')) {
+            $bast->approval = 2;
+        } else {
+            $bast->approval = 0; // Default value if neither checkbox is checked
+        }
+    
+        $dpaId = $request->input('dpa_id');
+        $dpa_id = $request->input('dpa_id');
         $bast->save();
-
-        return redirect()->route('PembantuPPTKView.bast.index')->with('success', 'BAST data updated successfully.');
+    
+        return redirect()->route('PembantuPPTKView.bast.index', ['dpaId' => $dpaId])->with('success', 'BAST data updated successfully.');
     }
+    
 
     //=====================BERITA ACARA PEMBAYARAN==========================================================
 
     public function createBap()
-    {
-        $dpas = DPA::all(); // Fetch the list of DPAs
-    
-        return view('PembantuPPTKView.bap.create', ['dpas' => $dpas]);
-    }
-    
-    public function indexBap()
-    {
-        $baps = Bap::all();
-        return view('PembantuPPTKView.bap.index', ['baps' => $baps]);
-    }
-    
-    public function storeBap(Request $request)
-    {
-        $validatedData = $request->validate([
-            'nomor' => 'required',
-            'tanggal' => 'required|date',
-            'keterangan' => 'nullable',
-            'upload_dokumen' => 'nullable|file',
-            'dpa_id' => 'required|numeric', // Validate the selected DPA
-        ]);
+{
+    $dpas = DPA::all(); // Fetch the list of DPAs
+    $dpaId = request()->query('dpaId');
+    return view('PembantuPPTKView.bap.create', compact('dpas', 'dpaId'));
+}
 
-        // Handle file upload and storage here
+public function indexBap($dpaId)
+{
+    $baps = Bap::where('dpa_id', $dpaId)->firstOrFail();
+    return view('PembantuPPTKView.bap.index', ['baps' => $baps, 'dpaId' => $dpaId,]); 
+}
 
-        // Create the Bast instance with the provided validated data
-        $bap = new Bap($validatedData);
+public function storeBap(Request $request)
+{
+    $validatedData = $request->validate([
+        'nomor' => 'required',
+        'tanggal' => 'required|date',
+        'keterangan' => 'nullable',
+        'upload_dokumen' => 'nullable|file',
+        'dpa_id' => 'required|numeric',
+    ]);
 
-        // Manually set the dpa_id value
-        $bap->dpa_id = $request->input('dpa_id');
+    $bap = new Bap($validatedData);
+    $bap->dpa_id = $request->input('dpa_id');
 
-        $bap->save();
+    // Process and store the uploaded file
+    if ($request->hasFile('upload_dokumen')) {
+        $uploadedFile = $request->file('upload_dokumen');
 
-        return redirect()->route('PembantuPPTKView.bap.create')->with('success', 'BAP saved successfully.');
+        $directoryPath = public_path('uploads') . DIRECTORY_SEPARATOR . $bap->dpa_id;
+
+        if (!file_exists($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
+        }
+
+        $fileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+        $uploadedFile->move($directoryPath, $fileName);
+
+        $bap->upload_dokumen = $directoryPath . DIRECTORY_SEPARATOR . $fileName;
     }
-    
-    public function editBap($id)
-    {
-        $bap = Bap::findOrFail($id);
-        $dpas = DPA::all(); // Fetch the list of DPAs
-        return view('PembantuPPTKView.bap.edit', ['bap' => $bap, 'dpas' => $dpas]);
+
+    $bap->save();
+
+    return redirect()->route('PembantuPPTKView.bap.create')->with('success', 'BAP saved successfully.');
+}
+
+public function editBap($id)
+{
+    $baps = Bap::findOrFail($id);
+    $dpas = DPA::all(); 
+    return view('PembantuPPTKView.bap.edit', ['baps' => $baps, 'dpas' => $dpas]);
+}
+
+public function updateBap(Request $request, $id)
+{
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+        'nomor' => 'nullable',
+        'tanggal' => 'nullable|date',
+        'keterangan' => 'nullable',
+        'upload_dokumen' => 'nullable|file',
+        'dpa_id' => 'required|numeric',
+    ]);
+
+    $baps = Bap::findOrFail($id);
+    $baps->fill($validatedData);
+
+    if ($request->has('approval')) {
+        $baps->approval = 1;
+    } elseif ($request->has('reject')) {
+        $baps->approval = 2;
+    } else {
+        $baps->approval = 0;
     }
-    
-    public function updateBap(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'nomor' => 'required',
-            'tanggal' => 'required|date',
-            'keterangan' => 'nullable',
-            'upload_dokumen' => 'nullable|file',
-            'dpa_id' => 'required|numeric', // Validate the selected DPA
-        ]);
-    
-        // Handle file upload and storage here
-    
-        // Retrieve the existing Bap instance
-        $bap = Bap::findOrFail($id);
-    
-        // Update the Bap instance with the provided validated data
-        $bap->fill($validatedData);
-    
-        // Manually set the dpa_id value
-        $bap->dpa_id = $request->input('dpa_id');
-    
-        // Save the updated Bap instance
-        $bap->save();
-    
-        return redirect()->route('PembantuPPTKView.bap.index')->with('success', 'BAP data updated successfully.');
-    }
+
+    $dpaId = $request->input('dpa_id'); 
+    $baps->dpa_id = $dpaId;
+    $baps->save();
+
+    return redirect()->route('PembantuPPTKView.bap.index', ['dpaId' => $dpaId])->with('success', 'BAP data updated successfully.');
+}
 
     //=====================BERITA ACARA PEMERIKSAAN HASIL PEKERJAAN==========================================================
 
+
     public function createBaph()
-    {
-        $dpas = DPA::all(); // Fetch the list of DPAs
-    
-        return view('PembantuPPTKView.baph.create', ['dpas' => $dpas]);
-    }
-    
-    public function indexBaph()
-    {
-        $baphs = Baph::all();
-        return view('PembantuPPTKView.baph.index', ['baphs' => $baphs]);
-    }
-    
-    public function storeBaph(Request $request)
-    {
-        $validatedData = $request->validate([
-            'nomor' => 'required',
-            'tanggal' => 'required|date',
-            'keterangan' => 'nullable',
-            'upload_dokumen' => 'nullable|file',
-            'dpa_id' => 'required|numeric', // Validate the selected DPA
-        ]);
+{
+    $dpas = DPA::all(); // Fetch the list of DPAs
+    $dpaId = request()->query('dpaId');
+    return view('PembantuPPTKView.baph.create', compact('dpas', 'dpaId'));
+}
 
-        // Handle file upload and storage here
+public function indexBaph($dpaId)
+{
+    $baphs = Baph::where('dpa_id', $dpaId)->firstOrFail();
+    return view('PembantuPPTKView.baph.index', ['baphs' => $baphs, 'dpaId' => $dpaId,]); 
+}
 
-        // Create the Bast instance with the provided validated data
-        $baph = new Baph($validatedData);
+public function storeBaph(Request $request)
+{
+    $validatedData = $request->validate([
+        'nomor' => 'required',
+        'tanggal' => 'required|date',
+        'keterangan' => 'nullable',
+        'upload_dokumen' => 'nullable|file',
+        'dpa_id' => 'required|numeric',
+    ]);
 
-        // Manually set the dpa_id value
-        $baph->dpa_id = $request->input('dpa_id');
+    $baph = new Baph($validatedData);
+    $baph->dpa_id = $request->input('dpa_id');
 
-        $baph->save();
+    // Process and store the uploaded file
+    if ($request->hasFile('upload_dokumen')) {
+        $uploadedFile = $request->file('upload_dokumen');
 
-        return redirect()->route('PembantuPPTKView.baph.create')->with('success', 'BAPH saved successfully.');
-    }
-    
-    public function editBaph($id)
-    {
-        $baph = Baph::findOrFail($id);
-        $dpas = DPA::all(); // Fetch the list of DPAs
-        return view('PembantuPPTKView.baph.edit', ['baph' => $baph, 'dpas' => $dpas]);
-    }
-    
-    public function updateBaph(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'nomor' => 'required',
-            'tanggal' => 'required|date',
-            'keterangan' => 'nullable',
-            'upload_dokumen' => 'nullable|file',
-            'dpa_id' => 'required|numeric', // Validate the selected DPA
-        ]);
-    
-        // Handle file upload and storage here
-    
-        // Retrieve the existing Bap instance
-        $baph = Baph::findOrFail($id);
-    
-        // Update the Bap instance with the provided validated data
-        $baph->fill($validatedData);
-    
-        // Manually set the dpa_id value
-        $baph->dpa_id = $request->input('dpa_id');
-    
-        // Save the updated Bap instance
-        $baph->save();
-    
-        return redirect()->route('PembantuPPTKView.baph.index')->with('success', 'BAPH data updated successfully.');
+        $directoryPath = public_path('uploads') . DIRECTORY_SEPARATOR . $baph->dpa_id;
+
+        if (!file_exists($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
+        }
+
+        $fileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+        $uploadedFile->move($directoryPath, $fileName);
+
+        $baph->upload_dokumen = $directoryPath . DIRECTORY_SEPARATOR . $fileName;
     }
 
+    $baph->save();
+
+    return redirect()->route('PembantuPPTKView.baph.create')->with('success', 'BAP saved successfully.');
+}
 
 
+public function editBaph($id)
+{
+    $baphs = Baph::findOrFail($id);
+    $dpas = DPA::all(); 
+    return view('PembantuPPTKView.baph.edit', ['baphs' => $baphs, 'dpas' => $dpas]);
+}
+
+public function updateBaph(Request $request, $id)
+{
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+        'nomor' => 'nullable',
+        'tanggal' => 'nullable|date',
+        'keterangan' => 'nullable',
+        'upload_dokumen' => 'nullable|file',
+        'dpa_id' => 'required|numeric',
+    ]);
+
+    $baphs = Baph::findOrFail($id);
+    $baphs->fill($validatedData);
+
+    if ($request->has('approval')) {
+        $baphs->approval = 1;
+    } elseif ($request->has('reject')) {
+        $baphs->approval = 2;
+    } else {
+        $baphs->approval = 0;
+    }
+
+    $dpaId = $request->input('dpa_id'); 
+    $baphs->dpa_id = $dpaId;
+    $baphs->save();
+
+    return redirect()->route('PembantuPPTKView.baph.index', ['dpaId' => $dpaId])->with('success', 'BAPH data updated successfully.');
+}
+    
 //=====================PILIH REKANAN==========================================================
 
 public function createPilihRekanan()
 {
     $dpas = DPA::all();
-    $rekanans = Rekanan::all(); // Fetch the list of Rekanans
-    
-    return view('PembantuPPTKView.pilihrekanan.create', [
-        'dpas' => $dpas,
-        'rekanans' => $rekanans, // Pass the Rekanans data to the view
-    ]);
+    $rekanans = Rekanan::all(); 
+
+    return view('PembantuPPTKView.pilihrekanan.create', ['dpas' => $dpas,'rekanans' => $rekanans,]);
 }
 
-public function indexPilihRekanan()
+public function indexPilihRekanan($dpaId)
 {
-    $pilihanRekanan = PilihRekanan::findOrFail();
-    $dpas = DPA::all();
-    $rekanans = Rekanan::all(); // Fetch the list of Rekanans
+    $pilihanRekanan = PilihRekanan::where('dpa_id', $dpaId)->firstOrFail();
+    $rekanans = Rekanan::all();
+    $dpas = DPA::all(); 
     
-    return view('PembantuPPTKView.pilihrekanan.edit', [
-        'pilihanRekanan' => $pilihanRekanan,
-        'dpas' => $dpas,
-        'rekanans' => $rekanans, // Pass the Rekanans data to the view
-    ]);
+    return view('PembantuPPTKView.pilihrekanan.index', compact('pilihanRekanan', 'rekanans', 'dpas')); // add 'dpas' to the compact function
 }
 
 public function storePilihRekanan(Request $request)
 {
     $validatedData = $request->validate([
-        'pilih' => 'nullable',
-        'detail' => 'nullable',
-        'jenis_pengadaan' => 'nullable',
-        'keterangan' => 'nullable',
-        'dpa_id' => 'required|numeric', // Validate the selected DPA
+        'pilih' => 'required',
+        'detail' => 'required',
+        'jenis_pengadaan' => 'required',
+        'keterangan' => 'required',
+        'dpa_id' => 'required|numeric', 
     ]);
 
-    // Add the 'dpa_id' to the validated data
-    $validatedData['dpa_id'] = $request->input('dpa_id');
-
-    PilihRekanan::create($validatedData);
+    $pilihanRekanan = new PilihRekanan($validatedData);
+    $pilihanRekanan->dpa_id = $request->input('dpa_id');
+    $pilihanRekanan->save();
 
     return redirect()->route('PembantuPPTKView.pilihrekanan.create')->with('success', 'Pilihan Rekanan saved successfully.');
 }
@@ -604,13 +692,9 @@ public function editPilihRekanan($id)
 {
     $pilihanRekanan = PilihRekanan::findOrFail($id);
     $dpas = DPA::all();
-    $rekanans = Rekanan::all(); // Fetch the list of Rekanans
-    
-    return view('PembantuPPTKView.pilihrekanan.edit', [
-        'pilihanRekanan' => $pilihanRekanan,
-        'dpas' => $dpas,
-        'rekanans' => $rekanans, // Pass the Rekanans data to the view
-    ]);
+    $rekanans = Rekanan::all(); 
+
+    return view('PembantuPPTKView.pilihrekanan.edit', ['pilihanRekanan' => $pilihanRekanan,'dpas' => $dpas,'rekanans' => $rekanans, ]);
 }
 
 public function updatePilihRekanan(Request $request, $id)
@@ -620,29 +704,31 @@ public function updatePilihRekanan(Request $request, $id)
         'detail' => 'nullable',
         'jenis_pengadaan' => 'nullable',
         'keterangan' => 'nullable',
-        'dpa_id' => 'required|numeric', // Validate the selected DPA
+        'dpa_id' => 'required|numeric', 
     ]);
 
-    // Retrieve the existing PilihRekanan instance
     $pilihanRekanan = PilihRekanan::findOrFail($id);
-
-    // Update the PilihRekanan instance with the provided validated data
     $pilihanRekanan->fill($validatedData);
 
-    // Manually set the dpa_id value
-    $pilihanRekanan->dpa_id = $request->input('dpa_id');
+    if ($request->has('approval')) {
+        $pilihanRekanan->approval = 1;
+    } elseif ($request->has('reject')) {
+        $pilihanRekanan->approval = 2;
+    } else {
+        $pilihanRekanan->approval = 0; 
+    }
 
-    // Save the updated PilihRekanan instance
+    $dpaId = $request->input('dpa_id'); 
+    $pilihanRekanan->dpa_id = $dpaId;
     $pilihanRekanan->save();
 
-    return redirect()->route('PembantuPPTKView.pilihrekanan.index')->with('success', 'Pilihan Rekanan data updated successfully.');
+    return redirect()->route('PembantuPPTKView.pilihrekanan.index', ['dpaId' => $dpaId])->with('success', 'Pilihan Rekanan data updated successfully.');
 }
 
 public function dokumenPembantuPPTK()
 {
 return view('PembantuPPTKView.dokumenpembantupptk');
 }
-
 
 }
 

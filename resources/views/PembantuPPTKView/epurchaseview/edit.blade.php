@@ -3,29 +3,39 @@
 @section('title', 'Update E-Purchasing')
 
 @section('content')
-<div class="container-fluid">
-    <h1>Update E-Purchasing</h1>
+    <div class="container">
+        <h1>Edit E-Purchasing</h1>
 
-    <form action="{{ route('PembantuPPTKView.epurchaseview.update', ['id' => $ePurchasing->id]) }}" method="post">
-        @csrf
-        @method('PUT')
-    <div class="form-group">
-        <label for="dpa_id">DPA:</label>
-        <select name="dpa_id" id="dpa_id" class="form-control" required>
-            <option value="{{ $ePurchasing->dpa_id }}" selected>{{ $ePurchasing->dpa->nomor_dpa }}</option>
-            @foreach($dpas as $dpa)
-                <option value="{{ $dpa->id }}">{{ $dpa->nomor_dpa }}</option>
-            @endforeach
-        </select>
-    </div>
-    <div class="form-group">
-            <label for="e_commerce">E-commerce:</label>
-            <input type="text" name="e_commerce" class="form-control" value="{{ $ePurchasing->e_commerce }}" required>
-        </div>
-        <div class="form-group">
-            <label for="id_paket">ID Paket/Pemesanan/No.PO:</label>
-            <input type="text" name="id_paket" class="form-control" value="{{ $ePurchasing->id_paket }}" required>
-        </div>
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('PembantuPPTKView.epurchasing.update', ['id' => $ePurchasing->id]) }}">
+            @csrf
+            @method('PUT')
+
+            <div class="form-group">
+                <label for="dpa_id">DPA:</label>
+                <select name="dpa_id" id="dpa_id" class="form-control" required>
+                @foreach ($dpas as $dpa)
+                    <option value="{{ $dpa->id }}" {{ $ePurchasing->dpa_id == $dpa->id ? 'selected' : '' }}> {{ $dpa->nomor_dpa }}
+                    </option>
+                @endforeach
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="e_commerce">E-commerce:</label>
+                <input type="text" name="e_commerce" class="form-control" value="{{ $ePurchasing->e_commerce }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_paket">ID Paket/Pemesanan/No.PO:</label>
+                <input type="text" name="id_paket" class="form-control" value="{{ $ePurchasing->id_paket }}" required>
+            </div>
         <div class="form-group">
             <label for="jumlah">Jumlah:</label>
             <input type="text" name="jumlah" class="form-control" value="{{ $ePurchasing->jumlah }}" required>
@@ -50,7 +60,24 @@
             <label for="nama_penyedia">Nama Penyedia:</label>
             <input type="text" name="nama_penyedia" class="form-control" value="{{ $ePurchasing->nama_penyedia }}" required>
         </div>
-        <button type="submit" class="btn btn-primary">Update</button>
-    </form>
-</div>
+
+        @if (auth()->user()->hasRole('Pembantu PPTK'))
+                <input type="hidden" name="approval" value="0">
+                <input type="hidden" name="reject" value="0">
+            @else
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="approval" name="approval">
+                    <label class="form-check-label" for="approval">Approve</label>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="reject" name="reject">
+                    <label class="form-check-label" for="reject">Reject</label>
+                </div>
+            @endif
+
+            <button type="submit" class="btn btn-primary">Update Rekanan Data</button>
+        </form>
+    </div>
 @endsection
+

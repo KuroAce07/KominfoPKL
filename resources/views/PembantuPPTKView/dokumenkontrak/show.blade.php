@@ -21,11 +21,19 @@
             <p><strong>Jumlah Potongan:</strong> {{ $dokumenKontrak->jumlah_potongan }}</p>
             <p><strong>Jumlah Total:</strong> {{ $dokumenKontrak->jumlah_total }}</p>
             <p><strong>Keterangan:</strong> {{ $dokumenKontrak->keterangan }}</p>
+            <p><strong>Dokumen:</strong> <a href="{{ url('uploads/' . $dpaId . '/' . basename($dokumenKontrak->upload_dokumen)) }}" download>View Dokumen</a></p>
+            <p><strong>Status Persetujuan:</strong>
+                @if ($dokumenKontrak->approval === 1)
+                    <span class="text-success">Dokumen Disetujui</span>
+                @elseif ($dokumenKontrak->approval === 2)
+                    <span class="text-danger">Dokumen Ditolak</span>
+                @else
+                    <span class="text-warning">Dokumen Belum Disetujui</span>
+                @endif
+            </p>
         </div>
         <div class="card-footer">
-            <!-- Add buttons for actions like Edit and Delete -->
             <a href="{{ route('PembantuPPTKView.dokumenkontrak.edit', ['id' => $dokumenKontrak->id]) }}" class="btn btn-primary">Edit</a>
-            <!-- Add other actions/buttons as needed -->
         </div>
     </div>
 </div>

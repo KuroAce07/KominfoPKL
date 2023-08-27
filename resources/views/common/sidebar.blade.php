@@ -201,13 +201,6 @@
                     <h6 class="collapse-header">DPA</h6>
                     <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
                 </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="{{ route('pengadaan.index') }}"
-                aria-expanded="true" aria-controls="collapsePages">
-                <i class="fas fa-fw fa-folder"></i>
-                <span>Dokumen Pemilihan</span>
         </li>
 
         <!-- Divider -->

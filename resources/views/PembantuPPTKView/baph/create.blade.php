@@ -5,13 +5,22 @@
 @section('content')
 <div class="container-fluid">
     <h1>Berita Acara Pembayaran (BAPH)</h1>
+                <!-- Display session success message if available -->
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
     <form action="{{ route('PembantuPPTKView.baph.store') }}" method="post" enctype="multipart/form-data">
         @csrf
+        <input type="hidden" name="dpa_id" value="{{ $dpaId }}">
         <div class="form-group">
-            <label for="dpa_id">Choose DPA:</label>
-            <select name="dpa_id" class="form-control" required>
-                @foreach ($dpas as $dpa)
-                    <option value="{{ $dpa->id }}">{{ $dpa->nomor_dpa }}</option>
+        <label for="dpa_id">DPA:</label>
+        <select name="dpa_id" id="dpa_id" class="form-control" required disabled>
+            @foreach($dpas as $dpa)
+                <option value="{{ $dpa->id }}" {{ request()->query('dpaId') == $dpa->id ? 'selected' : '' }}>
+                    {{ $dpa->nomor_dpa }}
+                </option>
                 @endforeach
             </select>
         </div>

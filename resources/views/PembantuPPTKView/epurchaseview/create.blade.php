@@ -5,18 +5,22 @@
 @section('content')
 <div class="container-fluid">
     <h1>Create E-Purchasing</h1>
-
+            <!-- Display session success message if available -->
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
     <form action="{{ route('PembantuPPTKView.epurchaseview.store') }}" method="post">
-        @csrf
-        <div class="form-group">
-            <label for="dpa_id">DPA:</label>
-            <select name="dpa_id" id="dpa_id" class="form-control" required>
-                <option value="" disabled selected>Select DPA</option>
-                @foreach($dpas as $dpa)
-                    <option value="{{ $dpa->id }}">{{ $dpa->nomor_dpa }}</option>
-                @endforeach
+    @csrf
+        <label for="dpa_id">DPA:</label>
+        <select name="dpa_id" id="dpa_id" class="form-control" required>
+            @foreach($dpas as $dpa)
+                <option value="{{ $dpa->id }}" {{ request()->query('dpaId') == $dpa->id ? 'selected' : '' }}>
+                    {{ $dpa->nomor_dpa }}
+                </option>
+            @endforeach
             </select>
-        </div>
         <div class="form-group">
             <label for="e_commerce">E-commerce:</label>
             <input type="text" name="e_commerce" class="form-control" required>

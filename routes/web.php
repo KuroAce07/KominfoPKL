@@ -72,59 +72,61 @@ Route::put('/Rekanan/{id}', [RekananController::class, 'update'])->name('rekanan
 Route::get('/dokumenpembantupptk', [PembantuPPTKUploadController::class, 'dokumenPembantuPPTK'])->name('PembantuPPTKView.dokumenpembantupptk');
     //E-Purchasing
     Route::get('/epurchasing/create', [PembantuPPTKUploadController::class, 'createEPurchasing'])->name('PembantuPPTKView.epurchaseview.create');
-    Route::get('/epurchasing', [PembantuPPTKUploadController::class, 'indexEPurchasing'])->name('PembantuPPTKView.epurchaseview.index');
+    Route::get('/epurchaseview/{dpaId}', [PembantuPPTKUploadController::class, 'indexEPurchasing'])->name('PembantuPPTKView.epurchaseview.index');
     Route::post('/epurchasing', [PembantuPPTKUploadController::class, 'storeEPurchasing'])->name('PembantuPPTKView.epurchaseview.store');
     Route::get('/epurchasing/{id}/edit', [PembantuPPTKUploadController::class, 'editEPurchasing'])->name('PembantuPPTKView.epurchaseview.edit');
     Route::put('/epurchasing/{id}', [PembantuPPTKUploadController::class, 'updateEPurchasing'])->name('PembantuPPTKView.epurchaseview.update');
+    Route::put('/epurchasing/{id}', [PembantuPPTKUploadController::class, 'updateEPurchasing'])->name('PembantuPPTKView.epurchasing.update');
 
     //BAST
     Route::get('/bast/create', [PembantuPPTKUploadController::class, 'createBast'])->name('PembantuPPTKView.bast.create');
     Route::post('/bast/store', [PembantuPPTKUploadController::class, 'storeBast'])->name('PembantuPPTKView.bast.store');
-    Route::get('/bast/{id}', [PembantuPPTKUploadController::class, 'indexBast'])->name('PembantuPPTKView.bast.index');
+    Route::get('/bast/{dpaId}', [PembantuPPTKUploadController::class, 'indexBast'])->name('PembantuPPTKView.bast.index');
     Route::get('/bast/{id}/edit', [PembantuPPTKUploadController::class, 'editBast'])->name('PembantuPPTKView.bast.edit');
     Route::put('/bast/{id}', [PembantuPPTKUploadController::class, 'updateBast'])->name('PembantuPPTKView.bast.update');
     
     //DokumenKontrak
-    Route::get('/PembantuPPTKView/dokumenkontrak/create', [PembantuPPTKUploadController::class, 'createDokumenKontrak'])->name('PembantuPPTKView.dokumenkontrak.create');
-    Route::post('/PembantuPPTKView/dokumenkontrak/store', [PembantuPPTKUploadController::class, 'storeDokumenKontrak'])->name('PembantuPPTKView.dokumenkontrak.store');
-    Route::get('/PembantuPPTKView/dokumenkontrak/show/{id}', [PembantuPPTKUploadController::class, 'showDokumenKontrak'])->name('PembantuPPTKView.dokumenkontrak.show');
-    Route::get('/PembantuPPTKView/dokumenkontrak/{id}/edit', [PembantuPPTKUploadController::class, 'editDokumenKontrak'])->name('PembantuPPTKView.dokumenkontrak.edit');
-    Route::put('/PembantuPPTKView/dokumenkontrak/update/{id}', [PembantuPPTKUploadController::class, 'updateDokumenKontrak'])->name('PembantuPPTKView.dokumenkontrak.update');
+    Route::get('/dokumenkontrak/create', [PembantuPPTKUploadController::class, 'createDokumenKontrak'])->name('PembantuPPTKView.dokumenkontrak.create');
+    Route::post('/dokumenkontrak/store', [PembantuPPTKUploadController::class, 'storeDokumenKontrak'])->name('PembantuPPTKView.dokumenkontrak.store');
+    Route::get('/dokumenkontrak/{dpaId}', [PembantuPPTKUploadController::class, 'showDokumenKontrak'])->name('PembantuPPTKView.dokumenkontrak.show');
+    Route::get('/dokumenkontrak/{id}/edit', [PembantuPPTKUploadController::class, 'editDokumenKontrak'])->name('PembantuPPTKView.dokumenkontrak.edit');
+    Route::put('/dokumenkontrak/update/{id}', [PembantuPPTKUploadController::class, 'updateDokumenKontrak'])->name('PembantuPPTKView.dokumenkontrak.update');
 
     //DokumenPendukung
     Route::get('/dokumenpendukung/create', [PembantuPPTKUploadController::class, 'createDokumenPendukung'])->name('PembantuPPTKView.dokumenpendukung.create');
-    Route::get('/dokumenpendukung', [PembantuPPTKUploadController::class, 'indexDokumenPendukung'])->name('PembantuPPTKView.dokumenpendukung.index');
+    Route::get('/dokumenpendukung/{dpaId}', [PembantuPPTKUploadController::class, 'indexDokumenPendukung'])->name('PembantuPPTKView.dokumenpendukung.index');
     Route::post('/dokumenpendukung', [PembantuPPTKUploadController::class, 'storeDokumenPendukung'])->name('PembantuPPTKView.dokumenpendukung.store');
     Route::get('/dokumenpendukung/{id}/edit', [PembantuPPTKUploadController::class, 'editDokumenPendukung'])->name('PembantuPPTKView.dokumenpendukung.edit');
     Route::put('/dokumenpendukung/{id}', [PembantuPPTKUploadController::class, 'updateDokumenPendukung'])->name('PembantuPPTKView.dokumenpendukung.update');
 
     //DokumenJustifikasi
     Route::get('/dokumenjustifikasi/create', [PembantuPPTKUploadController::class, 'createDokumenJustifikasi'])->name('PembantuPPTKView.dokumenjustifikasi.create');
-    Route::get('/dokumenjustifikasi/index', [PembantuPPTKUploadController::class, 'indexDokumenJustifikasi'])->name('PembantuPPTKView.dokumenjustifikasi.index');
-    Route::post('/dokumenjustifikasi/store', [PembantuPPTKUploadController::class, 'storeDokumenJustifikasi'])->name('PembantuPPTKView.dokumenjustifikasi.store');
+    Route::get('/dokumenjustifikasi/{dpaId}', [PembantuPPTKUploadController::class, 'indexDokumenJustifikasi'])->name('PembantuPPTKView.dokumenjustifikasi.index');
+    Route::post('/dokumenjustifikasi', [PembantuPPTKUploadController::class, 'storeDokumenJustifikasi'])->name('PembantuPPTKView.dokumenjustifikasi.store');
     Route::get('/dokumenjustifikasi/{id}/edit', [PembantuPPTKUploadController::class, 'editDokumenJustifikasi'])->name('PembantuPPTKView.dokumenjustifikasi.edit');
-    Route::put('/dokumenjustifikasi/{id}', [PembantuPPTKUploadController::class, 'updateDokumenJustifikasi'])->name('PembantuPPTKView.dokumenjustifikasi.update');
+    Route::put('/dokumenjustifikasi/{id}', [PembantuPPTKUploadController::class, 'updateDokumenJustifikasi'])->name('PembantuPPTKView.dokumenjustifikasi.update');    
 
     //BAP
     Route::get('/bap/create', [PembantuPPTKUploadController::class, 'createBap'])->name('PembantuPPTKView.bap.create');
     Route::post('/bap/store', [PembantuPPTKUploadController::class, 'storeBap'])->name('PembantuPPTKView.bap.store');
-    Route::get('/bap/index', [PembantuPPTKUploadController::class, 'indexBap'])->name('PembantuPPTKView.bap.index');
+    Route::get('/bap/{dpaId}', [PembantuPPTKUploadController::class, 'indexBap'])->name('PembantuPPTKView.bap.index');
     Route::get('/bap/{id}/edit', [PembantuPPTKUploadController::class, 'editBap'])->name('PembantuPPTKView.bap.edit');
     Route::put('/bap/{id}', [PembantuPPTKUploadController::class, 'updateBap'])->name('PembantuPPTKView.bap.update');
     
     //BAPH
-    Route::get('/baph/index', [PembantuPPTKUploadController::class, 'indexBaph'])->name('PembantuPPTKView.baph.index');
+    Route::put('/baph/{id}', [PembantuPPTKUploadController::class, 'updateBaph'])->name('PembantuPPTKView.baph.update');
     Route::get('/baph/create', [PembantuPPTKUploadController::class, 'createBaph'])->name('PembantuPPTKView.baph.create');
+    Route::get('/baph/{dpaId}', [PembantuPPTKUploadController::class, 'indexBaph'])->name('PembantuPPTKView.baph.index');
     Route::post('/baph/store', [PembantuPPTKUploadController::class, 'storeBaph'])->name('PembantuPPTKView.baph.store');
     Route::get('/baph/{id}/edit', [PembantuPPTKUploadController::class, 'editBaph'])->name('PembantuPPTKView.baph.edit');
-    Route::put('/baph/{id}', [PembantuPPTKUploadController::class, 'updateBaph'])->name('PembantuPPTKView.baph.update');
 
     //PilihRekanan
     Route::get('/pilihrekanan/create', [PembantuPPTKUploadController::class, 'createPilihRekanan'])->name('PembantuPPTKView.pilihrekanan.create');
-    Route::get('/pilihrekanan/index', [PembantuPPTKUploadController::class, 'indexPilihRekanan'])->name('PembantuPPTKView.pilihrekanan.index');
-    Route::post('/pilihrekanan/store', [PembantuPPTKUploadController::class, 'storePilihRekanan'])->name('PembantuPPTKView.pilihrekanan.store');
+    Route::get('/pilihrekanan/{dpaId}', [PembantuPPTKUploadController::class, 'indexPilihRekanan'])->name('PembantuPPTKView.pilihrekanan.index');
     Route::get('/pilihrekanan/{id}/edit', [PembantuPPTKUploadController::class, 'editPilihRekanan'])->name('PembantuPPTKView.pilihrekanan.edit');
+    Route::post('/pilihrekanan/store', [PembantuPPTKUploadController::class, 'storePilihRekanan'])->name('PembantuPPTKView.pilihrekanan.store');
     Route::put('/pilihrekanan/{id}', [PembantuPPTKUploadController::class, 'updatePilihRekanan'])->name('PembantuPPTKView.pilihrekanan.update');
+    
 
 // Upload DPA
 Route::resource('UploadDPA', App\Http\Controllers\UploadDPAController::class);

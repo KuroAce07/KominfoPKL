@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PilihRekanan extends Model
 {
     protected $table = 'pilih_rekanans';
-    protected $fillable = ['pilih', 'detail', 'jenis_pengadaan', 'keterangan'];
+    protected $fillable = ['pilih', 'detail', 'jenis_pengadaan', 'keterangan', 'approval',];
 
     public function dpa()
     {

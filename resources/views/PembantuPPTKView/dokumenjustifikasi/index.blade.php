@@ -6,23 +6,35 @@
 <div class="container-fluid">
     <h1>View Dokumen Justifikasi</h1>
 
-    <div class="card">
-        <div class="card-header">
-            Dokumen Justifikasi Details
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Nama:</strong> {{ $dokumenJustifikasi->first()->nama }}</p>
-                    <p><strong>Tanggal:</strong> {{ $dokumenJustifikasi->first()->tanggal }}</p>
-                    <p><strong>Keterangan:</strong> {{ $dokumenJustifikasi->first()->keterangan }}</p>
-                    <p><strong>Dokumen:</strong> <a href="{{ asset('storage/' . $dokumenJustifikasi->first()->upload_dokumen) }}" target="_blank">View Dokumen</a></p>
+    @if ($dokumenJustifikasi->count() > 0)
+        @foreach ($dokumenJustifikasi as $dokumen)
+            <div class="card mb-3">
+                <div class="card-header">
+                    Dokumen Justifikasi Details
+                </div>
+                <div class="card-body">
+                    <p><strong>Nama:</strong> {{ $dokumen->nama }}</p>
+                    <p><strong>Tanggal:</strong> {{ $dokumen->tanggal }}</p>
+                    <p><strong>Keterangan:</strong> {{ $dokumen->keterangan }}</p>
+                    <p><strong>Dokumen:</strong> <a href="{{ url('uploads/' . $dpaId . '/' . basename($dokumen->upload_dokumen)) }}" download>View Dokumen</a></p>
+                    <p><strong>Status Persetujuan:</strong>
+                        @if ($dokumen->approval === 1)
+                            <span class="text-success">Dokumen Disetujui</span>
+                        @elseif ($dokumen->approval === 2)
+                            <span class="text-danger">Dokumen Ditolak</span>
+                        @else
+                            <span class="text-warning">Dokumen Belum Disetujui</span>
+                        @endif
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <!-- Add link to edit page for each $dokumen -->
+                    <a href="{{ route('PembantuPPTKView.dokumenjustifikasi.edit', ['id' => $dokumen->id]) }}" class="btn btn-primary">Edit</a>
                 </div>
             </div>
-        </div>
-        <div class="card-footer">
-            <a href="{{ route('PembantuPPTKView.dokumenjustifikasi.edit', ['id' => $dokumenJustifikasi->first()->id]) }}" class="btn btn-primary">Edit</a>
-        </div>
-    </div>
+        @endforeach
+    @else
+        <p>No Dokumen Justifikasi available</p>
+    @endif
 </div>
 @endsection

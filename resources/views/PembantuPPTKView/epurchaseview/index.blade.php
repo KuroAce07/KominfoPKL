@@ -21,6 +21,15 @@
                     <p><strong>Tanggal Ubah:</strong> {{ $ePurchasing->tanggal_ubah }}</p>
                     <p><strong>Nama Pejabat Pengadaan:</strong> {{ $ePurchasing->nama_pejabat_pengadaan }}</p>
                     <p><strong>Nama Penyedia:</strong> {{ $ePurchasing->nama_penyedia }}</p>
+                    <p><strong>Status Persetujuan:</strong>
+                        @if ($ePurchasing->approval === 1)
+                            <span class="text-success">Disetujui</span>
+                        @elseif ($ePurchasing->approval === 2)
+                            <span class="text-danger">Ditolak</span>
+                        @else
+                            <span class="text-warning">Belum Disetujui</span>
+                        @endif
+                    </p>
                 </div>
             </div>
         </div>

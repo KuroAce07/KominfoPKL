@@ -14,6 +14,7 @@ class DokumenPendukung extends Model
         'tanggal',
         'keterangan',
         'upload_dokumen',
+        'approval',
     ];
 
     public function dpa()
