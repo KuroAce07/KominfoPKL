@@ -140,6 +140,7 @@ Route::post('/UploadDpa', [UploadDPAController::class, 'store'])->name('UploadDp
 Route::resource('ViewDPA', App\Http\Controllers\ViewDPAController::class);
 //view sub DPA
 Route::get('/ViewDPA/{dpa}', 'ViewDPAController@show')->name('ViewDPA.show');
+Route::delete('/deleteDPA/{id}', [ViewDPAController::class, 'destroy'])->name('ViewDPA.destroy');
 Route::get('/EditDPA/{id}', [ViewDPAController::class, 'edit'])->name('editDPA');
 Route::get('/ViewPDF/{id}', [ViewDPAController::class, 'viewPDF'])->name('viewPDF');
 Route::put('/DPA/{dpa}', [ViewDPAController::class, 'update'])->name('updateDPA');

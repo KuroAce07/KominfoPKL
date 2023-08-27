@@ -39,7 +39,7 @@ class ViewDPAController extends Controller
         
         $whatsappData = [];
         $whatsappData['phone'] = $user->mobile_number; // Assuming mobile_number is the column name in the users table
-        $whatsappData['message'] = "Ada DPA Baru yang harus dikerjakan dengan Nomor DPA : {$dpa->nomor_dpa} ";
+        $whatsappData['message'] = "Ada DPA Baru yang harus dikerjakan dari admin dengan Nomor DPA : {$dpa->nomor_dpa} ";
         $whatsappData['secret'] = false;
         $whatsappData['retry'] = false;
         $whatsappData['isGroup'] = false;
@@ -55,6 +55,14 @@ class ViewDPAController extends Controller
         $dpa->user_id2 = $user->id;
         $dpa->save();
 
+        $whatsappData = [];
+        $whatsappData['phone'] = $user->mobile_number; // Assuming mobile_number is the column name in the users table
+        $whatsappData['message'] = "Ada DPA Baru yang harus dikerjakan dari PPTK dengan Nomor DPA : {$dpa->nomor_dpa} ";
+        $whatsappData['secret'] = false;
+        $whatsappData['retry'] = false;
+        $whatsappData['isGroup'] = false;
+        WablasTrait::sendText([$whatsappData]);
+
         return redirect()->back()->with('success', 'Pejabat Pengadaan assigned successfully.');
     }
 
@@ -65,6 +73,14 @@ class ViewDPAController extends Controller
 
         $dpa->user_id3 = $user->id;
         $dpa->save();
+
+        $whatsappData = [];
+        $whatsappData['phone'] = $user->mobile_number; // Assuming mobile_number is the column name in the users table
+        $whatsappData['message'] = "Ada DPA Baru yang harus dilengkapi dokumennya dari PPTK dengan Nomor DPA : {$dpa->nomor_dpa} ";
+        $whatsappData['secret'] = false;
+        $whatsappData['retry'] = false;
+        $whatsappData['isGroup'] = false;
+        WablasTrait::sendText([$whatsappData]);
 
         return redirect()->back()->with('success', 'Pembantu PPTK assigned successfully.');
     }
@@ -89,6 +105,21 @@ public function edit($dpaId)
     $users = User::where('role_id', 3)->get(); // Adjust the query based on your needs
 
     return view('ViewDPA.edit', ['dpa' => $dpa, 'users' => $users]);
+}
+
+public function destroy($id)
+{
+    $dpa = DPA::find($id);
+
+    if (!$dpa) {
+        // Handle case where DPA doesn't exist
+        return redirect()->back()->with('error', 'DPA not found.');
+    }
+
+    // Perform the deletion
+    $dpa->delete();
+
+    return redirect()->route('yourDPAIndexRoute')->with('success', 'DPA deleted successfully.');
 }
 
 

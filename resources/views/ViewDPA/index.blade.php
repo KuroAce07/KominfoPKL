@@ -73,10 +73,15 @@
                                     <div class="btn-group">
                                         @hasrole('Admin')
                                         <a href="{{ route('editDPA', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Edit</a>
+                                        <button type="button" class="btn btn-danger delete-btn" onclick="deleteDpa('{{ route('ViewDPA.destroy', $dpa->id) }}')">Delete</button>
                                         @endhasrole
                                         <a href="{{ asset('uploads/'.$dpa->id.'/'.$dpa->id.'.pdf') }}" class="btn btn-info view-pdf-btn" target="_blank">View PDF</a>
+                                        @hasrole('Pejabat Pengadaan')
+                                        <a href="{{ route('pengadaan.create_pengadaan', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Buat Dokumen Pemilihan</button> </a>
+                                        @endhasrole
                                     </div>
-                                </td>
+                                </td>                                
+                                                                
 
                                 @hasrole('PPTK')
                                 <td>
@@ -164,7 +169,7 @@
             } else {
                 // Handle row click to navigate to the DPA detail page
                 window.location.href = `{{ route('ViewDPA.show', ['dpa' => ':dpaId']) }}`.replace(':dpaId', dpaId);
-                window.location.href = `{{ route('PembantuPPTKView.dokumenpembantupptk', ['dpaId' => ':dpaId']) }}`.replace(':dpaId', dpaId);
+                //window.location.href = `{{ route('PembantuPPTKView.dokumenpembantupptk', ['dpaId' => ':dpaId']) }}`.replace(':dpaId', dpaId);
             }
         });
     });
@@ -181,8 +186,14 @@
             button.addEventListener('click', function (event) {
                 event.stopPropagation();
             });
-        });
+        });      
     });
+    function deleteDpa(deleteUrl) {
+        const confirmation = confirm('Are you sure you want to delete this item?');
+        if (confirmation) {
+            window.location.href = deleteUrl;
+        }
+    }
 </script>
 
 @endsection

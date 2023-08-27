@@ -122,10 +122,10 @@
                     <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
                 </div>
             </div>
-            <a class="nav-link" href="{{ route('PembantuPPTKView.dokumenpembantupptk') }}">
+            {{-- <a class="nav-link" href="{{ route('PembantuPPTKView.dokumenpembantupptk') }}">
                 <i class="fas fa-folder"></i>
                 <span>Dokumen Pembantu PPTK</span>
-            </a>
+            </a> --}}
         </li>
     @endhasrole
 
