@@ -129,45 +129,58 @@
         </li>
     @endhasrole
 
-    @hasrole('Pejabat Pengadaan')
-      <!-- Heading -->
-      <div class="sidebar-heading">
-            PPTK
-        </div>
+    @hasrole('Bendahara')
+    <div class="sidebar-heading">
+        Bendahara
+    </div>
 
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                aria-expanded="true" aria-controls="collapsePages">
-                <i class="fas fa-fw fa-folder"></i>
-                <span>DPA</span>
-            </a>
-            <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">DPA</h6>
-                    <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
-                </div>
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+            aria-expanded="true" aria-controls="collapsePages">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>DPA</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">DPA</h6>
+                <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
             </div>
-        </li>
+        </div>
+    </li>
 
-        <!-- Divider -->
-        <hr class="sidebar-divider d-none d-md-block">
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
     @endhasrole
 
-    @hasrole('Bendahara')
-         <!-- Heading -->
-         <li class="nav-item active">
-            <a class="nav-link" href="{{ route('bendahara.index') }}">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Upload Berkas</span></a>
-        </li>
+    @hasrole('Pejabat Pengadaan')
+    <div class="sidebar-heading">
+        Pejabat Pengadaan
+    </div>
 
-        <li class="nav-item active">
-            <a class="nav-link" href="{{ route('showfolder.index', ['folder' => 'DPA']) }}">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Lihat</span>
-            </a>
-        </li>
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+            aria-expanded="true" aria-controls="collapsePages">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>DPA</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">DPA</h6>
+                <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('pengadaan.index') }}"
+            aria-expanded="true" aria-controls="collapsePages">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Dokumen Pemilihan</span>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
     @endhasrole
 
     @hasrole('PPTK')
@@ -189,6 +202,12 @@
                     <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
                 </div>
             </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('pengadaan.index') }}"
+                aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-fw fa-folder"></i>
+                <span>Dokumen Pemilihan</span>
         </li>
 
         <!-- Divider -->

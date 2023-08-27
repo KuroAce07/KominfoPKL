@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CeklisForm;
+use Illuminate\Support\Facades\Response;
 use PDF;
 
-class CeklisFormController extends Controller
+class CeklisformController extends Controller
 {
     public function index($dpa_id)
     {
@@ -68,10 +69,22 @@ class CeklisFormController extends Controller
         return $pdfPath;
     }
 
+    public function downloadPdf($dpa_id)
+    {
+        $pdfPath = $this->generatePDF($dpa_id);
+        
+        $pdfContent = file_get_contents(public_path($pdfPath));
+        $response = Response::make($pdfContent);
+        $response->header('Content-Type', 'application/pdf');
+        $response->header('Content-Disposition', 'inline; filename="' . $pdfPath . '"');
+        
+        return $response;
+    }
+
     public function showResult($dpa_id)
     {
         $ceklisForms = CeklisForm::where('dpa_id', $dpa_id)->get();
-        return view('ceklisform.result', ['ceklisForms' => $ceklisForms]);
+        return view('ceklisform.result', ['ceklisForms' => $ceklisForms, 'dpa_id' => $dpa_id]);
     }
 
 }

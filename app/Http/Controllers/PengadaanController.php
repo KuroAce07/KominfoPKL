@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\DPA;
 use Illuminate\Http\Request;
 use App\Models\Pengadaan;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class PengadaanController extends Controller
 {
@@ -50,5 +51,25 @@ class PengadaanController extends Controller
         return view('pengadaan.index', [
             'berkass' => $berkass
         ]);
+    }
+
+    public function delete($id)
+    {
+        $berkas = Pengadaan::findOrFail($id);
+
+        // Periksa apakah pengguna memiliki peran 'Pejabat Pengadaan'
+        if (!Auth::user()->hasRole('Pejabat Pengadaan')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menghapus dokumen pemilihan.');
+        }
+        
+        if ($berkas->berkas) {
+            // Hapus berkas fisik dari sistem berkas
+            File::delete(public_path($berkas->berkas));
+        }
+
+        // Hapus rekaman dari database
+        $berkas->delete();
+
+        return redirect()->route('pengadaan.index')->with('success', 'Dokumen pemilihan berhasil dihapus.');
     }
 }

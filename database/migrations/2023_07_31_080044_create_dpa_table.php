@@ -22,6 +22,10 @@ class CreateDpaTable extends Migration
             $table->foreign('user_id2')->references('id')->on('users');
             $table->unsignedBigInteger('user_id3')->nullable();
             $table->foreign('user_id3')->references('id')->on('users');
+            $table->unsignedBigInteger('user_id3')->nullable();
+            $table->foreign('user_id3')->references('id')->on('users');
+            $table->unsignedBigInteger('user_id4')->nullable();
+            $table->foreign('user_id4')->references('id')->on('users');
             $table->unsignedBigInteger('rekanan_id')->nullable();
             $table->foreign('rekanan_id')->references('id')->on('rekanans');
             $table->timestamps();

@@ -28,6 +28,9 @@
                             <th>Dana Yang Dibutuhkan</th>
                             <th>PPTK</th>
                             <th>Actions</th>
+                            @hasrole('Bendahara')
+                            <th>Action (Bendahara)</th>
+                            @endhasrole
                             @hasrole('PPTK')
                             <th>Pejabat Pengadaan</th>
                             <th>Pembantu PPTK</th>
@@ -75,8 +78,23 @@
                                         <a href="{{ route('editDPA', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Edit</a>
                                         @endhasrole
                                         <a href="{{ asset('uploads/'.$dpa->id.'/'.$dpa->id.'.pdf') }}" class="btn btn-info view-pdf-btn" target="_blank">View PDF</a>
+                                        @hasrole('Pejabat Pengadaan')
+                                        <a href="{{ route('pengadaan.create_pengadaan', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Buat Dokumen Pemilihan</button> </a>
+                                        @endhasrole
                                     </div>
                                 </td>
+                                <td>
+                                    @hasrole('Bendahara')
+                                    <div class="btn-group">
+                                        <a href="{{ route('ceklisform.index', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Ceklis</a>
+                                        <a href="{{ route('bendahara.create_spp', ['id' => $dpa->id]) }}" class="btn btn-success edit-btn">SPP</a>
+                                        <a href="{{ route('bendahara.create_spm', ['id' => $dpa->id]) }}" class="btn btn-warning edit-btn">SPM</a>
+                                        <a href="{{ route('bendahara.create_sp2d', ['id' => $dpa->id]) }}" class="btn btn-danger edit-btn">SP2D</a>
+                                        
+                                    @endhasrole
+                                </div>
+                                </td>
+
 
                                 @hasrole('PPTK')
                                 <td>

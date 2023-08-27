@@ -5,14 +5,14 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">View Berkas</h1>
+        <h1 class="h3 mb-0 text-gray-800">Berkas Pemilihan</h1>
     </div>
 
     @include('common.alert')
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">List of Berkas</h6>
+            <h6 class="m-0 font-weight-bold text-primary">List Berkas</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -23,6 +23,10 @@
                             <th>Pilihan</th>
                             <th>Berkas</th>
                             <th>Keterangan</th>
+                            @if (Auth::user()->hasRole('Pejabat Pengadaan'))
+                            <th>action</th>
+                            @endif
+
                         </tr>
                     </thead>
                     <tbody>
@@ -33,8 +37,13 @@
                             <td>{{ $berkas->pilihan }}</td>
                             <td>{{ $berkas->berkas }}</td>
                             <td>{{ $berkas->keterangan }}</td>
-
-
+                            @if (Auth::user()->hasRole('Pejabat Pengadaan'))
+                            <td><form action="{{ route('pengadaan.delete', ['id' => $berkas->id]) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form></td>
+                            @endif
                         </tr>
                         @endforeach
                         

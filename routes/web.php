@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Route;
 use App\Imports\ArsipLamaImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\RekananController;
+use App\Http\Controllers\PengadaanController;
+use App\Http\Controllers\BendaharaController;
+use App\Http\Controllers\CeklisformController;
+use App\Http\Controllers\DokumenKontrakController;
 
 
 
@@ -144,10 +148,30 @@ Route::get('/Track', [ViewDPAController::class, 'tracking'])->name('ViewDPA.trac
 //Route::get('/View', [ViewDPAController::class, 'index']);
 //dpa and user
 Route::get('/ViewDPA/{dpaId}/{userId}', [ViewDPAController::class, 'assignDpa'])->name('ViewDPA.assignDpa');
-// Upload berkas Bendahara
-Route::resource('bendahara', App\Http\Controllers\BendaharaController::class);
-// Lihat folder
-Route::get('/files/{folder}', 'App\Http\Controllers\ShowfolderController@showFilesInFolder')->name('showfolder.index');
+//Bendahara
+Route::get('/form/create_spp/{id}', [BendaharaController::class, 'create_spp'])->name('bendahara.create_spp');
+Route::get('/form/create_spm/{id}', [BendaharaController::class, 'create_spm'])->name('bendahara.create_spm');
+Route::get('/form/create_sp2d/{id}', [BendaharaController::class, 'create_sp2d'])->name('bendahara.create_sp2d');
+Route::post('/form/store_spp', [BendaharaController::class, 'store_spp'])->name('bendahara.store_spp');
+Route::post('/form/store_spm', [BendaharaController::class, 'store_spm'])->name('bendahara.store_spm');
+Route::post('/form/store_sp2d', [BendaharaController::class, 'store_sp2d'])->name('bendahara.store_sp2d');
+
+//ceklisform
+Route::get('/ceklisform/{id}', [CeklisformController::class, 'index'])->name('ceklisform.index');
+Route::post('/ceklisform', [CeklisformController::class, 'store'])->name('ceklisform.store');
+Route::get('/ceklisform/result/{id}', [CeklisformController::class, 'showResult'])->name('ceklisform.result');
+Route::get('/ceklisform/download-pdf/{id}', [CeklisformController::class, 'downloadPdf'])->name('ceklisform.downloadPdf');
+
+
+
+
+//Pejabat Pengadaan
+Route::get('/form/create/{id}', [PengadaanController::class, 'create_pengadaan'])->name('pengadaan.create_pengadaan');
+Route::post('/form/store', [PengadaanController::class, 'store_pengadaan'])->name('pengadaan.store_pengadaan');
+Route::get('/pengadaan', [PengadaanController::class, 'index'])->name('pengadaan.index');
+Route::get('/pengadaan', [PengadaanController::class, 'berkas'])->name('pengadaan.index');
+Route::delete('/pengadaan/{id}', [PengadaanController::class, 'delete'])->name('pengadaan.delete');
+
 
 
 // Users 

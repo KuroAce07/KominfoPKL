@@ -9,14 +9,12 @@
         <h2>Ceklis Form</h2>
         <form action="{{ route('ceklisform.store') }}" method="post">
             @csrf
-            <input type="hidden" name="dpa_id" value="{{ $dpa_id }}">
             
             <table class="table">
                 <thead>
-                    <td>Nama:   <input type="text" name="nama" required></td>
                     <tr>
                         <th>Nama berkas</th>
-                        <th>Check</th>
+                        <th>Status</th>
                         <!-- Add headers for other fields -->
                     </tr>
                 </thead>
@@ -74,10 +72,9 @@
             
             <button type="submit" class="btn btn-success">Submit</button>
         </form>
-        @if(session('pdfPath'))
-        <a href="{{ asset(session('pdfPath')) }}" class="btn btn-primary" target="_blank">View PDF</a>
-    @endif
+    @if (count($ceklisForms) > 0)
     <a href="{{ route('ceklisform.result', ['id' => $dpa_id]) }}" class="btn btn-success">Lihat Hasil</a>
+@endif
 </div>
     </div>
 @endsection
