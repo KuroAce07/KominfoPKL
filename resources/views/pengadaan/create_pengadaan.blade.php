@@ -16,6 +16,7 @@
                 <option value="Kontrak">Kontrak</option>
                 <option value="Pemesanan">Pemesanan</option>
                 <option value="E-Purchasing">E-Purchasing</option>
+                <option value="E-Purchasing">Lainnya</option>
                 <!-- Tambahkan pilihan lainnya sesuai kebutuhan -->
             </select>
             <br>

@@ -23,7 +23,7 @@
         <i class="fas fa-folder-open"></i>
 
 
-        <span>Dokumen Keuangan</span>
+        <span>Register Dokumen Pencairan</span>
     </a>
     <div id="arsipLamaDropDown" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
@@ -202,7 +202,19 @@
                     <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
                 </div>
         </li>
-
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ route('pengadaan.index') }}"
+                aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-fw fa-folder"></i>
+                <span>Dokumen Pemilihan</span>
+        </li>
+          <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Rekanan</h6>
+                    <a class="collapse-item" href="{{ route('rekanan.create') }}">Buat Rekanan</a>
+                    <a class="collapse-item" href="{{ route('rekanan.index') }}">Lihat List Rekanan</a>
+                </div>
+            </div>
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
     @endhasrole

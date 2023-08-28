@@ -13,7 +13,7 @@ class CreateDpaTable extends Migration
             $table->string('nomor_dpa');
             $table->string('urusan_pemerintahan');
             $table->string('bidang_urusan');
-            $table->string('program');
+            $table->text('program');
             $table->string('kegiatan');
             $table->string('dana');
             $table->unsignedBigInteger('user_id')->nullable();

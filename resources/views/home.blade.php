@@ -118,7 +118,7 @@
         $totalDana += (int) $danaValue;
     }
     $real = 10948000;
-    $sisa = $real - $totalDana;
+    $sisa = $totalDana - $real;
 @endphp
 <div class="col-12 d-flex justify-content-center">
 <div class="col-xl-3 col-md-6 mb-4">
@@ -127,7 +127,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                        Dana Yang Dibutuhkan</div>
+                        Anggaran Total</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                         Rp. {{ number_format($totalDana, 2, ',', '.') }}
                     </div>
@@ -146,7 +146,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                        Dana Yang Terealisasi</div>
+                        Realisasi Anggaran</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                         Rp. {{ number_format( $real, 2, ',', '.') }}
                     </div>
@@ -165,7 +165,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                        Dana Yang Kurang </div>
+                        Sisa Anggaran </div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                         Rp. {{ number_format( $sisa, 2, ',', '.') }}
                     </div>
