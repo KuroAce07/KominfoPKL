@@ -54,8 +54,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="kegiatan">Kegiatan</label>
-                        <input type="text" class="form-control" id="kegiatan" name="kegiatan">
+                        <label for="nama_sub_kegiatan">Kegiatan</label>
+                        <input type="text" class="form-control" id="nama_sub_kegiatan" name="nama_sub_kegiatan">
                     </div>
 
                     <div class="form-group">

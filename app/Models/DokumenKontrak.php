@@ -14,6 +14,7 @@ class DokumenKontrak extends Model
         'nama_kegiatan_transaksi',
         'tanggal_kontrak',
         'jumlah_uang',
+        'potongan_lain',
         'ppn',
         'pph',
         'jumlah_potongan',
@@ -21,6 +22,7 @@ class DokumenKontrak extends Model
         'keterangan',
         'upload_dokumen',
         'approval',
+        'alasan',
     ];
 
     public function dpa()

@@ -32,12 +32,24 @@
                                 <th>Actions</th>
                             @hasrole('PPTK')
                             <th>Pejabat Pengadaan</th>
-                            <th>Pembantu PPTK</th>
                             @endhasrole
                             @hasrole(['Pembantu PPTK', 'PPTK'])
+                            <th>Pembantu PPTK</th>
+                            @endhasrole
+                            @hasrole(['Bendahara', 'PPTK'])
+                            <th>Disposisi Bendahara</th>
+                            @endhasrole
+                            @hasrole('PPTK')
+                            <th>Input Data RUP</th>
+                            @endhasrole
+                            @hasrole(['Pembantu PPTK', 'PPTK', 'Bendahara'])
                             <th>Kelengkapan Dokumen</th>
                             @endhasrole
+                            @hasrole('Bendahara')
+                            <th>Action (Bendahara)</th>
+                            @endhasrole
                         </tr>
+
                     </thead>
                     <tbody>
                         @foreach ($dpaData as $dpa)
@@ -80,6 +92,7 @@
                                         <button type="button" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
                                             Assign PPTK
                                         </button>
+
                                         <div class="dropdown-menu">
                                             @foreach ($users as $user)
                                                 <a class="dropdown-item" href="{{ route('ViewDPA.assignDpa', ['dpaId' => $dpa->id, 'userId' => $user->id]) }}">
@@ -87,7 +100,7 @@
                                                 </a>
                                             @endforeach
                                         </div>
-                                    @endif
+                                    @endif                              
                                 </td>
                                 <td>
                                     <div class="btn-group">
@@ -112,7 +125,7 @@
                                 </td>
                            @endhasrole                            
 
-                                @hasrole('PPTK')
+                                @hasrole(['PPTK', 'Pejabat Pengadaan'])
                                 <td>
                                     <!-- Assign Pejabat pengadaan -->
                                     <div class="btn-group">
@@ -131,10 +144,44 @@
                                             </div>
                                         @endif
                                     </div>
-                                        <div class="btn-group d-flex justify-content-center mt-4">
-                                            <a href="#" class="btn btn-info lihat-deskripsi-btn">Lihat Deskripsi</a>
-                                        </div>
+                                    <div class="btn-group d-flex justify-content-center mt-4">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#descriptionModal-{{ $dpa->id_dpa }}">
+        Lihat Description
+    </button>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="descriptionModal-{{ $dpa->id_dpa }}" tabindex="-1" role="dialog" aria-labelledby="descriptionModalLabel-{{ $dpa->id_dpa }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" action="{{ route('updateDescriptionPP', ['dpaId' => $dpa->id]) }}">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="descriptionModalLabel-{{ $dpa->id_dpa }}">Edit Description</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="descriptionPP-{{ $dpa->id_dpa }}">Description:</label>
+                        <textarea id="descriptionPP-{{ $dpa->id_dpa }}" name="descriptionPP" class="form-control" rows="5">{{ $dpa->descriptionPP }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+                                    </div>
                                 </td>
+                                @endhasrole
+
+                                @hasrole(['PPTK', 'Pembantu PPTK'])
                                 <td>
                                     <!-- Assign Pembantu PPTK -->
                                     <div class="btn-group">
@@ -152,11 +199,138 @@
                                                 @endforeach
                                             </div>
                                         @endif
+                                        </div>
+
+                                        <div class="btn-group d-flex justify-content-center mt-4">
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#descriptionModalPPPTK-{{ $dpa->id_dpa }}">
+                                            Lihat Description
+                                        </button>
+                                    </div>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="descriptionModalPPPTK-{{ $dpa->id_dpa }}" tabindex="-1" role="dialog" aria-labelledby="descriptionModalLabelPPPTK-{{ $dpa->id_dpa }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <form method="POST" action="{{ route('updateDescriptionPPPTK', ['dpaId' => $dpa->id]) }}">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="descriptionModalLabelPPPTK-{{ $dpa->id_dpa }}">Edit Description</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label for="descriptionPPPTK-{{ $dpa->id_dpa }}">Description:</label>
+                                                            <textarea id="descriptionPPPTK-{{ $dpa->id_dpa }}" name="descriptionPPPTK" class="form-control" rows="5">{{ $dpa->descriptionPPPTK }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     </div>
                                 </td>
                                 @endhasrole
-                                
-                                @hasrole(['Pembantu PPTK', 'PPTK'])
+                                @hasrole(['PPTK', 'Bendahara'])
+                                    <td>
+                                    <div class="btn-group">
+                                            @if ($dpa->user_id4 && $dpa->bendaharaUsers)
+                                                {{ $dpa->bendaharaUsers->first_name }} {{ $dpa->bendaharaUsers->last_name }}
+                                            @else
+                                                <button type="button" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
+                                                    Assign Bendahara
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    @foreach ($bendaharaUsers as $bendaharaUser)
+                                                        <a class="dropdown-item" href="{{ route('ViewDPA.assignBendahara', ['dpaId' => $dpa->id, 'userId' => $bendaharaUser->id]) }}">
+                                                            {{ $bendaharaUser->first_name }} {{ $bendaharaUser->last_name }}
+                                                        </a>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                            </div>
+                                            <div class="btn-group d-flex justify-content-center mt-4">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#descriptionModalPP-{{ $dpa->id_dpa }}">
+        Lihat Description
+    </button>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="descriptionModalPP-{{ $dpa->id_dpa }}" tabindex="-1" role="dialog" aria-labelledby="descriptionModalPPLabel-{{ $dpa->id_dpa }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" action="{{ route('updateDescription', ['dpaId' => $dpa->id]) }}">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="descriptionModalPPLabel-{{ $dpa->id_dpa }}">Edit Description</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="description-{{ $dpa->id_dpa }}">Description:</label>
+                        <textarea id="description-{{ $dpa->id_dpa }}" name="description" class="form-control" rows="5">{{ $dpa->description }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+                                        </div>
+                                    </td>
+                             @endhasrole  
+
+                             @hasrole('PPTK')
+                             <td>
+                                </div>                    
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#submitFormRUP">
+                                    Submit Form
+                                    </button>
+                                    <div class="modal fade" id="submitFormRUP" tabindex="-1" role="dialog" aria-labelledby="submitFormRUPLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                        <form method="POST" action="{{ route('submitRUP', ['dpaId' => $dpa->id]) }}">
+                                            @csrf
+                                            <div class="modal-header">
+                                            <h5 class="modal-title" id="submitFormRUPLabel">Submit RUP Form</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                            </div>
+                                            <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="rup">RUP:</label>
+                                                <input id="rup" name="rup" class="form-control" value="{{ $dpa->rup }}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="nilairup">Nilai RUP:</label>
+                                                <input id="nilairup" name="nilairup" class="form-control" value="{{ $dpa->nilairup }}">
+                                            </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+                                        </div>
+                                    </div>
+                                </div>
+                             </td>
+                             @endhasrole
+
+                                @hasrole(['Pembantu PPTK', 'PPTK', 'Bendahara'])
                                     <td>
                                         <!-- Lihat Kelengkapan -->
                                         <div class="btn-group">
@@ -166,11 +340,20 @@
                                         </div>
                                     </td>
                                 @endhasrole
+                                @hasrole('Bendahara')
+                                <td> 
+                                    <div class="btn-group">
+                                        <a href="{{ route('ceklisform.index', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Ceklis</a>
+                                        <a href="{{ route('bendahara.create_spp', ['id' => $dpa->id]) }}" class="btn btn-success edit-btn">SPP</a>
+                                        <a href="{{ route('bendahara.create_spm', ['id' => $dpa->id]) }}" class="btn btn-warning edit-btn">SPM</a>
+                                        <a href="{{ route('bendahara.create_sp2d', ['id' => $dpa->id]) }}" class="btn btn-danger edit-btn">SP2D</a>
+                                    </div>
+                                </td>
+                                @endhasrole
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-                {{ $dpaData->links() }}
             </div>
         </div>
     </div>

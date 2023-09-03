@@ -12,7 +12,7 @@
             <label for="dpa_id">Choose DPA:</label>
             <select name="dpa_id" class="form-control" required>
                 @foreach ($dpas as $dpa)
-                    <option value="{{ $dpa->id }}" @if ($dpa->id === $bap->dpa_id) selected @endif>{{ $dpa->nomor_dpa }}</option>
+                    <option value="{{ $dpa->id }}" @if ($dpa->id === $bap->dpa_id) selected @endif>{{ $dpa->kode_sub_kegiatan }}</option>
                 @endforeach
             </select>
         </div>

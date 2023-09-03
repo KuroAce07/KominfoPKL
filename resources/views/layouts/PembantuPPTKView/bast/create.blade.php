@@ -11,7 +11,7 @@
             <label for="dpa_id">DPA:</label>
             <select name="dpa_id" class="form-control">
                 @foreach ($dpas as $dpa)
-                    <option value="{{ $dpa->id }}">{{ $dpa->nomor_dpa }}</option>
+                    <option value="{{ $dpa->id }}">{{ $dpa->kode_sub_kegiatan }}</option>
                 @endforeach
             </select>
         </div>

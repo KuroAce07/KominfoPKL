@@ -12,6 +12,8 @@
             <div class="card-body">
             @if ($pilihanRekanan)
                 <div class="mb-3">
+                <p><strong>Nomor DPA:</strong> {{ $pilihanRekanan->dpa->kode_sub_kegiatan }}</p>
+                <p><strong>Nama Kegiatan:</strong> {{ $pilihanRekanan->dpa->nama_sub_kegiatan }}</p>
                 <p><strong>Pilih:</strong> {{ $pilihanRekanan->first()->pilih }}</p>
                 <p><strong>Detail:</strong> {{ $pilihanRekanan->first()->detail }}</p>
                 <p><strong>Jenis Pengadaan:</strong> {{ $pilihanRekanan->first()->jenis_pengadaan }}</p>
@@ -24,7 +26,8 @@
                         @else
                             <span class="text-warning">Dokumen Belum Disetujui</span>
                         @endif
-                    </p>
+                </p>
+                <p><strong>Alasan:</strong> {{ $pilihanRekanan->alasan }}</p>
             </div>
             @else
                 <p>No Pilihan Rekanan available</p>

@@ -15,27 +15,34 @@ class ViewDPAController extends Controller
     public function index()
 {
     // Subquery to select the maximum 'id' for each 'id_dpa'
-    $subquery = DPA::selectRaw('MAX(id) as max_id')
-        ->groupBy('id_dpa');
+    $subquery = DPA::selectRaw('MAX(id) as max_id')->groupBy('id_dpa');
 
     // Query to retrieve DPA data by joining with the subquery
-    $dpaData = DPA::joinSub($subquery, 'max_ids', function ($join) {
-        $join->on('dpa.id', '=', 'max_ids.max_id');
-    })
-    ->orderBy('id_dpa')
-    ->paginate(10);
+    $dpaData = DPA::joinSub($subquery, 'max_ids', function ($join) {$join->on('dpa.id', '=', 'max_ids.max_id');})->orderBy('id_dpa')->paginate(10);
+
+    $accessibleDpaData = $dpaData->filter(function ($dpa) {
+        return $this->canViewDpa($dpa);
+    });
+
+    // Check if the logged-in user has role_id 1 (admin) and allow access to all DPAs
+    if (auth()->user()->role_id === 1) {
+        $accessibleDpaData = $dpaData;
+    }
 
     // Retrieve users with specific role IDs
-    $users = User::where('role_id', 3)->get();
-    $pejabatPengadaanUsers = User::where('role_id', 4)->get();
-    $pembantupptkUsers = User::where('role_id', 5)->get();
+        $dpaData = DPA::with('pejabatPengadaanUser')->get();
+        $users = User::where('role_id', 3)->get();
+        $pejabatPengadaanUsers = User::where('role_id', 4)->get();
+        $pembantupptkUsers = User::where('role_id', 5)->get();
+        $bendaharaUsers = User::where('role_id', 6)->get();
 
-    return view('ViewDPA.index', [
-        'dpaData' => $dpaData,
-        'users' => $users,
-        'pejabatPengadaanUsers' => $pejabatPengadaanUsers,
-        'pembantupptkUsers' => $pembantupptkUsers
-    ]);
+        return view('ViewDPA.index', [
+            'dpaData' => $accessibleDpaData,
+            'users' => $users,
+            'pejabatPengadaanUsers' => $pejabatPengadaanUsers,
+            'pembantupptkUsers' => $pembantupptkUsers,
+            'bendaharaUsers' => $bendaharaUsers,
+        ]);
 }
 
     public function assignDpa($dpaId, $userId)
@@ -48,7 +55,7 @@ class ViewDPAController extends Controller
         
         $whatsappData = [];
         $whatsappData['phone'] = $user->mobile_number; // Assuming mobile_number is the column name in the users table
-        $whatsappData['message'] = "Ada DPA Baru yang harus dikerjakan dari admin dengan Nomor DPA : {$dpa->nomor_dpa} ";
+        $whatsappData['message'] = "Ada DPA Baru yang harus dikerjakan dari admin dengan Nomor DPA : {$dpa->kode_sub_kegiatan} ";
         $whatsappData['secret'] = false;
         $whatsappData['retry'] = false;
         $whatsappData['isGroup'] = false;
@@ -66,7 +73,7 @@ class ViewDPAController extends Controller
 
         $whatsappData = [];
         $whatsappData['phone'] = $user->mobile_number; // Assuming mobile_number is the column name in the users table
-        $whatsappData['message'] = "Ada DPA Baru yang harus dikerjakan dari PPTK dengan Nomor DPA : {$dpa->nomor_dpa} ";
+        $whatsappData['message'] = "Ada DPA Baru yang harus dikerjakan dari PPTK dengan Nomor DPA : {$dpa->kode_sub_kegiatan} ";
         $whatsappData['secret'] = false;
         $whatsappData['retry'] = false;
         $whatsappData['isGroup'] = false;
@@ -85,7 +92,7 @@ class ViewDPAController extends Controller
 
         $whatsappData = [];
         $whatsappData['phone'] = $user->mobile_number; // Assuming mobile_number is the column name in the users table
-        $whatsappData['message'] = "Ada DPA Baru yang harus dilengkapi dokumennya dari PPTK dengan Nomor DPA : {$dpa->nomor_dpa} ";
+        $whatsappData['message'] = "Ada DPA Baru yang harus dilengkapi dokumennya dari PPTK dengan Nomor DPA : {$dpa->kode_sub_kegiatan} ";
         $whatsappData['secret'] = false;
         $whatsappData['retry'] = false;
         $whatsappData['isGroup'] = false;
@@ -94,10 +101,106 @@ class ViewDPAController extends Controller
         return redirect()->back()->with('success', 'Pembantu PPTK assigned successfully.');
     }
 
+    public function assignBendahara($dpaId, $userId)
+{
+    $user = User::findOrFail($userId);
+    $dpa = DPA::findOrFail($dpaId);
+
+    $dpa->user_id4 = $user->id;
+    $dpa->save();
+
+    $whatsappData = [];
+    $whatsappData['phone'] = $user->mobile_number; // Assuming mobile_number is the column name in the users table
+    $whatsappData['message'] = "Ada DPA Baru yang harus dilengkapi dokumennya dari Bendahara dengan Nomor DPA: {$dpa->kode_sub_kegiatan}";
+    $whatsappData['secret'] = false;
+    $whatsappData['retry'] = false;
+    $whatsappData['isGroup'] = false;
+    WablasTrait::sendText([$whatsappData]);
+
+    return redirect()->back()->with('success', 'Bendahara assigned successfully.');
+}
+
+public function showDeskripsiBendahara($dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+
+    return view('ViewDPA.deskripsibendahara', compact('dpa'));
+}
+
+public function updateDescription(Request $request, $dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+
+    $dpa->description = $request->input('description');
+    $dpa->save();
+
+    return redirect()->route('viewDPA')->with('success', 'Description updated successfully.');
+}
+
+public function updateDescriptionPP(Request $request, $dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+
+    $dpa->descriptionPP = $request->input('descriptionPP');
+    $dpa->save();
+
+    return redirect()->route('viewDPA')->with('success', 'Description updated successfully.');
+}
+
+// ViewDPAController.php
+
+public function showDeskripsiPejabatPengadaan($dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+
+    return view('ViewDPA.deskripsiPejabatPengadaan', compact('dpa'));
+}
+
+public function updateDescriptionPPPTK(Request $request, $dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+
+    $dpa->descriptionPPPTK = $request->input('descriptionPPPTK');
+    $dpa->save();
+
+    return redirect()->route('viewDPA')->with('success', 'Description updated successfully.');
+}
+
+// ViewDPAController.php
+
+public function showDeskripsiPPPTK($dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+
+    return view('ViewDPA.deskripsiPPPTK', compact('dpa'));
+}
+
+public function submitRUP(Request $request, $dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+
+    $dpa->rup = $request->input('rup');
+    $dpa->nilairup = $request->input('nilairup');
+    $dpa->save();
+
+    return redirect()->route('viewDPA')->with('success', 'RUP updated successfully.');
+}
+
+public function updateDescriptionRUP(Request $request, $dpaId)
+{
+  $descriptionRUP = $request->input('descriptionRUP');
+
+  // Update the description in the database.
+  DB::table('dpa')->where('id', $dpaId)->update(['descriptionRUP' => $descriptionRUP]);
+
+  // Redirect the user back to the pop up view.
+  return redirect()->back();
+}
+
     public function canViewDpa($dpa)
     {
         // Check if the logged-in user is assigned to this DPA as PPTK or Pembantu PPTK
-        return auth()->user()->id === $dpa->user_id || auth()->user()->id === $dpa->user_id2|| auth()->user()->id === $dpa->user_id3;
+        return auth()->user()->id === $dpa->user_id || auth()->user()->id === $dpa->user_id2|| auth()->user()->id === $dpa->user_id3 || auth()->user()->id === $dpa->user_id4;
     }
     
 public function edit($dpaId)
@@ -223,12 +326,9 @@ public function update(Request $request, $dpaId)
     $dpa = DPA::findOrFail($dpaId);
     
     // Update the DPA fields based on the form inputs
-    $dpa->nomor_dpa = $request->input('nomor_dpa');
-    $dpa->urusan_pemerintahan = $request->input('urusan_pemerintahan');
-    $dpa->bidang_urusan = $request->input('bidang_urusan');
-    $dpa->program = $request->input('program');
-    $dpa->kegiatan = $request->input('kegiatan');
-    $dpa->dana = $request->input('dana');
+    $dpa->kode_sub_kegiatan = $request->input('kode_sub_kegiatan');
+    $dpa->nama_sub_kegiatan = $request->input('nama_sub_kegiatan');
+    $dpa->nilai_rincian = $request->input('nilai_rincian');
     
     // Update PPTK (if applicable)
     if ($request->has('pptk')) {

@@ -13,6 +13,7 @@ use App\Models\Baph;
 use App\Models\PilihRekanan;
 use App\Models\DPA;
 use App\Models\Rekanan;
+use App\Models\User;
 
 class PembantuPPTKUploadController extends Controller
 {
@@ -29,7 +30,6 @@ public function createDokumenKontrak()
 public function showDokumenKontrak($dpaId)
 {
     $dokumenKontrak = DokumenKontrak::where('dpa_id', $dpaId)->firstOrFail();
-    $dpas = DPA::all();
     return view('PembantuPPTKView.dokumenkontrak.show', ['dokumenKontrak' => $dokumenKontrak,'dpaId' => $dpaId,]);
 }
 
@@ -44,10 +44,12 @@ public function storeDokumenKontrak(Request $request)
         'jumlah_uang' => 'required|numeric',
         'ppn' => 'nullable|numeric',
         'pph' => 'nullable|numeric',
+        'potongan_lain' => 'nullable|numeric',
         'jumlah_potongan' => 'nullable|numeric',
         'jumlah_total' => 'required|numeric',
         'keterangan' => 'nullable|string',
         'upload_dokumen' => 'nullable|file',
+        'alasan' => 'nullable',
     ]);
 
     $dokumenKontrak = new DokumenKontrak($validatedData);
@@ -88,17 +90,19 @@ public function editDokumenKontrak($id)
 public function updateDokumenKontrak(Request $request, $id)
 {
     $validatedData = $request->validate([
-        'dpa_id' => 'required|numeric', // Validate the selected DPA
-        'jenis_kontrak' => 'required',
-        'nama_kegiatan_transaksi' => 'required',
-        'tanggal_kontrak' => 'required|date',
-        'jumlah_uang' => 'required|numeric',
+        'dpa_id' => 'nullable|numeric', // Validate the selected DPA
+        'jenis_kontrak' => 'nullable',
+        'nama_kegiatan_transaksi' => 'nullable',
+        'tanggal_kontrak' => 'nullable|date',
+        'jumlah_uang' => 'nullable|numeric',
         'ppn' => 'nullable|numeric',
         'pph' => 'nullable|numeric',
+        'potongan_lain' => 'nullable|numeric',
         'jumlah_potongan' => 'nullable|numeric',
-        'jumlah_total' => 'required|numeric',
+        'jumlah_total' => 'nullable|numeric',
         'keterangan' => 'nullable|string',
         'upload_dokumen' => 'nullable|file',
+        'alasan' => 'nullable',
     ]);
 
     $dokumenKontrak = DokumenKontrak::findOrFail($id);
@@ -106,19 +110,18 @@ public function updateDokumenKontrak(Request $request, $id)
 
     // Set the approval value based on checkbox
     if ($request->has('approval')) {
-        $dokumenKontrak->approval = 1;
+        $dokumenKontrak->approval = 0; // Default value if neither checkbox is checked
     } elseif ($request->has('reject')) {
         $dokumenKontrak->approval = 2;
     } else {
-        $dokumenKontrak->approval = 0; // Default value if neither checkbox is checked
+        $dokumenKontrak->approval = 1;
     }
 
-
-    $dpaId = $request->input('dpa_id'); 
     $dokumenKontrak->save();
     $dpa_id = $request->input('dpa_id'); // Retrieve the value of 'dpa_id' from the request
 
     return redirect()->route('PembantuPPTKView.dokumenkontrak.show', ['dpaId' => $dpa_id])->with('success', 'Dokumen Kontrak updated successfully.');
+    
 }
 
     //=====================DOKUMEN JUSTIFIKASI==========================================================
@@ -134,7 +137,6 @@ public function updateDokumenKontrak(Request $request, $id)
     $dokumenJustifikasi = DokumenJustifikasi::where('dpa_id', $dpaId)->get();
     $dpas = DPA::all();
     return view('PembantuPPTKView.dokumenjustifikasi.index', ['dokumenJustifikasi' => $dokumenJustifikasi, 'dpas' => $dpas, 'dpaId' => $dpaId,]);
-
     }  
 
     public function storeDokumenJustifikasi(Request $request)
@@ -145,6 +147,7 @@ public function updateDokumenKontrak(Request $request, $id)
             'keterangan' => 'nullable',
             'upload_dokumen' => 'nullable|file',
             'dpa_id' => 'required|numeric', // Validate the selected DPA
+            'alasan' => 'nullable',
         ]);
     
         $dokumenJustifikasi = new DokumenJustifikasi($validatedData);
@@ -186,6 +189,7 @@ public function updateDokumenKontrak(Request $request, $id)
             'tanggal' => 'nullable|date',
             'keterangan' => 'nullable',
             'upload_dokumen' => 'nullable|file',
+            'alasan' => 'nullable',
         ]);
 
         $dokumenJustifikasi = DokumenJustifikasi::findOrFail($id);
@@ -193,49 +197,58 @@ public function updateDokumenKontrak(Request $request, $id)
     
         
         if ($request->has('approval')) {
-            $dokumenJustifikasi->approval = 1;
+            $dokumenJustifikasi->approval = 0; 
         } elseif ($request->has('reject')) {
             $dokumenJustifikasi->approval = 2;
         } else {
-            $dokumenJustifikasi->approval = 0; 
+            $dokumenJustifikasi->approval = 1;
         }
     
         $dpaId = $request->input('dpa_id'); 
         $dokumenJustifikasi->dpa_id = $dpaId;
         $dokumenJustifikasi->save();
     
-        return redirect()->route('PembantuPPTKView.dokumenjustifikasi.index', ['dpaId' => $dpaId])->with('success', 'E-Purchasing data updated successfully.');
+        return redirect()->route('PembantuPPTKView.dokumenjustifikasi.index', ['dpaId' => $dpaId])->with('success', 'Dokumen Justifikasi updated successfully.');
     }
 
     //=====================E-PURCHASING==========================================================
 
-        public function createEPurchasing()
-        {
-            $dpas = DPA::all(); // Fetch the list of DPAs
-
-            return view('PembantuPPTKView.epurchaseview.create', ['dpas' => $dpas]);
-        }
+    public function createEPurchasing()
+    {
+        $dpas = DPA::all(); // Fetch the list of DPAs
+        $pejabatPengadaanUsers = User::where('role_id', 4)->get();
+        $dpaId = request()->query('dpaId');
+        return view('PembantuPPTKView.epurchaseview.create', ['dpas' => $dpas, 'pejabatPengadaanUsers' => $pejabatPengadaanUsers]);
+    }
     
-        public function indexEPurchasing($dpaId)
-        {
-            $ePurchasing = EPurchasing::where('dpa_id', $dpaId)->firstOrFail();
-
-            return view('PembantuPPTKView.epurchaseview.index', ['ePurchasing' => $ePurchasing]);
-        }               
+    
+    public function indexEPurchasing($dpaId)
+    {
+        $ePurchasing = EPurchasing::select('e_purchasings.*', 'users.first_name', 'users.last_name')
+            ->join('users', 'users.id', '=', 'e_purchasings.nama_pejabat_pengadaan')
+            ->where('dpa_id', $dpaId)
+            ->firstOrFail();
+    
+        return view('PembantuPPTKView.epurchaseview.index', ['ePurchasing' => $ePurchasing]);
+    }
+            
+        
+        
     
         public function storeEPurchasing(Request $request)
         {
             $validatedData = $request->validate([
-                'e_commerce' => 'required',
-                'id_paket' => 'required',
-                'jumlah' => 'required|numeric',
-                'harga_total' => 'required|numeric',
-                'tanggal_buat' => 'required|date',
-                'tanggal_ubah' => 'required|date',
-                'nama_pejabat_pengadaan' => 'required',
-                'nama_penyedia' => 'required',
-                'dpa_id' => 'required|numeric', // Validate the selected DPA
+                'e_commerce' => 'nullable',
+                'id_paket' => 'nullable',
+                'jumlah' => 'nullable|numeric',
+                'harga_total' => 'nullable|numeric',
+                'tanggal_buat' => 'nullable|date',
+                'tanggal_ubah' => 'nullable|date',
+                'nama_pejabat_pengadaan' => 'nullable',
+                'nama_penyedia' => 'nullable',
+                'dpa_id' => 'nullable|numeric', // Validate the selected DPA
                 'upload_dokumen' => 'nullable|file', // Add file validation
+                'alasan' => 'nullable',
             ]);
         
             $ePurchasing = new EPurchasing($validatedData);
@@ -264,11 +277,18 @@ public function updateDokumenKontrak(Request $request, $id)
         
         public function editEPurchasing($id)
         {
-            $ePurchasing = DokumenPendukung::findOrFail($id);
+            $ePurchasing = EPurchasing::findOrFail($id);
             $dpas = DPA::all(); // Fetch the list of DPAs
-            return view('PembantuPPTKView.epurchaseview.edit', ['ePurchasing' => $ePurchasing,'dpas' => $dpas]);
+            $pejabatPengadaanUsers = User::where('role_id', 4)->get();
+        
+            return view('PembantuPPTKView.epurchaseview.edit', [
+                'ePurchasing' => $ePurchasing,
+                'dpas' => $dpas,
+                'pejabatPengadaanUsers' => $pejabatPengadaanUsers, // Include this line
+            ]);
         }
         
+
 
         public function updateEPurchasing(Request $request, $id)
         {
@@ -283,6 +303,7 @@ public function updateDokumenKontrak(Request $request, $id)
                 'nama_pejabat_pengadaan' => 'nullable',
                 'nama_penyedia' => 'nullable',
                 'dpa_id' => 'required|numeric', // Validate the selected DPA
+                'alasan' => 'nullable',
 
             ]);
         
@@ -291,11 +312,11 @@ public function updateDokumenKontrak(Request $request, $id)
         
             // Set the approval value based on checkbox
             if ($request->has('approval')) {
-                $ePurchasing->approval = 1;
+                $ePurchasing->approval = 0; // Default value if neither checkbox is checked
             } elseif ($request->has('reject')) {
                 $ePurchasing->approval = 2;
             } else {
-                $ePurchasing->approval = 0; // Default value if neither checkbox is checked
+                $ePurchasing->approval = 1;
             }
         
             $dpaId = $request->input('dpa_id'); // Retrieve dpaId from the input
@@ -328,6 +349,7 @@ public function storeDokumenPendukung(Request $request)
         'keterangan' => 'nullable',
         'upload_dokumen' => 'nullable|file',
         'dpa_id' => 'required|numeric',
+        'alasan' => 'nullable',
     ]);
 
     $dokumenPendukung = new DokumenPendukung($validatedData);
@@ -373,17 +395,18 @@ public function updateDokumenPendukung(Request $request, $id)
         'tanggal' => 'nullable|date',
         'keterangan' => 'nullable',
         'upload_dokumen' => 'nullable|file',
+        'alasan' => 'nullable',
     ]);
 
     $dokumenPendukung = DokumenPendukung::findOrFail($id);
     $dokumenPendukung->fill($validatedData);
 
     if ($request->has('approval')) {
-        $dokumenPendukung->approval = 1;
+        $dokumenPendukung->approval = 0; // Default value if neither checkbox is checked
     } elseif ($request->has('reject')) {
         $dokumenPendukung->approval = 2;
     } else {
-        $dokumenPendukung->approval = 0; // Default value if neither checkbox is checked
+        $dokumenPendukung->approval = 1;
     }
 
     $dpaId = $request->input('dpa_id'); // Retrieve dpaId from the input
@@ -417,6 +440,7 @@ public function updateDokumenPendukung(Request $request, $id)
             'keterangan' => 'nullable',
             'upload_dokumen' => 'nullable|file',
             'dpa_id' => 'required|numeric',
+            'alasan' => 'nullable',
         ]);
     
         $bast = new Bast($validatedData);
@@ -458,6 +482,7 @@ public function updateDokumenPendukung(Request $request, $id)
             'keterangan' => 'nullable',
             'upload_dokumen' => 'nullable|file',
             'dpa_id' => 'required|numeric',
+            'alasan' => 'nullable',
         ]);
     
 
@@ -465,11 +490,11 @@ public function updateDokumenPendukung(Request $request, $id)
         $bast->fill($validatedData);
     
         if ($request->has('approval')) {
-            $bast->approval = 1;
+            $bast->approval = 0; // Default value if neither checkbox is checked
         } elseif ($request->has('reject')) {
             $bast->approval = 2;
         } else {
-            $bast->approval = 0; // Default value if neither checkbox is checked
+            $bast->approval = 1;
         }
     
         $dpaId = $request->input('dpa_id');
@@ -503,6 +528,7 @@ public function storeBap(Request $request)
         'keterangan' => 'nullable',
         'upload_dokumen' => 'nullable|file',
         'dpa_id' => 'required|numeric',
+        'alasan' => 'nullable',
     ]);
 
     $bap = new Bap($validatedData);
@@ -545,17 +571,18 @@ public function updateBap(Request $request, $id)
         'keterangan' => 'nullable',
         'upload_dokumen' => 'nullable|file',
         'dpa_id' => 'required|numeric',
+        'alasan' => 'nullable',
     ]);
 
     $baps = Bap::findOrFail($id);
     $baps->fill($validatedData);
 
     if ($request->has('approval')) {
-        $baps->approval = 1;
+        $baps->approval = 0;
     } elseif ($request->has('reject')) {
         $baps->approval = 2;
     } else {
-        $baps->approval = 0;
+        $baps->approval = 1;
     }
 
     $dpaId = $request->input('dpa_id'); 
@@ -589,6 +616,7 @@ public function storeBaph(Request $request)
         'keterangan' => 'nullable',
         'upload_dokumen' => 'nullable|file',
         'dpa_id' => 'required|numeric',
+        'alasan' => 'nullable',
     ]);
 
     $baph = new Baph($validatedData);
@@ -632,17 +660,18 @@ public function updateBaph(Request $request, $id)
         'keterangan' => 'nullable',
         'upload_dokumen' => 'nullable|file',
         'dpa_id' => 'required|numeric',
+        'alasan' => 'nullable',
     ]);
 
     $baphs = Baph::findOrFail($id);
     $baphs->fill($validatedData);
 
     if ($request->has('approval')) {
-        $baphs->approval = 1;
+        $baphs->approval = 0;
     } elseif ($request->has('reject')) {
         $baphs->approval = 2;
     } else {
-        $baphs->approval = 0;
+        $baphs->approval = 1;
     }
 
     $dpaId = $request->input('dpa_id'); 
@@ -679,6 +708,7 @@ public function storePilihRekanan(Request $request)
         'jenis_pengadaan' => 'required',
         'keterangan' => 'required',
         'dpa_id' => 'required|numeric', 
+        'alasan' => 'nullable',
     ]);
 
     $pilihanRekanan = new PilihRekanan($validatedData);
@@ -705,17 +735,18 @@ public function updatePilihRekanan(Request $request, $id)
         'jenis_pengadaan' => 'nullable',
         'keterangan' => 'nullable',
         'dpa_id' => 'required|numeric', 
+        'alasan' => 'nullable',
     ]);
 
     $pilihanRekanan = PilihRekanan::findOrFail($id);
     $pilihanRekanan->fill($validatedData);
 
     if ($request->has('approval')) {
-        $pilihanRekanan->approval = 1;
+        $pilihanRekanan->approval = 0; 
     } elseif ($request->has('reject')) {
         $pilihanRekanan->approval = 2;
     } else {
-        $pilihanRekanan->approval = 0; 
+        $pilihanRekanan->approval = 1;
     }
 
     $dpaId = $request->input('dpa_id'); 

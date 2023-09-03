@@ -13,14 +13,27 @@
     <form action="{{ route('PembantuPPTKView.dokumenjustifikasi.store') }}" method="post" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="dpa_id" value="{{ $dpaId }}">
-        <label for="dpa_id">DPA:</label>
-        <select name="dpa_id" id="dpa_id" class="form-control" required disabled>
-            @foreach($dpas as $dpa)
-                <option value="{{ $dpa->id }}" {{ request()->query('dpaId') == $dpa->id ? 'selected' : '' }}>
-                    {{ $dpa->nomor_dpa }}
-                </option>
-            @endforeach
-                    </select>
+<div class="form-group">
+    <label for="dpa_id">DPA:</label>
+    <select name="dpa_id" id="dpa_id" class="form-control" required disabled>
+        @foreach($dpas as $dpa)
+            <option value="{{ $dpa->id }}" {{ request()->query('dpaId') == $dpa->id ? 'selected' : '' }}>
+                {{ $dpa->kode_sub_kegiatan }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="jenis_kontrak">Nama Kegiatan/Sub Kegiatan:</label>
+    <select name="dpa_id" id="dpa_id" class="form-control" required disabled>
+        @foreach($dpas as $dpa)
+            <option value="{{ $dpa->id }}" {{ request()->query('dpaId') == $dpa->id ? 'selected' : '' }}>
+                {{ $dpa->nama_sub_kegiatan }}
+            </option>
+        @endforeach
+    </select>
+</div>
             
                 <div class="form-group">
                     <label for="nama">Nama:</label>

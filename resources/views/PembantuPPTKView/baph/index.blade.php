@@ -12,6 +12,8 @@
         <div class="card-body">
             @if ($baphs)
                 <div class="mb-3">
+                    <p><strong>Nomor DPA:</strong> {{ $baphs->dpa->kode_sub_kegiatan }}</p>
+                    <p><strong>Nama Kegiatan:</strong> {{ $baphs->dpa->nama_sub_kegiatan }}</p>
                     <p><strong>Nomor:</strong> {{ $baphs->nomor }}</p>
                     <p><strong>Tanggal:</strong> {{ $baphs->tanggal }}</p>
                     <p><strong>Keterangan:</strong> {{ $baphs->keterangan }}</p>
@@ -25,6 +27,7 @@
                             <span class="text-warning">Dokumen Belum Disetujui</span>
                         @endif
                     </p>
+                    <p><strong>Alasan:</strong> {{ $baphs->alasan }}</p>
                 </div>
             @else
                 <p>No BAPH available</p>

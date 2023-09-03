@@ -23,7 +23,7 @@
         <i class="fas fa-folder-open"></i>
 
 
-        <span>Dokumen Keuangan</span>
+        <span>Register Dokumen Pencairan</span>
     </a>
     <div id="arsipLamaDropDown" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
@@ -186,28 +186,53 @@
     @endhasrole
 
     @hasrole('PPTK')
-      <!-- Heading -->
-      <div class="sidebar-heading">
-            PPTK
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        PPTK
+    </div>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDPA"
+            aria-expanded="true" aria-controls="collapseDPA">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>DPA</span>
+        </a>
+        <div id="collapseDPA" class="collapse" aria-labelledby="headingDPA" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">DPA</h6>
+                <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
+            </div>
         </div>
+    </li>
 
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                aria-expanded="true" aria-controls="collapsePages">
-                <i class="fas fa-fw fa-folder"></i>
-                <span>DPA</span>
-            </a>
-            <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">DPA</h6>
-                    <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
-                </div>
-        </li>
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ route('pengadaan.index') }}"
+            aria-expanded="true" aria-controls="collapsePengadaan">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Dokumen Pemilihan</span>
+        </a>
+    </li>
 
-        <!-- Divider -->
-        <hr class="sidebar-divider d-none d-md-block">
-    @endhasrole
+    <!-- Rekanan Section -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRekanan"
+            aria-expanded="true" aria-controls="collapseRekanan">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Rekanan</span>
+        </a>
+        <div id="collapseRekanan" class="collapse" aria-labelledby="headingRekanan" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Rekanan</h6>
+                <a class="collapse-item" href="{{ route('rekanan.create') }}">Buat Rekanan</a>
+                <a class="collapse-item" href="{{ route('rekanan.index') }}">Lihat List Rekanan</a>
+            </div>
+        </div>
+    </li>
+    
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+@endhasrole
     
     <li class="nav-item">
         <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">

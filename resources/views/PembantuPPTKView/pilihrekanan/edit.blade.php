@@ -16,9 +16,9 @@
 
             <div class="form-group">
                 <label for="dpa_id">DPA:</label>
-                <select name="dpa_id" id="dpa_id" class="form-control" required disabled>
+                <select name="dpa_id" id="dpa_id" class="form-control" required>
                     @foreach($dpas as $dpa)
-                        <option value="{{ $dpa->id }}" {{ $pilihanRekanan->dpa_id == $dpa->id ? 'selected' : '' }}>{{ $dpa->nomor_dpa }}</option>
+                        <option value="{{ $dpa->id }}" {{ $pilihanRekanan->dpa_id == $dpa->id ? 'selected' : '' }}>{{ $dpa->kode_sub_kegiatan }}</option>
                     @endforeach
                 </select>
             </div>
@@ -52,6 +52,7 @@
             </div>
 
             @if (auth()->user()->hasRole('Pembantu PPTK'))
+                <input type="hidden" name="alasan" value="0">
                 <input type="hidden" name="approval" value="0">
                 <input type="hidden" name="reject" value="0">
             @else
@@ -64,9 +65,12 @@
                     <input type="checkbox" class="form-check-input" id="reject" name="reject">
                     <label class="form-check-label" for="reject">Reject</label>
                 </div>
+                <div class="form-group">
+                <label for="alasan">Alasan:</label><textarea name="alasan" class="form-control">{{ $pilihanRekanan->alasan }}</textarea>
+                </div>
             @endif
 
-            <button type="submit" class="btn btn-primary">Update Rekanan Data</button>
+            <button type="submit" class="btn btn-primary">Update Dokumen Kontrak Data</button>
         </form>
     </div>
 @endsection

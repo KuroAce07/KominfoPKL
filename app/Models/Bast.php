@@ -8,7 +8,7 @@ class Bast extends Model
 {
     protected $table = 'basts';
 
-    protected $fillable = ['nomor', 'tanggal', 'keterangan', 'upload_dokumen', 'approval',];
+    protected $fillable = ['nomor', 'tanggal', 'keterangan', 'upload_dokumen', 'approval', 'alasan',];
 
     public function dpa()
     {

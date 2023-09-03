@@ -18,6 +18,7 @@
             <p><strong>Jumlah Uang:</strong> {{ $dokumenKontrak->jumlah_uang }}</p>
             <p><strong>PPN:</strong> {{ $dokumenKontrak->ppn }}</p>
             <p><strong>PPH:</strong> {{ $dokumenKontrak->pph }}</p>
+            <p><strong>Potongan Lain:</strong> {{ $dokumenKontrak->potongan_lain }}</p>
             <p><strong>Jumlah Potongan:</strong> {{ $dokumenKontrak->jumlah_potongan }}</p>
             <p><strong>Jumlah Total:</strong> {{ $dokumenKontrak->jumlah_total }}</p>
             <p><strong>Keterangan:</strong> {{ $dokumenKontrak->keterangan }}</p>

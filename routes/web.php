@@ -72,11 +72,10 @@ Route::put('/Rekanan/{id}', [RekananController::class, 'update'])->name('rekanan
 Route::get('/dokumenpembantupptk', [PembantuPPTKUploadController::class, 'dokumenPembantuPPTK'])->name('PembantuPPTKView.dokumenpembantupptk');
     //E-Purchasing
     Route::get('/epurchasing/create', [PembantuPPTKUploadController::class, 'createEPurchasing'])->name('PembantuPPTKView.epurchaseview.create');
-    Route::get('/epurchaseview/{dpaId}', [PembantuPPTKUploadController::class, 'indexEPurchasing'])->name('PembantuPPTKView.epurchaseview.index');
-    Route::post('/epurchasing', [PembantuPPTKUploadController::class, 'storeEPurchasing'])->name('PembantuPPTKView.epurchaseview.store');
-    Route::get('/epurchasing/{id}/edit', [PembantuPPTKUploadController::class, 'editEPurchasing'])->name('PembantuPPTKView.epurchaseview.edit');
     Route::put('/epurchasing/{id}', [PembantuPPTKUploadController::class, 'updateEPurchasing'])->name('PembantuPPTKView.epurchaseview.update');
-    Route::put('/epurchasing/{id}', [PembantuPPTKUploadController::class, 'updateEPurchasing'])->name('PembantuPPTKView.epurchasing.update');
+    Route::post('/epurchasing/store', [PembantuPPTKUploadController::class, 'storeEPurchasing'])->name('PembantuPPTKView.epurchaseview.store');
+    Route::get('/epurchasing/{id}/edit', [PembantuPPTKUploadController::class, 'editEPurchasing'])->name('PembantuPPTKView.epurchaseview.edit');
+    Route::get('/epurchasing/{dpaId}', [PembantuPPTKUploadController::class, 'indexEPurchasing'])->name('PembantuPPTKView.epurchaseview.index');
 
     //BAST
     Route::get('/bast/create', [PembantuPPTKUploadController::class, 'createBast'])->name('PembantuPPTKView.bast.create');
@@ -151,6 +150,15 @@ Route::get('/ViewPDF/{id}', [ViewDPAController::class, 'viewPDF'])->name('viewPD
 Route::put('/DPA/{dpa}', [ViewDPAController::class, 'update'])->name('updateDPA');
 Route::get('/assignPP/{dpaId}/{userId}', [ViewDPAController::class, 'assignPP'])->name('ViewDPA.assignPP');
 Route::get('/assignPPPTK/{dpaId}/{userId}', [ViewDPAController::class, 'assignPPPTK'])->name('ViewDPA.assignPPPTK');
+Route::get('/assignBendahara/{dpaId}/{userId}', [ViewDPAController::class, 'assignBendahara'])->name('ViewDPA.assignBendahara');
+        Route::get('/deskripsi-bendahara/{dpaId}', [ViewDPAController::class, 'showDeskripsiBendahara'])->name('deskripsiBendahara');
+        Route::put('/update-description/{dpaId}', [ViewDPAController::class, 'updateDescription'])->name('updateDescription');
+        Route::get('/deskripsi-pejabat-pengadaan/{dpaId}', [ViewDPAController::class, 'showDeskripsiPejabatPengadaan'])->name('deskripsiPejabatPengadaan');
+        Route::put('/update-description-pp/{dpaId}', [ViewDPAController::class, 'updateDescriptionPP'])->name('updateDescriptionPP');
+        Route::get('/deskripsi-ppptk/{dpaId}', [ViewDPAController::class, 'showDeskripsiPPPTK'])->name('deskripsiPPPTK');
+        Route::put('/update-description-ppptk/{dpaId}', [ViewDPAController::class, 'updateDescriptionPPPTK'])->name('updateDescriptionPPPTK');
+        Route::post('/submitRUP/{dpaId}', [ViewDPAController::class, 'submitRUP'])->name('submitRUP');
+        Route::get('/view-dpa', [ViewDPAController::class, 'index'])->name('viewDPA');
 Route::get('/Track', [ViewDPAController::class, 'tracking'])->name('ViewDPA.track');
 // Route to view the uploaded PDF data (ViewDPA site)
 //Route::get('/View', [ViewDPAController::class, 'index']);
@@ -171,16 +179,12 @@ Route::get('/ceklisform/result/{id}', [CeklisformController::class, 'showResult'
 Route::get('/ceklisform/download-pdf/{id}', [CeklisformController::class, 'downloadPdf'])->name('ceklisform.downloadPdf');
 
 
-
-
 //Pejabat Pengadaan
 Route::get('/form/create/{id}', [PengadaanController::class, 'create_pengadaan'])->name('pengadaan.create_pengadaan');
 Route::post('/form/store', [PengadaanController::class, 'store_pengadaan'])->name('pengadaan.store_pengadaan');
 Route::get('/pengadaan', [PengadaanController::class, 'index'])->name('pengadaan.index');
 Route::get('/pengadaan', [PengadaanController::class, 'berkas'])->name('pengadaan.index');
 Route::delete('/pengadaan/{id}', [PengadaanController::class, 'delete'])->name('pengadaan.delete');
-
-
 
 // Users 
 Route::middleware('auth')->prefix('users')->name('users.')->group(function(){

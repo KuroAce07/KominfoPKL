@@ -21,7 +21,7 @@ class CreateArsipLamasTable extends Migration
             $table->string('sumber_dana')->nullable();
             $table->string('uraian_belanja')->nullable();
             $table->string('sub_kegiatan')->nullable();
-            $table->string('kegiatan')->nullable();
+            $table->string('nama_sub_kegiatan')->nullable();
             $table->string('nama')->nullable();
             $table->string('pph_21')->nullable(); // Changed to string
             $table->string('pph_22')->nullable(); // Changed to string

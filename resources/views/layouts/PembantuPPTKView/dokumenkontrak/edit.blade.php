@@ -12,7 +12,7 @@
         <label for="dpa_id">DPA:</label>
         <select name="dpa_id" id="dpa_id" class="form-control" required>
             @foreach($dpas as $dpa)
-                <option value="{{ $dpa->id }}" {{ $dokumenKontrak->dpa_id == $dpa->id ? 'selected' : '' }}>{{ $dpa->nomor_dpa }}</option>
+                <option value="{{ $dpa->id }}" {{ $dokumenKontrak->dpa_id == $dpa->id ? 'selected' : '' }}>{{ $dpa->kode_sub_kegiatan }}</option>
             @endforeach
         </select>
         </select>
@@ -34,6 +34,8 @@
         <input type="number" name="ppn" class="form-control" step="0.01">
         <label for="pph">PPH:</label>
         <input type="number" name="pph" class="form-control" step="0.01">
+        <label for="potongan_lain">Potongan Lain:</label>
+        <input type="number" name="potongan_lain" class="form-control" step="0.01">
         <label for="jumlah_potongan">Jumlah Potongan:</label>
         <input type="number" name="jumlah_potongan" class="form-control" step="0.01">
         <label for="jumlah_total">Jumlah Total:</label>

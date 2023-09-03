@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Bap extends Model
 {
     protected $table = 'baps';
-    protected $fillable = ['nomor', 'tanggal', 'keterangan', 'upload_dokumen','approval', ];
+    protected $fillable = ['nomor', 'tanggal', 'keterangan', 'upload_dokumen','approval', 'alasan',];
 
     public function dpa()
     {

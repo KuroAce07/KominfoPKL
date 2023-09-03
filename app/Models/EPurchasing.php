@@ -18,7 +18,8 @@ protected $fillable = [
     'tanggal_ubah',
     'nama_pejabat_pengadaan',
     'nama_penyedia',
-    'approval', // Add the approval attribute to the $fillable array
+    'approval',
+    'alasan', // Add the approval attribute to the $fillable array
 ];
 
 

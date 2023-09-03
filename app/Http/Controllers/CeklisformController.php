@@ -15,47 +15,44 @@ class CeklisformController extends Controller
         return view('ceklisform.index', ['ceklisForms' => $ceklisForms, 'dpa_id' => $dpa_id]);
 
     }
-
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'dpa_id' => 'required',
-            'nama' => 'required',
-            'kwitansi' => 'nullable',
-            'nota_bukti_invoice' => 'nullable',
-            'dok_kontrak' => 'nullable',
-            'surat_pemesanan' => 'nullable',
-            'surat_perjanjian' => 'nullable',
-            'ringkasan_kontrak' => 'nullable',
-            'dok_epurchasing' => 'nullable',
-            'dok_pendukung' => 'nullable',
-            'tkdn' => 'nullable',
-            'berita_serah_terima' => 'nullable',
-            'berita_pembayaran' => 'nullable',
-            'berita_pemeriksaan' => 'nullable',
-
-            // Validasi untuk kolom lainnya
-        ]);
-    
-        // Set nilai default 0 jika checkbox tidak diisi, atau 1 jika diisi
+        $dpa_id = $request->input('dpa_id');
+        $data = [
+            'dpa_id' => $dpa_id, // Assuming dpa_id is passed through the form
+            'nama' => $request->has('nama') ? 1 : 0,
+            'kwitansi' => $request->has('kwitansi') ? 1 : 0,
+            'nota_bukti_invoice' => $request->has('nota_bukti_invoice') ? 1 : 0,
+            'dok_kontrak' => $request->has('dok_kontrak') ? 1 : 0,
+            'surat_pemesanan' => $request->has('surat_pemesanan') ? 1 : 0,
+            'surat_perjanjian' => $request->has('surat_perjanjian') ? 1 : 0,
+            'ringkasan_kontrak' => $request->has('ringkasan_kontrak') ? 1 : 0,
+            'dok_epurchasing' => $request->has('dok_epurchasing') ? 1 : 0,
+            'dok_pendukung' => $request->has('dok_pendukung') ? 1 : 0,
+            'tkdn' => $request->has('tkdn') ? 1 : 0,
+            'berita_serah_terima' => $request->has('berita_serah_terima') ? 1 : 0,
+            'berita_pembayaran' => $request->has('berita_pembayaran') ? 1 : 0,
+            'berita_pemeriksaan' => $request->has('berita_pemeriksaan') ? 1 : 0,
+            // ... repeat for other checkbox fields
+        ];
+        CeklisForm::create($data);
         $checkboxFields = ['kwitansi', 'nota_bukti_invoice', 'surat_pemesanan', 'dok_kontrak', 'surat_perjanjian', 'ringkasan_kontrak', 'dok_epurchasing', 'dok_pendukung', 'tkdn', 'berita_serah_terima', 'berita_pembayaran', 'berita_pemeriksaan'];
         foreach ($checkboxFields as $field) {
-        $data[$field] = $request->has($field) ? 1 : 0;
-    }
-        // Set nilai default 0 untuk kolom lainnya
+            $data[$field] = $request->has($field) ? 1 : 0;
+        }
     
-        $pdfPath = $this->generatePDF($data['dpa_id']);
-        $data['dpa_id'] = $request->input('dpa_id');
+        // Create the CeklisForm record
         CeklisForm::create($data);
-
-         // Generate and save PDF
-        $pdfPath = $this->generatePDF($data['dpa_id']);
-
+    
+        // Generate and save PDF
+        $pdfPath = $this->generatePDF($dpa_id);
         $request->session()->put('pdfPath', $pdfPath);
-
+    
         return redirect()->route('ceklisform.result', ['id' => $data['dpa_id']]);
-            // ->with('success', 'Data berhasil disimpan.')->with('pdfPath', $pdfPath);
     }
+    
+   
+
     
     public function generatePDF($dpa_id)
     {

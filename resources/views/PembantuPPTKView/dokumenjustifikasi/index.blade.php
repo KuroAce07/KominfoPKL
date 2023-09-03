@@ -13,6 +13,8 @@
                     Dokumen Justifikasi Details
                 </div>
                 <div class="card-body">
+                    <p><strong>Nomor DPA:</strong> {{ $dokumen->dpa->kode_sub_kegiatan }}</p>
+                    <p><strong>Nama Kegiatan:</strong> {{ $dokumen->dpa->nama_sub_kegiatan }}</p>
                     <p><strong>Nama:</strong> {{ $dokumen->nama }}</p>
                     <p><strong>Tanggal:</strong> {{ $dokumen->tanggal }}</p>
                     <p><strong>Keterangan:</strong> {{ $dokumen->keterangan }}</p>
@@ -26,6 +28,7 @@
                             <span class="text-warning">Dokumen Belum Disetujui</span>
                         @endif
                     </p>
+                    <p><strong>Alasan:</strong> {{ $dokumen->alasan }}</p>
                 </div>
                 <div class="card-footer">
                     <!-- Add link to edit page for each $dokumen -->

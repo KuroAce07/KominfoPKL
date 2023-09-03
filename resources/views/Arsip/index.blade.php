@@ -53,7 +53,7 @@
                                 <tr>
                                     <td>{{ $arsip->id }}</td>
                                     <td>{{ $arsip->nama }}</td>
-                                    <td>{{ $arsip->kegiatan }}</td>
+                                    <td>{{ $arsip->nama_sub_kegiatan }}</td>
                                     <td>{{ $arsip->sub_kegiatan }}</td>
                                     <td>{{ $arsip->uraian_belanja }}</td>
                                     <td>{{ $arsip->sumber_dana }}</td>

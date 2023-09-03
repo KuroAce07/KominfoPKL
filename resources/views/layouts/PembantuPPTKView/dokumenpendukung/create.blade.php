@@ -12,7 +12,7 @@
             <select name="dpa_id" id="dpa_id" class="form-control" required>
                 <option value="" disabled selected>Select DPA</option>
                 @foreach ($dpas as $dpa)
-                    <option value="{{ $dpa->id }}">{{ $dpa->nomor_dpa }}</option>
+                    <option value="{{ $dpa->id }}">{{ $dpa->kode_sub_kegiatan }}</option>
                 @endforeach
             </select>
         </div>

@@ -13,13 +13,16 @@ class CreateMultipleTables extends Migration
             $table->string('jenis_kontrak');
             $table->string('nama_kegiatan_transaksi');
             $table->date('tanggal_kontrak');
-            $table->decimal('jumlah_uang', 10, 2);
-            $table->decimal('ppn', 10, 2)->nullable();
-            $table->decimal('pph', 10, 2)->nullable();
-            $table->decimal('jumlah_potongan', 10, 2)->nullable();
-            $table->decimal('jumlah_total', 10, 2);
+            $table->integer('jumlah_uang');
+            $table->integer('ppn')->nullable();
+            $table->integer('pph')->nullable();
+            $table->integer('potongan_lain')->nullable();
+            $table->integer('jumlah_potongan')->nullable();
+            $table->integer('jumlah_total');
             $table->text('keterangan')->nullable();
             $table->string('upload_dokumen')->nullable();
+            $table->unsignedTinyInteger('approval')->default(0);
+            $table->text('alasan')->nullable();
             $table->timestamps();
         
             // Add the dpa_id column
@@ -27,32 +30,37 @@ class CreateMultipleTables extends Migration
         
             // Define the foreign key constraint
             $table->foreign('dpa_id')->references('id')->on('dpa')->onDelete('cascade');
-        });
+        });        
 
         Schema::create('dokumen_pendukungs', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
             $table->date('tanggal');
+            $table->integer('approval')->default(0);
             $table->text('keterangan')->nullable();
-            $table->string('upload_dokumen')->nullable();
+            $table->text('upload_dokumen')->nullable();
+            $table->text('alasan')->nullable();
             $table->timestamps();
-
+        
             $table->unsignedBigInteger('dpa_id');
-
+        
             // Define the foreign key constraint
             $table->foreign('dpa_id')->references('id')->on('dpa')->onDelete('cascade');
         });
+        
 
         Schema::create('e_purchasings', function (Blueprint $table) {
             $table->id();
             $table->string('e_commerce');
             $table->string('id_paket');
             $table->integer('jumlah');
-            $table->decimal('harga_total', 10, 2);
+            $table->integer('harga_total')->nullable();
             $table->date('tanggal_buat');
             $table->date('tanggal_ubah');
             $table->string('nama_pejabat_pengadaan');
             $table->string('nama_penyedia');
+            $table->unsignedTinyInteger('approval')->default(0);
+            $table->text('alasan')->nullable();
             $table->timestamps();
 
             $table->unsignedBigInteger('dpa_id');
@@ -67,6 +75,8 @@ class CreateMultipleTables extends Migration
             $table->date('tanggal');
             $table->text('keterangan')->nullable();
             $table->string('upload_dokumen')->nullable();
+            $table->unsignedTinyInteger('approval')->default(0);
+            $table->text('alasan')->nullable();
             $table->timestamps();
 
             $table->unsignedBigInteger('dpa_id');
@@ -81,6 +91,8 @@ class CreateMultipleTables extends Migration
             $table->date('tanggal');
             $table->text('keterangan')->nullable();
             $table->string('upload_dokumen')->nullable();
+            $table->unsignedTinyInteger('approval')->default(0);
+            $table->text('alasan')->nullable();
             $table->timestamps();
 
             $table->unsignedBigInteger('dpa_id');
@@ -96,7 +108,8 @@ class CreateMultipleTables extends Migration
             $table->text('keterangan')->nullable();
             $table->string('upload_dokumen')->nullable();
             $table->timestamps();
-
+            $table->unsignedTinyInteger('approval')->default(0);
+            $table->text('alasan')->nullable();
             $table->unsignedBigInteger('dpa_id');
 
             // Define the foreign key constraint
@@ -109,6 +122,8 @@ class CreateMultipleTables extends Migration
             $table->date('tanggal');
             $table->text('keterangan')->nullable();
             $table->string('upload_dokumen')->nullable();
+            $table->unsignedTinyInteger('approval')->default(0);
+            $table->text('alasan')->nullable();
             $table->timestamps();
 
             $table->unsignedBigInteger('dpa_id');
@@ -123,6 +138,8 @@ class CreateMultipleTables extends Migration
             $table->text('detail')->nullable();
             $table->string('jenis_pengadaan')->nullable();
             $table->text('keterangan')->nullable();
+            $table->unsignedTinyInteger('approval')->default(0);
+            $table->text('alasan')->nullable();
             $table->timestamps();
 
             $table->unsignedBigInteger('dpa_id');

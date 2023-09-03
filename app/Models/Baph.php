@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Baph extends Model
 {
     protected $table = 'baphs';
-    protected $fillable = ['nomor', 'tanggal', 'keterangan', 'upload_dokumen', 'approval', ];// Add the approval attribute to the $fillable array];
+    protected $fillable = ['nomor', 'tanggal', 'keterangan', 'upload_dokumen', 'approval', 'alasan',];// Add the approval attribute to the $fillable array];
 
     public function dpa()
     {

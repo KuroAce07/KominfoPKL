@@ -23,7 +23,7 @@
     </div>
     <div class="content">
         {{-- Display DPA details in the PDF content --}}
-        <p><strong>Nomor DPA:</strong> {{ $dpa->nomor_dpa }}</p>
+        <p><strong>Nomor DPA:</strong> {{ $dpa->kode_sub_kegiatan }}</p>
         {{-- ... Display more details ... --}}
     </div>
 </body>

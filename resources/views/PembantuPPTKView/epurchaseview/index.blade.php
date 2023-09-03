@@ -13,13 +13,15 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
+                    <p><strong>Nomor DPA:</strong> {{ $ePurchasing->dpa->kode_sub_kegiatan }}</p>
+                    <p><strong>Nama Kegiatan:</strong> {{ $ePurchasing->dpa->nama_sub_kegiatan }}</p>
                     <p><strong>E-commerce:</strong> {{ $ePurchasing->e_commerce }}</p>
                     <p><strong>ID Paket:</strong> {{ $ePurchasing->id_paket }}</p>
                     <p><strong>Jumlah:</strong> {{ $ePurchasing->jumlah }}</p>
                     <p><strong>Harga Total:</strong> {{ $ePurchasing->harga_total }}</p>
                     <p><strong>Tanggal Buat:</strong> {{ $ePurchasing->tanggal_buat }}</p>
                     <p><strong>Tanggal Ubah:</strong> {{ $ePurchasing->tanggal_ubah }}</p>
-                    <p><strong>Nama Pejabat Pengadaan:</strong> {{ $ePurchasing->nama_pejabat_pengadaan }}</p>
+                    <p><strong>Nama Pejabat Pengadaan:</strong> {{ $ePurchasing->first_name }} {{ $ePurchasing->last_name }}</p>
                     <p><strong>Nama Penyedia:</strong> {{ $ePurchasing->nama_penyedia }}</p>
                     <p><strong>Status Persetujuan:</strong>
                         @if ($ePurchasing->approval === 1)
@@ -30,6 +32,7 @@
                             <span class="text-warning">Belum Disetujui</span>
                         @endif
                     </p>
+                    <p><strong>Alasan:</strong> {{ $ePurchasing->alasan }}</p>
                 </div>
             </div>
         </div>

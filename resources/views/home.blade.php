@@ -106,19 +106,19 @@
     // Get all DPA records
     $dpas = \App\Models\DPA::all();
 
-    // Initialize the total dana
+    // Initialize the total nilai_rincian
     $totalDana = 0;
 
-    // Loop through each DPA record and add its dana value to the total
+    // Loop through each DPA record and add its nilai_rincian value to the total
     foreach ($dpas as $dpa) {
         // Remove currency symbol and non-numeric characters from the string
-        $danaValue = preg_replace('/[^0-9]/', '', $dpa->dana);
+        $danaValue = preg_replace('/[^0-9]/', '', $dpa->nilai_rincian);
 
         // Convert the cleaned string value to a numeric value and add it to the total
         $totalDana += (int) $danaValue;
     }
     $real = 10948000;
-    $sisa = $real - $totalDana;
+    $sisa = $totalDana - $real;
 @endphp
 <div class="col-12 d-flex justify-content-center">
 <div class="col-xl-3 col-md-6 mb-4">
@@ -127,7 +127,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                        Dana Yang Dibutuhkan</div>
+                        Anggaran Total</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                         Rp. {{ number_format($totalDana, 2, ',', '.') }}
                     </div>
@@ -146,7 +146,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                        Dana Yang Terealisasi</div>
+                        Realisasi Anggaran</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                         Rp. {{ number_format( $real, 2, ',', '.') }}
                     </div>
@@ -165,7 +165,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                        Dana Yang Kurang </div>
+                        Sisa Anggaran </div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                         Rp. {{ number_format( $sisa, 2, ',', '.') }}
                     </div>

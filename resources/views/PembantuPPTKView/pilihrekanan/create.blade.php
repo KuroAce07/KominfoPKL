@@ -16,15 +16,27 @@
     <form action="{{ route('PembantuPPTKView.pilihrekanan.store') }}" method="post">
         @csrf
         <div class="form-group">
-        <label for="dpa_id">DPA:</label>
-        <select name="dpa_id" id="dpa_id" class="form-control" required disabled>
-            @foreach($dpas as $dpa)
-                <option value="{{ $dpa->id }}" {{ request()->query('dpaId') == $dpa->id ? 'selected' : '' }}>
-                    {{ $dpa->nomor_dpa }}
-                </option>
-                @endforeach
-            </select>
-        </div>
+<div class="form-group">
+    <label for="dpa_id">DPA:</label>
+    <select name="dpa_id" id="dpa_id" class="form-control" required readonly>
+        @foreach($dpas as $dpa)
+            <option value="{{ $dpa->id }}" {{ request()->query('dpaId') == $dpa->id ? 'selected' : '' }}>
+                {{ $dpa->kode_sub_kegiatan }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="jenis_kontrak">Nama Kegiatan/Sub Kegiatan:</label>
+    <select name="dpa_id" id="dpa_id" class="form-control" required readonly>
+        @foreach($dpas as $dpa)
+            <option value="{{ $dpa->id }}" {{ request()->query('dpaId') == $dpa->id ? 'selected' : '' }}>
+                {{ $dpa->nama_sub_kegiatan }}
+            </option>
+        @endforeach
+    </select>
+</div>
         <div class="form-group">
             <label for="pilih">Pilih:</label>
             <select name="pilih" class="form-control" required>
@@ -50,6 +62,7 @@
             <textarea name="keterangan" class="form-control"></textarea>
         </div>
         <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        </div>
     </form>
 </div>
 @endsection

@@ -32,7 +32,7 @@ class ArsipLamaImport implements ToCollection
                 'sumber_dana' => (string) $row[4],
                 'uraian_belanja' => (string) $row[5],
                 'sub_kegiatan' => (string) $row[6],
-                'kegiatan' => (string) $row[7],
+                'nama_sub_kegiatan' => (string) $row[7],
                 'nama' => (string) $row[8],
                 'pph_21' => (string) $row[9],
                 'pph_22' => (string) $row[10],

@@ -59,6 +59,11 @@ class DPA extends Model
         return $this->belongsTo(User::class, 'user_id3');
     }
 
+    public function bendaharaUsers()
+    {
+        return $this->belongsTo(User::class, 'user_id4');
+    }
+
     public function dokumenKontraks()
     {
         return $this->hasMany(DokumenKontrak::class, 'dpa_id');
