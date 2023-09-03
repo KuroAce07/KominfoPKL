@@ -139,8 +139,13 @@ Route::post('/UploadDpa', [UploadDPAController::class, 'store'])->name('UploadDp
 // View List DPA
 Route::resource('ViewDPA', App\Http\Controllers\ViewDPAController::class);
 //view sub DPA
-Route::get('/ViewDPA/{dpa}', 'ViewDPAController@show')->name('ViewDPA.show');
+Route::get('/DPA/Lama/{id_dpa}', [ViewDPAController::class, 'dppa'])->name('ViewDPA.dppa');
+Route::get('/RAK', [ViewDPAController::class, 'rak'])->name('ViewDPA.rak');
+Route::get('/RAK/Edit/{id}', [ViewDPAController::class, 'rak'])->name('ViewDPA.editrak');
+Route::get('/RAK/Realisasi/{id}', [ViewDPAController::class, 'realrak'])->name('ViewDPA.realrak');
+Route::put('/RAK/Realisasi/{id}', [ViewDPAController::class, 'updateRealisasi'])->name('ViewDPA.updateRealisasi');
 Route::delete('/deleteDPA/{id}', [ViewDPAController::class, 'destroy'])->name('ViewDPA.destroy');
+Route::put('/RAK/{dpa}', [ViewDPAController::class, 'update'])->name('updaterak');
 Route::get('/EditDPA/{id}', [ViewDPAController::class, 'edit'])->name('editDPA');
 Route::get('/ViewPDF/{id}', [ViewDPAController::class, 'viewPDF'])->name('viewPDF');
 Route::put('/DPA/{dpa}', [ViewDPAController::class, 'update'])->name('updateDPA');

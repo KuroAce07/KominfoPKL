@@ -65,7 +65,7 @@ public function update(Request $request, $id)
     $rekanan = Rekanan::findOrFail($id);
     $rekanan->update($validatedData);
 
-    return redirect()->route('rekanans.index')->with('success', 'Rekanan updated successfully!');
+    return redirect()->route('rekanan.index')->with('success', 'Rekanan updated successfully!');
 }
 
     // Other controller methods for CRUD operations
