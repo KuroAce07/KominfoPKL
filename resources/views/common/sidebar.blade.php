@@ -88,7 +88,9 @@
                     <h6 class="collapse-header">DPA</h6>
                     <a class="collapse-item" href="{{ route('UploadDPA.index') }}">Upload DPA</a>
                     <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
-                    <a class="collapse-item" href="{{ route('ViewDPA.track') }}">Tracking DPA</a>
+                    {{-- <a class="collapse-item" href="{{ route('ViewDPA.dppa') }}">Lihat List DPA lama</a>
+                    <a class="collapse-item" href="{{ route('ViewDPA.track') }}">Tracking DPA</a>  --}}
+                    <a class="collapse-item" href="{{ route('ViewDPA.rak') }}">Rencana Anggaran Kas</a>
                 </div>
             </div>
             <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">

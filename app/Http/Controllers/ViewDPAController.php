@@ -6,28 +6,37 @@ use Illuminate\Http\Request;
 use App\Models\DPA;
 use App\Models\User;
 use App\Traits\WablasTrait;
+use App\Models\Realisasi;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 
 class ViewDPAController extends Controller
 {
     public function index()
-    {
-        $dpaData = DPA::with('subDPA', 'pejabatPengadaanUser')->get();
-        $users = User::where('role_id', 3)->get();
-        $pejabatPengadaanUsers = User::where('role_id', 4)->get();
-        $pembantupptkUsers = User::where('role_id', 5)->get();
-    
-        // Filter DPAs based on user access
-        $accessibleDpaData = $dpaData->filter(function ($dpa) {
-            return $this->canViewDpa($dpa);
-        });
-    
-        // Check if the logged-in user has role_id 1 (admin) and allow access to all DPAs
-        if (auth()->user()->role_id === 1) {
-            $accessibleDpaData = $dpaData;
-        }
-    
-        return view('ViewDPA.index', ['dpaData' => $accessibleDpaData, 'users' => $users, 'pejabatPengadaanUsers' => $pejabatPengadaanUsers, 'pembantupptkUsers' => $pembantupptkUsers]);
-    }
+{
+    // Subquery to select the maximum 'id' for each 'id_dpa'
+    $subquery = DPA::selectRaw('MAX(id) as max_id')
+        ->groupBy('id_dpa');
+
+    // Query to retrieve DPA data by joining with the subquery
+    $dpaData = DPA::joinSub($subquery, 'max_ids', function ($join) {
+        $join->on('dpa.id', '=', 'max_ids.max_id');
+    })
+    ->orderBy('id_dpa')
+    ->paginate(10);
+
+    // Retrieve users with specific role IDs
+    $users = User::where('role_id', 3)->get();
+    $pejabatPengadaanUsers = User::where('role_id', 4)->get();
+    $pembantupptkUsers = User::where('role_id', 5)->get();
+
+    return view('ViewDPA.index', [
+        'dpaData' => $dpaData,
+        'users' => $users,
+        'pejabatPengadaanUsers' => $pejabatPengadaanUsers,
+        'pembantupptkUsers' => $pembantupptkUsers
+    ]);
+}
 
     public function assignDpa($dpaId, $userId)
     {
@@ -91,14 +100,6 @@ class ViewDPAController extends Controller
         return auth()->user()->id === $dpa->user_id || auth()->user()->id === $dpa->user_id2|| auth()->user()->id === $dpa->user_id3;
     }
     
-    
-    public function show($dpaId)
-{
-    $dpa = DPA::with('subDPA')->findOrFail($dpaId);
-
-    return view('ViewDPA.show', ['dpa' => $dpa]);
-}
-
 public function edit($dpaId)
 {
     $dpa = DPA::findOrFail($dpaId);
@@ -119,7 +120,85 @@ public function destroy($id)
     // Perform the deletion
     $dpa->delete();
 
-    return redirect()->route('yourDPAIndexRoute')->with('success', 'DPA deleted successfully.');
+    return redirect()->route('ViewDPA.index')->with('success', 'DPA deleted successfully.');
+}
+
+public function rak()
+{
+    $dpaData = DPA::all(); // Fetch all DPAs from the database
+
+    return view('ViewDPA.rak', compact('dpaData'));
+}
+
+public function editrak($dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+    $users = User::where('role_id', 3)->get(); // Adjust the query based on your needs
+
+    return view('ViewDPA.edit', ['dpa' => $dpa, 'users' => $users]);
+}
+
+public function realrak($dpaId)
+{
+    $dpa = DPA::findOrFail($dpaId);
+    $realisasi = Realisasi::where('dpa_id', $dpa->id)->first(); // Retrieve the associated Realisasi record
+    return view('ViewDPA.realrak', ['dpa' => $dpa, 'realisasi' => $realisasi]); // Pass both $dpa and $realisasi to the view
+}
+
+public function UpdateRealisasi(Request $request, $dpaId)
+{
+    // Check if a DPA with the given ID exists
+    $dpa = DPA::findOrFail($dpaId);
+
+    // Get values from the form inputs
+    $bulanValues = [];
+    for ($i = 1; $i <= 12; $i++) {
+        $bulanValue = "bulan_$i";
+        $bulanValues[$bulanValue] = $request->input("bulan_$i");
+    }
+    $totalRak = $request->input('total_rak');
+
+    // Find an existing Realisasi record by dpa_id
+    $realisasi = Realisasi::where('dpa_id', $dpa->id)->first();
+    if ($realisasi) {
+        // Update the existing record in the realisasi table
+        $realisasi->update([
+            'bulan_1' => $bulanValues['bulan_1'],
+            'bulan_2' => $bulanValues['bulan_2'],
+            'bulan_3' => $bulanValues['bulan_3'],
+            'bulan_4' => $bulanValues['bulan_4'],
+            'bulan_5' => $bulanValues['bulan_5'],
+            'bulan_6' => $bulanValues['bulan_6'],
+            'bulan_7' => $bulanValues['bulan_7'],
+            'bulan_8' => $bulanValues['bulan_8'],
+            'bulan_9' => $bulanValues['bulan_9'],
+            'bulan_10' => $bulanValues['bulan_10'],
+            'bulan_11' => $bulanValues['bulan_11'],
+            'bulan_12' => $bulanValues['bulan_12'],
+            'total_rak' => $totalRak,
+        ]);
+    } else {
+        // Create a new Realisasi record
+        Realisasi::create([
+            'dpa_id' => $dpa->id,
+            'bulan_1' => $bulanValues['bulan_1'],
+            'bulan_2' => $bulanValues['bulan_2'],
+            'bulan_3' => $bulanValues['bulan_3'],
+            'bulan_4' => $bulanValues['bulan_4'],
+            'bulan_5' => $bulanValues['bulan_5'],
+            'bulan_6' => $bulanValues['bulan_6'],
+            'bulan_7' => $bulanValues['bulan_7'],
+            'bulan_8' => $bulanValues['bulan_8'],
+            'bulan_9' => $bulanValues['bulan_9'],
+            'bulan_10' => $bulanValues['bulan_10'],
+            'bulan_11' => $bulanValues['bulan_11'],
+            'bulan_12' => $bulanValues['bulan_12'],
+            'total_rak' => $totalRak,
+        ]);
+    }
+
+    // Redirect back to the view
+    return redirect()->route('ViewDPA.realrak', $dpaId)->with('success', 'Realisasi stored/updated successfully.');
 }
 
 
@@ -164,8 +243,32 @@ public function update(Request $request, $dpaId)
 
 public function tracking()
 {
-    $dpaData = DPA::all();
-
+    $dpaData = DPA::paginate(10);
     return view('ViewDPA.track', ['dpaData' => $dpaData]);
 }
+
+public function dppa($id_dpa)
+{
+    $dppaData = DPA::where('id_dpa', $id_dpa)
+        ->where('tipe', 'dppa')
+        ->get();
+
+    $combinedData = [];
+
+    foreach ($dppaData as $item) {
+        $matchingRow = DPA::where('id_dpa', $item->id_dpa)
+            ->where('tipe', '<>', 'dppa') // Exclude the current row's tipe value
+            ->first();
+
+        if ($matchingRow) {
+            $combinedData[] = [
+                'dppaRow' => $item,
+                'matchingRow' => $matchingRow,
+            ];
+        }
+    }
+
+    return view('ViewDPA.dppa', compact('combinedData'));
+}
+
 }

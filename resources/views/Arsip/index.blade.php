@@ -28,15 +28,15 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Nama</th>
+                                <th>Kegiatan</th>
+                                <th>Sub Kegiatan</th>
+                                <th>Uraian Belanja</th>
+                                <th>Sumber Dana</th>
                                 <th>No SPM</th>
                                 <th>Tanggal SPM</th>
                                 <th>Nilai SPM</th>
                                 <th>Terbilang</th>
-                                <th>Sumber Dana</th>
-                                <th>Uraian Belanja</th>
-                                <th>Sub Kegiatan</th>
-                                <th>Kegiatan</th>
-                                <th>Nama</th>
                                 <th>PPH 21</th>
                                 <th>PPH 22</th>
                                 <th>PPH 23</th>
@@ -52,15 +52,15 @@
                             @foreach ($arsipList as $arsip)
                                 <tr>
                                     <td>{{ $arsip->id }}</td>
+                                    <td>{{ $arsip->nama }}</td>
+                                    <td>{{ $arsip->kegiatan }}</td>
+                                    <td>{{ $arsip->sub_kegiatan }}</td>
+                                    <td>{{ $arsip->uraian_belanja }}</td>
+                                    <td>{{ $arsip->sumber_dana }}</td>
                                     <td>{{ $arsip->no_spm }}</td>
                                     <td>{{ \Carbon\Carbon::createFromFormat('Y-m-d', $arsip->tanggal_spm)->formatLocalized('%d %B %Y') }}</td>
                                     <td>Rp. {{ number_format($arsip->nilai_spm, 2, ',', '.') }}</td>
                                     <td>{{ numberToWordsIDR($arsip->nilai_spm) }} rupiah</td>
-                                    <td>{{ $arsip->sumber_dana }}</td>
-                                    <td>{{ $arsip->uraian_belanja }}</td>
-                                    <td>{{ $arsip->sub_kegiatan }}</td>
-                                    <td>{{ $arsip->kegiatan }}</td>
-                                    <td>{{ $arsip->nama }}</td>
                                     <td>{{ number_format(intval($arsip->pph_21), 0, ',', '.') }}</td>
                                     <td>{{ number_format(intval($arsip->pph_22), 0, ',', '.') }}</td>
                                     <td>{{ number_format(intval($arsip->pph_23), 0, ',', '.') }}</td>

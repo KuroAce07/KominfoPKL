@@ -19,33 +19,61 @@
             <form action="{{ route('updateDPA', ['dpa' => $dpa->id]) }}" method="post">
                 @csrf
                 @method('PUT')
-
-                {{-- Your form fields and inputs go here --}}
                 <div class="form-group">
-                    <label for="nomor_dpa">Nomor DPA</label>
-                    <input type="text" class="form-control" id="nomor_dpa" name="nomor_dpa" value="{{ $dpa->nomor_dpa }}">
-                </div>
-
-                <!-- Additional Data Display -->
-                <div class="form-group">
-                    <label for="urusan_pemerintahan">Urusan Pemerintahan</label>
-                    <input type="text" class="form-control" id="urusan_pemerintahan" name="urusan_pemerintahan" value="{{ $dpa->urusan_pemerintahan }}" >
+                    <label for="tahun">Tahun</label>
+                    <input type="text" class="form-control" id="tahun" name="tahun" value="{{ $dpa->tahun }}">
                 </div>
                 <div class="form-group">
-                    <label for="bidang_urusan">Bidang Urusan</label>
-                    <input type="text" class="form-control" id="bidang_urusan" name="bidang_urusan" value="{{ $dpa->bidang_urusan }}" >
+                    <label for="daerah">Daerah</label>
+                    <input type="text" class="form-control" id="daerah" name="daerah" value="{{ $dpa->daerah }}">
                 </div>
                 <div class="form-group">
-                    <label for="program">Program</label>
-                    <input type="text" class="form-control" id="program" name="program" value="{{ $dpa->program }}" >
+                    <label for="kode_urusan">Kode Urusan</label>
+                    <input type="text" class="form-control" id="kode_urusan" name="kode_urusan" value="{{ $dpa->kode_urusan }}">
                 </div>
                 <div class="form-group">
-                    <label for="kegiatan">Kegiatan</label>
-                    <input type="text" class="form-control" id="kegiatan" name="kegiatan" value="{{ $dpa->kegiatan }}" >
+                    <label for="kode_sub_skpd">Kode Sub SKPD</label>
+                    <input type="text" class="form-control" id="kode_sub_skpd" name="kode_sub_skpd" value="{{ $dpa->kode_sub_skpd }}">
                 </div>
                 <div class="form-group">
-                    <label for="dana">Dana Yang Dibutuhkan</label>
-                    <input type="text" class="form-control" id="dana" name="dana" value="{{ $dpa->dana }}" >
+                    <label for="nama_sub_skpd">Nama Sub SKPD</label>
+                    <input type="text" class="form-control" id="nama_sub_skpd" name="nama_sub_skpd" value="{{ $dpa->nama_sub_skpd }}">
+                </div>
+                <div class="form-group">
+                    <label for="kode_program">Kode Program</label>
+                    <input type="text" class="form-control" id="kode_program" name="kode_program" value="{{ $dpa->kode_program }}">
+                </div>
+                <div class="form-group">
+                    <label for="nama_program">Nama Program</label>
+                    <input type="text" class="form-control" id="nama_program" name="nama_program" value="{{ $dpa->nama_program }}">
+                </div>
+                <div class="form-group">
+                    <label for="kode_kegiatan">Kode Kegiatan</label>
+                    <input type="text" class="form-control" id="kode_kegiatan" name="kode_kegiatan" value="{{ $dpa->kode_kegiatan }}">
+                </div>
+                <div class="form-group">
+                    <label for="nama_kegiatan">Nama Kegiatan</label>
+                    <input type="text" class="form-control" id="nama_kegiatan" name="nama_kegiatan" value="{{ $dpa->nama_kegiatan }}">
+                </div>
+                <div class="form-group">
+                    <label for="kode_sub_kegiatan">Kode Sub Kegiatan</label>
+                    <input type="text" class="form-control" id="kode_sub_kegiatan" name="kode_sub_kegiatan" value="{{ $dpa->kode_sub_kegiatan }}">
+                </div>
+                <div class="form-group">
+                    <label for="nama_sub_kegiatan">Nama Sub Kegiatan</label>
+                    <input type="text" class="form-control" id="nama_sub_kegiatan" name="nama_sub_kegiatan" value="{{ $dpa->nama_sub_kegiatan }}">
+                </div>
+                <div class="form-group">
+                    <label for="kode_akun">Kode Akun</label>
+                    <input type="text" class="form-control" id="kode_akun" name="kode_akun" value="{{ $dpa->kode_akun }}">
+                </div>
+                <div class="form-group">
+                    <label for="nama_akun">Nama Akun</label>
+                    <input type="text" class="form-control" id="nama_akun" name="nama_akun" value="{{ $dpa->nama_akun }}">
+                </div>
+                <div class="form-group">
+                    <label for="nilai_rincian">Nilai Rincian</label>
+                    <input type="text" class="form-control" id="nilai_rincian" name="nilai_rincian" value="Rp. {{ number_format($dpa->nilai_rincian, 0, ',', '.') }}">
                 </div>
                 <div class="form-group">
     <label for="pptk">PPTK</label>

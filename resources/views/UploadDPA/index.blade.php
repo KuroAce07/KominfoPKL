@@ -1,43 +1,34 @@
 @extends('layouts.app')
 
-@section('title', 'Roles')
-
 @section('content')
-<div class="container-fluid">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Upload DPA Excel File</div>
 
-    <div class="card shadow mb-4">
-        <div class="card-body">
+                <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
 
-            @if ($message = Session::get('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong>{{ $message }}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    @if(session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
+
+                    <form action="{{ route('UploadDPA.index') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+
+                        <div class="form-group">
+                            <label for="file">Select Excel File</label>
+                            <input type="file" name="file" class="form-control-file" accept=".xlsx,.xls" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
                 </div>
-            @endif
-
-            <form action="{{ route('UploadDPA.index') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-
-                <div class="mb-3">
-                    <label class="form-label" for="inputFile">Choose File:</label>
-                    <input 
-                        type="file" 
-                        name="file" 
-                        id="inputFile"
-                        class="form-control @error('file') is-invalid @enderror">
-                    @error('file')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">Upload</button>
-                </div>
-
-            </form>
-
+            </div>
         </div>
     </div>
-
 </div>
 @endsection

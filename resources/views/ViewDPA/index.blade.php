@@ -19,15 +19,17 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nomor DPA</th>
-                            <th>Urusan Pemerintahan</th>
-                            <th>Bidang Urusan</th>
-                            <th>Program</th>
-                            <th>Kegiatan</th>
-                            <th>Dana Yang Dibutuhkan</th>
-                            <th>PPTK</th>
-                            <th>Actions</th>
+                                <th>Nomor</th>   
+                                <th>Kode Sub Kegiatan</th>                       
+                                <th>Sub Kegiatan</th>
+                                <th>Kode Akun</th>
+                                <th>Akun</th>
+                                <th>Nilai Rincian</th>
+                                <th>Status</th>
+                                <th>Detail</th>
+                                <th>Jenis</th>
+                                <th>Assign</th>
+                                <th>Actions</th>
                             @hasrole('PPTK')
                             <th>Pejabat Pengadaan</th>
                             <th>Pembantu PPTK</th>
@@ -39,20 +41,38 @@
                     </thead>
                     <tbody>
                         @foreach ($dpaData as $dpa)
-                            <tr class="row-clickable" data-dpa-id="{{ $dpa->id }}">
-                                <td>{{ $dpa->id }}</td>
-                                <td>{{ $dpa->nomor_dpa }}</td>
-                                <td>{{ $dpa->urusan_pemerintahan }}</td>
-                                <td>{{ $dpa->bidang_urusan }}</td>
-                                <td>{{ $dpa->program }}</td>
-                                <td>{{ $dpa->kegiatan }}</td>
-                                <td>
-                                    @if (is_numeric($dpa->dana))
-                                        Rp{{ number_format(floatval($dpa->dana), 2, ',', '.') }}
-                                    @else
-                                        {{ $dpa->dana }}
-                                    @endif
+                        <tr>
+                            {{-- <tr class="row-clickable" data-dpa-id="{{ $dpa->id }}"> --}}
+                                <td>{{ $dpa->id_dpa }}</td>
+                                <td>{{ $dpa->kode_sub_kegiatan }}</td>
+                                <td>{{ $dpa->nama_sub_kegiatan }}</td>
+                                <td>{{ $dpa->kode_akun }}</td>
+                                <td>{{ $dpa->nama_akun }}</td>
+                                <td>Rp. {{ number_format($dpa->nilai_rincian, 0, ',', '.') }}</td>
+                                <td>@if(!is_null($dpa->user_id4))
+                                    Selesai
+                                @else
+                                    Belum Selesai
+                                @endif
                                 </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <!-- Detail button trigger -->
+                                        <button type="button" class="btn btn-info detail-btn" data-toggle="modal" data-target="#detailModal{{ $dpa->id }}">
+                                            Detail
+                                        </button>
+                                        <!-- Tracking button trigger -->
+                                        <button type="button" class="btn btn-Primary tracking-btn" data-toggle="modal" data-target="#trackingModal{{ $dpa->id }}">
+                                            Tracking
+                                        </button>
+                                    
+                                        @if ($dpa->tipe === 'DPPA')
+                                            <a href="{{ route('ViewDPA.dppa', ['id_dpa'=>$dpa->id_dpa]) }}" class="btn btn-Success" style="text-decoration: none; color: white;">Cek DPA</a>
+                                        @endif
+                                        <a href="{{ route('ViewDPA.realrak', ['id' => $dpa->id_dpa]) }}" class="btn btn-warning" target="_blank">RAK</a>
+                                    </div>
+                                </td>                     
+                                <td>{{ $dpa->tipe }}</td>
                                 <td>
                                     @if ($dpa->assignedUser)
                                         {{ $dpa->assignedUser->full_name }}
@@ -75,13 +95,22 @@
                                         <a href="{{ route('editDPA', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Edit</a>
                                         <button type="button" class="btn btn-danger delete-btn" onclick="deleteDpa('{{ route('ViewDPA.destroy', $dpa->id) }}')">Delete</button>
                                         @endhasrole
-                                        <a href="{{ asset('uploads/'.$dpa->id.'/'.$dpa->id.'.pdf') }}" class="btn btn-info view-pdf-btn" target="_blank">View PDF</a>
                                         @hasrole('Pejabat Pengadaan')
                                         <a href="{{ route('pengadaan.create_pengadaan', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Buat Dokumen Pemilihan</button> </a>
                                         @endhasrole
                                     </div>
                                 </td>                                
-                                                                
+                                
+                                @hasrole('Bendahara')
+                                <td> 
+                                    <div class="btn-group">
+                                        <a href="{{ route('ceklisform.index', ['id' => $dpa->id]) }}" class="btn btn-primary edit-btn">Ceklis</a>
+                                        <a href="{{ route('bendahara.create_spp', ['id' => $dpa->id]) }}" class="btn btn-success edit-btn">SPP</a>
+                                        <a href="{{ route('bendahara.create_spm', ['id' => $dpa->id]) }}" class="btn btn-warning edit-btn">SPM</a>
+                                        <a href="{{ route('bendahara.create_sp2d', ['id' => $dpa->id]) }}" class="btn btn-danger edit-btn">SP2D</a>
+                                    </div>
+                                </td>
+                           @endhasrole                            
 
                                 @hasrole('PPTK')
                                 <td>
@@ -141,11 +170,151 @@
                         @endforeach
                     </tbody>
                 </table>
+                {{ $dpaData->links() }}
+            </div>
+        </div>
+    </div>
+    {{-- TOMBOL DETAIL --}}
+    @foreach ($dpaData as $dpa)
+<!-- Detail Modal for DPA ID -->
+<div class="modal fade" id="detailModal{{ $dpa->id }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel{{ $dpa->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel{{ $dpa->id }}">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                    <th>ID</th> 
+                                    <th>Kode Urusan</th>
+                                    <th>Urusan</th>
+                                    <th>Kode Bidang Urusan</th>
+                                    <th>Bidang Urusan</th>
+                                    <th>Kode SKPD</th>
+                                    <th>SKPD</th>
+                                    <th>Kode Sub SKPD</th>
+                                    <th>Sub SKPD</th>
+                                    <th>Kode Program</th>
+                                    <th>Program</th>
+                                    <th>Kode Kegiatan</th>
+                                    <th>Kegiatan</th>          
+                                    <th>Kode Sub Kegiatan</th>             
+                                    <th>Sub Kegiatan</th>
+                                    <th>Kode Akun</th>
+                                    <th>Nama Akun</th>
+                                    <th>Nilai Rincian</th>  
+                                    <th>Total RAK</th>   
+                                    <th>Tipe Dokumen</th>                    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ $dpa->id_dpa }}</td>
+                                <td>{{ $dpa->kode_urusan }}</td>
+                                <td>{{ $dpa->nama_urusan }}</td>
+                                <td>{{ $dpa->kode_bidang_urusan }}</td>
+                                <td>{{ $dpa->nama_bidang_urusan }}</td>
+                                <td>{{ $dpa->kode_skpd }}</td>
+                                <td>{{ $dpa->nama_skpd }}</td>
+                                <td>{{ $dpa->kode_sub_skpd }}</td>
+                                <td>{{ $dpa->nama_sub_skpd }}</td>
+                                <td>{{ $dpa->kode_program }}</td>
+                                <td>{{ $dpa->nama_program }}</td>
+                                <td>{{ $dpa->kode_kegiatan }}</td>
+                                <td>{{ $dpa->nama_kegiatan }}</td>       
+                                <td>{{ $dpa->kode_sub_kegiatan }}</td>
+                                <td>{{ $dpa->nama_sub_kegiatan }}</td>
+                                <td>{{ $dpa->kode_akun }}</td>
+                                <td>{{ $dpa->nama_akun }}</td>
+                                <td>Rp. {{ number_format($dpa->nilai_rincian, 0, ',', '.') }}</td> 
+                                <td>Rp. {{ number_format($dpa->total_rak, 0, ',', '.') }}</td>
+                                <td>{{ $dpa->tipe }}</td>                              
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+                                    <!-- You can add more content to the timeline here -->
+                <!-- Content to display detail information goes here -->
+                <!-- You can use JavaScript or Blade template logic to populate this section -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
+    {{-- TOMBOL TRACKING --}}
+<!-- Tracking Modal for DPA ID {{ $dpa->id }} -->
+<div class="modal fade" id="trackingModal{{ $dpa->id }}" tabindex="-1" role="dialog" aria-labelledby="trackingModalLabel{{ $dpa->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="trackingModalLabel{{ $dpa->id }}">Tracking</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6>Progress Status:</h6>
+                @if ($dpa->user_id4)
+                <br><span class="badge badge-warning">Not Yet</span> Finish
+                <br><span class="badge badge-info">In Progress</span> Dikerjakan Oleh Bendahara
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh PPTK Dan Sudah Diverifikasi oleh Penjabat Pengadaan
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh Penjabat Pengadaan
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh PPTK
+                <br><span class="badge badge-success">Has Assigned</span> Start
+                @elseif ($dpa->user_id3)
+                <br><span class="badge badge-warning">Not Assigned</span> Finish
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh Bendahara
+                <br><span class="badge badge-info">In Progress</span> Dikerjakan Oleh PPTK Dan Sudah Diverifikasi
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh Penjabat Pengadaan
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh PPTK
+                <br><span class="badge badge-success">Has Assigned</span> Start
+                @elseif ($dpa->user_id2)
+                <br><span class="badge badge-warning">Not Assigned</span> Finish
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh Bendahara
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh PPTK Dan Sudah Diverifikasi
+                <br><span class="badge badge-info">In Progress</span> Dikerjakan Oleh Penjabat Pengadaan
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh PPTK
+                <br><span class="badge badge-success">Has Assigned</span> Start
+                @elseif ($dpa->user_id)
+                <br><span class="badge badge-warning text-warning">Not Assigned</span> Finish
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh Bendahara
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh PPTK Dan Sudah Diverifikasi
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh Penjabat Pengadaan
+                <br><span class="badge badge-info">In Progress</span> Dikerjakan Oleh PPTK
+                <br><span class="badge badge-success">Has Assigned</span> Start
+                @else
+                {{-- <div style="border-left: 16px solid purple"> --}}
+                <br><span class="badge badge-warning text-warning">Not Assigned</span> Finish
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh Bendahara
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh PPTK Dan Sudah Diverifikasi
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh Penjabat Pengadaan
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh Penjabat Pengadaan
+                <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh PPTK
+                <br><span class="badge badge-warning text-warning">Not Assigned</span> Start
+                @endif
+                <!-- Content to display tracking information goes here -->
+                <!-- You can use JavaScript or Blade template logic to populate this section -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
 
+</div>
+
+{{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+<script src="{{ asset('js/app.js') }}"></script> --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     const rows = document.querySelectorAll('.row-clickable');
@@ -168,7 +337,6 @@
                 }
             } else {
                 // Handle row click to navigate to the DPA detail page
-                window.location.href = `{{ route('ViewDPA.show', ['dpa' => ':dpaId']) }}`.replace(':dpaId', dpaId);
                 //window.location.href = `{{ route('PembantuPPTKView.dokumenpembantupptk', ['dpaId' => ':dpaId']) }}`.replace(':dpaId', dpaId);
             }
         });
@@ -189,11 +357,31 @@
         });      
     });
     function deleteDpa(deleteUrl) {
-        const confirmation = confirm('Are you sure you want to delete this item?');
-        if (confirmation) {
-            window.location.href = deleteUrl;
-        }
+    const confirmation = confirm('Are you sure you want to delete this item?');
+    if (confirmation) {
+        const form = document.createElement('form');
+        form.method = 'POST'; // Use POST method to avoid the "GET method not supported" error
+        form.action = deleteUrl;
+        form.style.display = 'none';
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = '{{ csrf_token() }}'; // Replace with your actual token value
+
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+
+        form.appendChild(csrfInput);
+        form.appendChild(methodInput);
+
+        document.body.appendChild(form);
+        form.submit();
     }
+}
+
 </script>
 
 @endsection
@@ -280,13 +468,4 @@
         padding: 10px;
         border: 1px solid #dee2e6;
     }
-
-    .custom-table__column--uraian {
-        flex-basis: 70%;
-    }
-
-    .custom-table__column--jumlah {
-        flex-basis: 30%;
-    }
-</style>
 </style>
