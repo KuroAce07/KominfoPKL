@@ -167,7 +167,6 @@ public function updateDescriptionPPPTK(Request $request, $dpaId)
 }
 
 // ViewDPAController.php
-
 public function showDeskripsiPPPTK($dpaId)
 {
     $dpa = DPA::findOrFail($dpaId);
@@ -196,6 +195,22 @@ public function updateDescriptionRUP(Request $request, $dpaId)
   // Redirect the user back to the pop up view.
   return redirect()->back();
 }
+
+public function submitSumberDana(Request $request, $dpaId)
+{
+    $sumber_dana = $request->input('sumber_dana');
+    if ($request->has('other')) {
+        $sumber_dana = $request->input('other');
+    }
+
+    // Save the sumber_dana value in the dpa database
+    $dpa = DPA::findOrFail($dpaId);
+    $dpa->sumber_dana = $sumber_dana;
+    $dpa->save();
+
+    return redirect()->back()->with('success', 'Sumber Dana submitted successfully.');
+}
+
 
     public function canViewDpa($dpa)
     {

@@ -758,8 +758,21 @@ public function updatePilihRekanan(Request $request, $id)
 
 public function dokumenPembantuPPTK()
 {
-return view('PembantuPPTKView.dokumenpembantupptk');
+    // Retrieve the data for the "Dokumen Kontrak" row
+    $dokumenKontrak = DokumenKontrak::where('dpa_id', request()->query('dpaId'))->first();
+    $dokumenjustifikasi = DokumenJustifikasi::where('dpa_id', request()->query('dpaId'))->first();
+    $dokumenPendukung = DokumenPendukung::where('dpa_id', request()->query('dpaId'))->first();
+    $dokumenEpurchasing = EPurchasing::where('dpa_id', request()->query('dpaId'))->first();
+    $bap = Bap::where('dpa_id', request()->query('dpaId'))->first();
+    $baph = Baph::where('dpa_id', request()->query('dpaId'))->first();
+    $bast = Bast::where('dpa_id', request()->query('dpaId'))->first();
+    $pilihRekanan = PilihRekanan::where('dpa_id', request()->query('dpaId'))->first();
+
+    // Pass the data to the view
+    return view('PembantuPPTKView.dokumenpembantupptk', ['dokumenKontrak' => $dokumenKontrak, 'dokumenjustifikasi' => $dokumenjustifikasi, 'bap' => $bap, 
+    'dokumenEpurchasing' => $dokumenEpurchasing, 'dokumenPendukung' => $dokumenPendukung, 'baph' => $baph, 'bast' => $bast, 'pilihRekanan' => $pilihRekanan]);
 }
+
 
 }
 

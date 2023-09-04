@@ -24,6 +24,7 @@ class CreateDpaTable extends Migration
             $table->string('kode_program')->nullable();
             $table->string('nama_program')->nullable();
             $table->string('kode_kegiatan')->nullable();
+            $table->string('sumber_dana')->nullable();
             $table->string('nama_kegiatan')->nullable();
             $table->string('kode_sub_kegiatan')->nullable();
             $table->string('nama_sub_kegiatan')->nullable();

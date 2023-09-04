@@ -3,6 +3,7 @@
 @section('title', 'View DPA')
 
 @section('content')
+
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">View DPA</h1>
@@ -41,6 +42,7 @@
                             @endhasrole
                             @hasrole('PPTK')
                             <th>Input Data RUP</th>
+                            <th>Pilih<span class="hide-underscore">_</span>Sumber<span class="hide-underscore">_</span>Dana</th>
                             @endhasrole
                             @hasrole(['Pembantu PPTK', 'PPTK', 'Bendahara'])
                             <th>Kelengkapan Dokumen</th>
@@ -294,39 +296,68 @@
 
                              @hasrole('PPTK')
                              <td>
-                                </div>                    
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#submitFormRUP">
-                                    Submit Form
-                                    </button>
-                                    <div class="modal fade" id="submitFormRUP" tabindex="-1" role="dialog" aria-labelledby="submitFormRUPLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                        <form method="POST" action="{{ route('submitRUP', ['dpaId' => $dpa->id]) }}">
-                                            @csrf
-                                            <div class="modal-header">
-                                            <h5 class="modal-title" id="submitFormRUPLabel">Submit RUP Form</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">×</span>
-                                            </button>
-                                            </div>
-                                            <div class="modal-body">
-                                            <div class="form-group">
-                                                <label for="rup">RUP:</label>
-                                                <input id="rup" name="rup" class="form-control" value="{{ $dpa->rup }}">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="nilairup">Nilai RUP:</label>
-                                                <input id="nilairup" name="nilairup" class="form-control" value="{{ $dpa->nilairup }}">
-                                            </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            </div>
-                                        </form>
-                                        </div>
-                                    </div>
-                                </div>
+                                
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#submitFormRUP-{{ $dpa->id_dpa }}">
+    Submit Form
+</button>
+<div class="modal fade" id="submitFormRUP-{{ $dpa->id_dpa }}" tabindex="-1" role="dialog" aria-labelledby="submitFormRUPLabel-{{ $dpa->id_dpa }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" action="{{ route('submitRUP', ['dpaId' => $dpa->id]) }}">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="submitFormRUPLabel-{{ $dpa->id_dpa }}">Submit RUP Form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="rup-{{ $dpa->id_dpa }}">RUP:</label>
+                        <input id="rup-{{ $dpa->id_dpa }}" name="rup" class="form-control" value="{{ $dpa->rup }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="nilairup-{{ $dpa->id_dpa }}">Nilai RUP:</label>
+                        <input id="nilairup-{{ $dpa->id_dpa }}" name="nilairup" class="form-control" value="{{ $dpa->nilairup }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+                            </div>
+                        </td>
+                    <td>
+
+<!-- Dropdown form -->
+<form method="POST" action="{{ route('submitSumberDana', ['dpaId' => $dpa->id]) }}">
+    @csrf
+    <div class="form-group">
+        <label for="sumber_dana-{{ $dpa->id }}">Sumber Dana:</label>
+        <select id="sumber_dana-{{ $dpa->id }}" name="sumber_dana" class="form-control">
+            <option value="DAU" {{ $dpa->sumber_dana == 'DAU' ? 'selected' : '' }}>DAU</option>
+            <option value="PAD" {{ $dpa->sumber_dana == 'PAD' ? 'selected' : '' }}>PAD</option>
+            <option value="DBH Pemerintah Provinsi" {{ $dpa->sumber_dana == 'DBH Pemerintah Provinsi' ? 'selected' : '' }}>DBH Pemerintah Provinsi</option>
+            <option value="DBH Provinsi" {{ $dpa->sumber_dana == 'DBH Provinsi' ? 'selected' : '' }}>DBH Provinsi</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<form method="POST" action="{{ route('submitSumberDana', ['dpaId' => $dpa->id]) }}">
+    @csrf
+    <div class="form-group">
+        <label for="other-{{ $dpa->id }}">Other:</label>
+        <input type="text" id="other-{{ $dpa->id }}" name="other" class="form-control" value="{{ $dpa->sumber_dana }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
                              </td>
                              @endhasrole
 
@@ -539,6 +570,16 @@
             });
         });      
     });
+
+    document.getElementById('sumber_dana-{{ $dpa->id }}').addEventListener('change', function() {
+        var otherInput = document.getElementById('other-input-{{ $dpa->id }}');
+        if (this.value === 'other') {
+            otherInput.style.display = 'block';
+        } else {
+            otherInput.style.display = 'none';
+        }
+    });
+
     function deleteDpa(deleteUrl) {
     const confirmation = confirm('Are you sure you want to delete this item?');
     if (confirmation) {
@@ -563,12 +604,19 @@
         document.body.appendChild(form);
         form.submit();
     }
+
+    
 }
 
 </script>
 
 @endsection
 <style>
+
+.hide-underscore {
+        text-decoration: underline; /* Apply underline to text */
+        color: transparent; /* Make text color transparent (hides underscores) */
+    }
     
     .custom-table {
         border: 1px solid #000 !important; /* Set the border color to black (#000) with !important */

@@ -70,6 +70,7 @@ Route::get('/Rekanan/{id}/Edit', [RekananController::class, 'edit'])->name('reka
 Route::put('/Rekanan/{id}', [RekananController::class, 'update'])->name('rekanan.update');
 
 Route::get('/dokumenpembantupptk', [PembantuPPTKUploadController::class, 'dokumenPembantuPPTK'])->name('PembantuPPTKView.dokumenpembantupptk');
+
     //E-Purchasing
     Route::get('/epurchasing/create', [PembantuPPTKUploadController::class, 'createEPurchasing'])->name('PembantuPPTKView.epurchaseview.create');
     Route::put('/epurchasing/{id}', [PembantuPPTKUploadController::class, 'updateEPurchasing'])->name('PembantuPPTKView.epurchaseview.update');
@@ -159,6 +160,7 @@ Route::get('/assignBendahara/{dpaId}/{userId}', [ViewDPAController::class, 'assi
         Route::put('/update-description-ppptk/{dpaId}', [ViewDPAController::class, 'updateDescriptionPPPTK'])->name('updateDescriptionPPPTK');
         Route::post('/submitRUP/{dpaId}', [ViewDPAController::class, 'submitRUP'])->name('submitRUP');
         Route::get('/view-dpa', [ViewDPAController::class, 'index'])->name('viewDPA');
+Route::post('/submit-sumber-dana/{dpaId}', [ViewDPAController::class, 'submitSumberDana'])->name('submitSumberDana');
 Route::get('/Track', [ViewDPAController::class, 'tracking'])->name('ViewDPA.track');
 // Route to view the uploaded PDF data (ViewDPA site)
 //Route::get('/View', [ViewDPAController::class, 'index']);
