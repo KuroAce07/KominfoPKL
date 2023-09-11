@@ -245,46 +245,49 @@
                         <!-- Add a hidden input to store the selected Pejabat Pengadaan value -->
                         <input type="hidden" id="pp-value-{{ $dpa->id_dpa }}" name="pp" value="{{ $dpa->user_id2 }}">
 
-                        <!-- Update the Pejabat Pengadaan dropdown -->
-                        <div class="btn-group">
-                            @if ($dpa->user_id2 && $dpa->pejabatPengadaanUser)
-                                {{ $dpa->pejabatPengadaanUser->first_name }} {{ $dpa->pejabatPengadaanUser->last_name }}
-                            @else
-                                <div class="dropdown">
-                                <button type="button" id="assign-btn-{{ $dpa->id_dpa }}" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
-                                    Assign Pejabat Pengadaan
-                                </button>
-                                <div class="dropdown-menu">
-                                    @foreach ($pejabatPengadaanUsers as $pejabatPengadaanUser)
-                                        <a class="dropdown-item" href="#" onclick="assignUser({{ $dpa->id_dpa }}, {{ $pejabatPengadaanUser->id }}, '{{ $pejabatPengadaanUser->first_name }} {{ $pejabatPengadaanUser->last_name }}')">
-                                            {{ $pejabatPengadaanUser->first_name }} {{ $pejabatPengadaanUser->last_name }}
-                                        </a>
-                                    @endforeach
-                                </div>
-                                </div>
-                            @endif
-                        </div>
+<div class="btn-group">
+    @if ($dpa->user_id2 && $dpa->pejabatPengadaanUser)
+        <div class="user-name">
+        Pejabat Pengadaan: {{ $dpa->pejabatPengadaanUser->first_name }} {{ $dpa->pejabatPengadaanUser->last_name }}
+        </div>
+    @else
+        <button type="button" id="assign-btn-{{ $dpa->id_dpa }}" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
+            Assign Pejabat Pengadaan
+        </button>
+        <div class="dropdown-menu">
+            @foreach ($pejabatPengadaanUsers as $pejabatPengadaanUser)
+                <a class="dropdown-item" href="#" onclick="assignUser('{{ $dpa->id_dpa }}', '{{ $pejabatPengadaanUser->id }}', '{{ $pejabatPengadaanUser->first_name }} {{ $pejabatPengadaanUser->last_name }}')">
+                    {{ $pejabatPengadaanUser->first_name }} {{ $pejabatPengadaanUser->last_name }}
+                </a>
+            @endforeach
+        </div>
+    @endif
+</div>
+                    
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</td>
+    </td>
 
 <!-- JavaScript to handle modal behavior -->
 <script>
-function assignPP(dpaId, userId, userName) {
-    // Update the hidden input with the selected user
-    document.getElementById('pp-value-' + dpaId).value = userId;
+    function assignUser(dpaId, userId, userName) {
+        // Update the hidden input with the selected user
+        document.getElementById('pp-value-' + dpaId).value = userId;
 
-    // Update the dropdown button text with the selected user's name
-    document.getElementById('assign-btn-' + dpaId).textContent = userName;
-}
+        // Update the dropdown button text with the selected user's name
+        document.getElementById('assign-btn-' + dpaId).textContent = userName;
+    }
 </script>
+
+
 @endif
 @endhasrole
 
@@ -332,7 +335,6 @@ function assignPP(dpaId, userId, userName) {
                                 </select>
                                 @endif
                             </div>
-                            
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Save changes</button>
@@ -379,6 +381,7 @@ Lihat Keterangan Disposisi
                     <!-- Update the PPPTK dropdown -->
                     <div class="btn-group">
                     @if ($dpa->user_id3 && $dpa->pembantupptkUsers)
+                    Pembantu PPTK:
                         {{ $dpa->pembantupptkUsers->first_name }} {{ $dpa->pembantupptkUsers->last_name }}
                     @else
                         <div class="dropdown">
@@ -411,13 +414,10 @@ Lihat Keterangan Disposisi
 function assignPPPTK(dpaId, userId, userName) {
     // Update the hidden input with the selected user
     document.getElementById('ppptk-value-' + dpaId).value = userId;
-
     // Update the dropdown button text with the selected user's name
     document.getElementById('assign-btn-' + dpaId).innerHTML = userName;
 }
 </script>
-
-
 @endif
 @endhasrole
 
@@ -510,6 +510,7 @@ Lihat Keterangan Disposisi
                         <!-- Update the Bendahara dropdown -->
                         <div class="btn-group">
                             @if ($dpa->user_id4 && $dpa->bendaharaUsers)
+                            Bendahara: 
                                 {{ $dpa->bendaharaUsers->first_name }} {{ $dpa->bendaharaUsers->last_name }}
                             @else
                                 <div class="dropdown">

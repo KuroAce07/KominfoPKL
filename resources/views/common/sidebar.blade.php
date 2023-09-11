@@ -211,7 +211,6 @@
     </a>
     <div id="collapseDPA" class="collapse" aria-labelledby="headingDPA" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
             <a class="collapse-item" href="{{ route('ViewDPA.index', ['column' => 'A']) }}">Pejabat Pengadaan</a>
             <a class="collapse-item" href="{{ route('ViewDPA.index', ['column' => 'B']) }}">Pembantu PPTK</a>
             <a class="collapse-item" href="{{ route('ViewDPA.index', ['column' => 'C']) }}">Bendahara</a>
