@@ -42,6 +42,7 @@ class ArsipLamaImport implements ToCollection
                 'lain_lain' => (string) $row[14],
                 'tanggal_sp2d' => (string) $row[15],
                 'no_sp2d' => (string) $row[16],
+                'tipe' => 'import',
             ]);
         }
     }

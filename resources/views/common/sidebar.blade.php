@@ -34,7 +34,7 @@
         <i class="fas fa-folder-open"></i>
 
 
-        <span>Register Dokumen Pencairan</span>
+        <span>Dokumen Pencairan</span>
     </a>
     <div id="arsipLamaDropDown" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
@@ -96,12 +96,12 @@
             </div>
             <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">DPA</h6>
-                    <a class="collapse-item" href="{{ route('UploadDPA.index') }}">Upload DPA</a>
-                    <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List DPA</a>
-                    {{-- <a class="collapse-item" href="{{ route('ViewDPA.dppa') }}">Lihat List DPA lama</a>
-                    <a class="collapse-item" href="{{ route('ViewDPA.track') }}">Tracking DPA</a>  --}}
+                    <h6 class="collapse-header">Kegiatan</h6>
+                    <a class="collapse-item" href="{{ route('UploadDPA.index') }}">Upload Kegiatan</a>
+                    <a class="collapse-item" href="{{ route('ViewDPA.index') }}">Lihat List Kegiatan</a>
                     <a class="collapse-item" href="{{ route('ViewDPA.rak') }}">Rencana Anggaran Kas</a>
+                    <a class="collapse-item" href="{{ route('ViewDPA.sumberdana') }}">Sumber Dana</a>
+                    <a class="collapse-item" href="{{ route('ViewDPA.metodepengadaan') }}">Pengadaan</a>
                 </div>
             </div>
             <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">

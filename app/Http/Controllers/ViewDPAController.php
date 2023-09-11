@@ -1,21 +1,25 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\DPA;
 use App\Models\User;
 use App\Traits\WablasTrait;
 use App\Models\Realisasi;
+use App\Models\addmetodepengadaan;
+use App\Models\addsumberdana;
+use App\Exports\exportdokumen;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ViewDPAController extends Controller
 {
-public function index(Request $request)
+    public function index(Request $request)
 {
     $column = $request->input('column');
+
     // Subquery to select the maximum 'id' for each 'id_dpa'
     $subquery = DPA::selectRaw('MAX(id) as max_id')
         ->groupBy('id_dpa');
@@ -24,26 +28,22 @@ public function index(Request $request)
     $dpaData = DPA::joinSub($subquery, 'max_ids', function ($join) {
         $join->on('dpa.id', '=', 'max_ids.max_id');
     })
-    ->orderBy('id_dpa')
-    ->get(); // Get all data
+    ->orderBy('id_dpa');
 
-    
     // Check if the logged-in user has role_id 1 (admin) and allow access to all DPAs
-    if (auth()->user()->role_id === 1) {
-        // No need to filter if the user is an admin
-        $accessibleDpaData = $dpaData;
-    } else {
+    if (auth()->user()->role_id !== 1) {
         // Filter DPAs based on user access
-        $filteredDpaData = $dpaData->filter(function ($dpa) {
-            return $this->canViewDpa($dpa);
+        $dpaData = $dpaData->where(function ($query) {
+            $query->where('user_id', auth()->user()->id)
+                  ->orWhere('user_id2', auth()->user()->id)
+                  ->orWhere('user_id3', auth()->user()->id)
+                  ->orWhere('user_id4', auth()->user()->id);
         });
-
-        // Create a LengthAwarePaginator instance for the filtered data
-        $perPage = 10;
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $currentPageItems = $filteredDpaData->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $accessibleDpaData = new LengthAwarePaginator($currentPageItems, count($filteredDpaData), $perPage);
     }
+
+    // Use Eloquent's built-in pagination
+    $perPage = 10;
+    $accessibleDpaData = $dpaData->paginate($perPage);
 
     $users = User::where('role_id', 3)->get();
     $pejabatPengadaanUsers = User::where('role_id', 4)->get();
@@ -59,6 +59,8 @@ public function index(Request $request)
         'column' => $column, // Pass the column value to your view
     ]);
 }
+
+
 
     public function assignDpa($dpaId, $userId)
     {
@@ -150,7 +152,7 @@ public function updateDescription(Request $request, $dpaId)
     $dpa->user_id4 = $request->input('bendahara');
     $dpa->save();
 
-    return redirect()->route('viewDPA')->with('success', 'Description updated successfully.');
+    return redirect()->route('viewDPA', ['column' => 'C'])->with('success', 'Description updated successfully.');
 }
 
 public function updateDescriptionPP(Request $request, $dpaId)
@@ -161,7 +163,7 @@ public function updateDescriptionPP(Request $request, $dpaId)
     $dpa->user_id2 = $request->input('pp');
     $dpa->save();
 
-    return redirect()->route('viewDPA')->with('success', 'Description updated successfully.');
+    return redirect()->route('viewDPA', ['column' => 'A'])->with('success', 'Description updated successfully.');
 }
 
 // ViewDPAController.php
@@ -181,7 +183,7 @@ public function updateDescriptionPPPTK(Request $request, $dpaId)
     $dpa->user_id3 = $request->input('ppptk');
     $dpa->save();
 
-    return redirect()->route('viewDPA')->with('success', 'Description updated successfully.');
+    return redirect()->route('viewDPA', ['column' => 'B'])->with('success', 'Description updated successfully.');
 }
 
 // ViewDPAController.php
@@ -228,7 +230,6 @@ public function submitSumberDana(Request $request, $dpaId)
 
     return redirect()->back()->with('success', 'Sumber Dana submitted successfully.');
 }
-
 
     public function canViewDpa($dpa)
     {
@@ -332,7 +333,6 @@ public function UpdateRealisasi(Request $request, $dpaId)
             'total_rak' => $totalRak,
         ]);
     }
-
     // Redirect back to the view
     return redirect()->route('ViewDPA.realrak', $dpaId)->with('success', 'Realisasi stored/updated successfully.');
 }
@@ -404,4 +404,84 @@ public function dppa($id_dpa)
     return view('ViewDPA.dppa', compact('combinedData'));
 }
 
+public function metodepengadaan()
+{
+    // Retrieve data from the "metodepengadaan" table
+    $metodepengadaanData = addmetodepengadaan::all();
+
+    return view('ViewDPA.metodepengadaan', ['metodepengadaanData' => $metodepengadaanData]);
+}
+
+public function addmetodepengadaan(Request $request)
+    {
+        // Validate and process the form data, then insert into the database
+        // Example validation:
+        $validatedData = $request->validate([
+            'metode_pengadaan' => 'required|string|max:255',
+            'keterangan' => 'required|string',
+            // Add validation rules for other form fields as needed
+        ]);
+
+        // Insert the data into the database using the model
+        AddMetodePengadaan::create($validatedData);
+
+        return redirect()->route('ViewDPA.metodepengadaan')->with('success', 'Entry added successfully.');
+    }
+
+    public function deleteMetodePengadaan($id)
+    {
+        // Find the entry by ID and delete it
+        $entry = AddMetodePengadaan::find($id);
+    
+        if (!$entry) {
+            return redirect()->route('ViewDPA.metodepengadaan')->with('error', 'Entry not found.');
+        }
+    
+        $entry->delete();
+    
+        return redirect()->route('ViewDPA.metodepengadaan')->with('success', 'Entry deleted successfully.');
+    }
+
+    public function sumberdana()
+    {
+        // Retrieve data from the "metodepengadaan" table
+        $sumberdanadata = addsumberdana::all();
+    
+        return view('ViewDPA.sumberdana', ['sumberdanadata' => $sumberdanadata]);
+    }
+    
+    public function addsumberdana(Request $request)
+        {
+            // Validate and process the form data, then insert into the database
+            // Example validation:
+            $validatedData = $request->validate([
+                'sumber_dana' => 'required|string|max:255',
+                'keterangan' => 'required|string',
+                // Add validation rules for other form fields as needed
+            ]);
+    
+            // Insert the data into the database using the model
+            addsumberdana::create($validatedData);
+    
+            return redirect()->route('ViewDPA.sumberdana')->with('success', 'Entry added successfully.');
+        }
+    
+        public function deletesumberdana($id)
+        {
+            // Find the entry by ID and delete it
+            $entry = addsumberdana::find($id);
+        
+            if (!$entry) {
+                return redirect()->route('ViewDPA.sumberdana')->with('error', 'Entry not found.');
+            }
+        
+            $entry->delete();
+        
+            return redirect()->route('ViewDPA.sumberdana')->with('success', 'Entry deleted successfully.');
+        }
+
+        public function export()
+        {
+            return Excel::download(new exportdokumen, 'dokumen.xlsx');
+        }
 }

@@ -31,6 +31,7 @@ class CreateArsipLamasTable extends Migration
             $table->string('lain_lain')->nullable();
             $table->string('tanggal_sp2d')->nullable(); // Changed to string
             $table->string('no_sp2d')->nullable();
+            $table->string('tipe')->nullable();
             $table->timestamps();
         });
     }

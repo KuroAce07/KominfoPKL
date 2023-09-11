@@ -5,6 +5,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\ArsipLama;
 use App\Imports\ArsipLamaImport;
+use App\Exports\exportdokumenpencairan;
 
 class ArsipController extends Controller
 {
@@ -18,6 +19,12 @@ class ArsipController extends Controller
     {
         $arsip = ArsipLama::findOrFail($id);
         return view('Arsip.edit', compact('arsip'));
+    }
+    
+    public function file($id)
+    {
+        $arsip = ArsipLama::findOrFail($id);
+        return view('Arsip.file', compact('arsip'));
     }
 
     public function update(Request $request, $id)
@@ -102,5 +109,10 @@ public function store(Request $request)
         } catch (\Exception $e) {
             return redirect()->route('Arsip.index')->with('error', 'An error occurred: ' . $e->getMessage());
         }
+    }
+
+    public function export()
+    {
+        return Excel::download(new exportdokumenpencairan, 'dokumen_pencairan.xlsx');
     }
 }

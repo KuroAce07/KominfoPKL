@@ -10,7 +10,7 @@
     </div>
 
     @include('common.alert')
-
+    <a href="{{ route('ViewDPA.export') }}" class="btn btn-success ml-auto">Export to Excel</a>
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">List of DPAs</h6>
@@ -36,7 +36,6 @@
                             @hasrole('Pejabat Pengadaan')
                             <th>RUP</th>
                             <th>Keterangan</th>
-                            <th>Deskripsi PPTK</th>
                             @endhasrole
 
                             @hasrole('PPTK')
@@ -215,64 +214,82 @@
             </td> --}}
             @endhasrole
 
-            @hasrole('PPTK')
-            @if ($column == 'A')
-            <td>
-        <!-- Assign Pejabat pengadaan -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#descriptionModal-{{ $dpa->id_dpa }}">
+@hasrole('PPTK')
+@if ($column == 'A')
+<td>
+    <!-- Assign Pejabat pengadaan -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#descriptionModal-{{ $dpa->id_dpa }}">
         Lihat Keterangan Disposisi
-        </button>
-        </div>
-        <!-- Modal -->
-        <div class="modal fade" id="descriptionModal-{{ $dpa->id_dpa }}" tabindex="-1" role="dialog"
-            aria-labelledby="descriptionModalLabel-{{ $dpa->id_dpa }}" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <form method="POST" action="{{ route('updateDescriptionPP', ['dpaId' => $dpa->id]) }}">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="descriptionModalLabel-{{ $dpa->id_dpa }}">Edit Description</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+    </button>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="descriptionModal-{{ $dpa->id_dpa }}" tabindex="-1" role="dialog"
+        aria-labelledby="descriptionModalLabel-{{ $dpa->id_dpa }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="{{ route('updateDescriptionPP', ['dpaId' => $dpa->id]) }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="descriptionModalLabel-{{ $dpa->id_dpa }}">Edit Description</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
                         </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="descriptionPP-{{ $dpa->id_dpa }}">Description:</label>
+                            <textarea id="descriptionPP-{{ $dpa->id_dpa }}" name="descriptionPP" class="form-control" rows="5">{{ $dpa->descriptionPP }}</textarea>
                         </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="descriptionPP-{{ $dpa->id_dpa }}">Description:</label>
-                                <textarea id="descriptionPP-{{ $dpa->id_dpa }}" name="descriptionPP" class="form-control" rows="5">{{ $dpa->descriptionPP }}</textarea>
-                            </div>
 
-                            <!-- Add a hidden input to store the selected Pejabat Pengadaan value -->
-                            <input type = "hidden" id ="pp-value-{{ $dpa->id_dpa }}" name ="pp" value ="{{ $dpa->user_id2 }}">
+                        <!-- Add a hidden input to store the selected Pejabat Pengadaan value -->
+                        <input type="hidden" id="pp-value-{{ $dpa->id_dpa }}" name="pp" value="{{ $dpa->user_id2 }}">
 
-                            <!-- Update the Pejabat Pengadaan dropdown -->
-                            <div class="form-group">
-                                <label for ="pp-{{ $dpa->id_dpa }}">Pejabat Pengadaan:</label>
-                                @if ($dpa->user_id2 && $dpa->pejabatPengadaanUser)
-                                <input type = "text" id ="pp-{{ $dpa->id_dpa }}" class ="form-control" value ="{{ $dpa->pejabatPengadaanUser->first_name }} {{ $dpa->pejabatPengadaanUser->last_name }}" readonly>
-                                @else
-                                <select id ="pp-{{ $dpa->id_dpa }}" class ="form-control">
-                                <option value = "">Assign Pejabat Pengadaan</option>
-                                @foreach ($pejabatPengadaanUsers as $pejabatPengadaanUser)
-                                <option value="{{ $pejabatPengadaanUser->id }}">{{ $pejabatPengadaanUser->first_name }} {{ $pejabatPengadaanUser->last_name }}</option>
-                                @endforeach
-                                </select>
-                                @endif
+<div class="btn-group">
+    @if ($dpa->user_id2 && $dpa->pejabatPengadaanUser)
+        <div class="user-name">
+        Pejabat Pengadaan: {{ $dpa->pejabatPengadaanUser->first_name }} {{ $dpa->pejabatPengadaanUser->last_name }}
+        </div>
+    @else
+        <button type="button" id="assign-btn-{{ $dpa->id_dpa }}" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
+            Assign Pejabat Pengadaan
+        </button>
+        <div class="dropdown-menu">
+            @foreach ($pejabatPengadaanUsers as $pejabatPengadaanUser)
+                <a class="dropdown-item" href="#" onclick="assignUser('{{ $dpa->id_dpa }}', '{{ $pejabatPengadaanUser->id }}', '{{ $pejabatPengadaanUser->first_name }} {{ $pejabatPengadaanUser->last_name }}')">
+                    {{ $pejabatPengadaanUser->first_name }} {{ $pejabatPengadaanUser->last_name }}
+                </a>
+            @endforeach
+        </div>
+    @endif
+</div>
+                    
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save changes</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </form>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        </div>
     </td>
-    @endif
-    @endhasrole
+
+<!-- JavaScript to handle modal behavior -->
+<script>
+    function assignUser(dpaId, userId, userName) {
+        // Update the hidden input with the selected user
+        document.getElementById('pp-value-' + dpaId).value = userId;
+
+        // Update the dropdown button text with the selected user's name
+        document.getElementById('assign-btn-' + dpaId).textContent = userName;
+    }
+</script>
+
+
+@endif
+@endhasrole
 
             @hasrole('Pejabat Pengadaan')
             <td>
@@ -362,19 +379,25 @@ Lihat Keterangan Disposisi
                     <input type="hidden" id="ppptk-value-{{ $dpa->id_dpa }}" name="ppptk" value="{{ $dpa->user_id3 }}">
 
                     <!-- Update the PPPTK dropdown -->
-                    <div class="form-group">
-                        <label for="ppptk-{{ $dpa->id_dpa }}">Pembantu PPTK:</label>
-                        @if ($dpa->user_id3 && $dpa->pembantupptkUsers)
-                        <input type="text" id="ppptk-{{ $dpa->id_dpa }}" class="form-control" value="{{ $dpa->pembantupptkUsers->first_name }} {{ $dpa->pembantupptkUsers->last_name }}" readonly>
-                        @else
-                        <select id="ppptk-{{ $dpa->id_dpa }}" class="form-control">
-                        <option value="">Assign Pembantu PPTK</option>
-                        @foreach ($pembantupptkUsers as $pembantupptkUser)
-                        <option value="{{ $pembantupptkUser->id }}">{{ $pembantupptkUser->first_name }} {{ $pembantupptkUser->last_name }}</option>
-                        @endforeach
-                        </select>
-                        @endif
-                    </div>
+                    <div class="btn-group">
+                    @if ($dpa->user_id3 && $dpa->pembantupptkUsers)
+                    Pembantu PPTK:
+                        {{ $dpa->pembantupptkUsers->first_name }} {{ $dpa->pembantupptkUsers->last_name }}
+                    @else
+                        <div class="dropdown">
+                            <button type="button" id="assign-btn-{{ $dpa->id_dpa }}" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
+                                Assign Pembantu PPTK
+                            </button>
+                            <div class="dropdown-menu">
+                                @foreach ($pembantupptkUsers as $pembantupptkUser)
+                                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); assignPPPTK({{ $dpa->id_dpa }}, {{ $pembantupptkUser->id }}, '{{ $pembantupptkUser->first_name }} {{ $pembantupptkUser->last_name }}')">
+                                        {{ $pembantupptkUser->first_name }} {{ $pembantupptkUser->last_name }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Save changes</button>
@@ -386,6 +409,15 @@ Lihat Keterangan Disposisi
 </div>
 </div>
 </td>
+
+<script>
+function assignPPPTK(dpaId, userId, userName) {
+    // Update the hidden input with the selected user
+    document.getElementById('ppptk-value-' + dpaId).value = userId;
+    // Update the dropdown button text with the selected user's name
+    document.getElementById('assign-btn-' + dpaId).innerHTML = userName;
+}
+</script>
 @endif
 @endhasrole
 
@@ -449,8 +481,8 @@ Lihat Keterangan Disposisi
 @if ($column == 'C')
 <td>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#descriptionModalPP-{{ $dpa->id_dpa }}">
-Lihat Keterangan Disposisi
-</button>
+        Lihat Keterangan Disposisi
+    </button>
     </div>
     <!-- Modal -->
     <div class="modal fade" id="descriptionModalPP-{{ $dpa->id_dpa }}" tabindex="-1" role="dialog"
@@ -463,29 +495,36 @@ Lihat Keterangan Disposisi
                     <div class="modal-header">
                         <h5 class="modal-title" id="descriptionModalPPLabel-{{ $dpa->id_dpa }}">Edit Description</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                    </button>
+                            <span aria-hidden="true">×</span>
+                        </button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="description-{{ $dpa->id_dpa }}">Description:</label>
                             <textarea id="description-{{ $dpa->id_dpa }}" name="description" class="form-control" rows="5">{{ $dpa->description }}</textarea>
                         </div>
+                        
                         <!-- Add a hidden input to store the selected Bendahara value -->
                         <input type="hidden" id="bendahara-value-{{ $dpa->id_dpa }}" name="bendahara" value="{{ $dpa->user_id4 }}">
 
                         <!-- Update the Bendahara dropdown -->
-                        <div class="form-group">
-                            <label for="bendahara-{{ $dpa->id_dpa }}">Bendahara:</label>
+                        <div class="btn-group">
                             @if ($dpa->user_id4 && $dpa->bendaharaUsers)
-                            <input type="text" id="bendahara-{{ $dpa->id_dpa }}" class="form-control" value="{{ $dpa->bendaharaUsers->first_name }} {{ $dpa->bendaharaUsers->last_name }}" readonly>
+                            Bendahara: 
+                                {{ $dpa->bendaharaUsers->first_name }} {{ $dpa->bendaharaUsers->last_name }}
                             @else
-                            <select id="bendahara-{{ $dpa->id_dpa }}" class="form-control">
-                            <option value="">Assign Bendahara</option>
-                            @foreach ($bendaharaUsers as $bendaharaUser)
-                            <option value="{{ $bendaharaUser->id }}">{{ $bendaharaUser->first_name }} {{ $bendaharaUser->last_name }}</option>
-                            @endforeach
-                            </select>
+                                <div class="dropdown">
+                                    <button type="button" id="assign-btn-{{ $dpa->id_dpa }}" class="btn btn-secondary dropdown-toggle assign-btn" data-toggle="dropdown">
+                                        Assign Bendahara
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        @foreach ($bendaharaUsers as $bendaharaUser)
+                                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); assignBendahara({{ $dpa->id_dpa }}, {{ $bendaharaUser->id }}, '{{ $bendaharaUser->first_name }} {{ $bendaharaUser->last_name }}')">
+                                                {{ $bendaharaUser->first_name }} {{ $bendaharaUser->last_name }}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -497,8 +536,17 @@ Lihat Keterangan Disposisi
             </div>
         </div>
     </div>
-    </div>
 </td>
+
+<script>
+function assignBendahara(dpaId, userId, userName) {
+    // Update the hidden input with the selected user
+    document.getElementById('bendahara-value-' + dpaId).value = userId;
+
+    // Update the dropdown button text with the selected user's name
+    document.getElementById('assign-btn-' + dpaId).textContent = userName;
+}
+</script>
 @endif
 @endhasrole
 
@@ -616,23 +664,30 @@ Lihat Keterangan Disposisi
         <div class="form-group">
             <label for="sumber_dana-{{ $dpa->id }}">Sumber Dana:</label>
             <select id="sumber_dana-{{ $dpa->id }}" name="sumber_dana" class="form-control">
-            <option value="DAU" {{ $dpa->sumber_dana == 'DAU' ? 'selected' : '' }}>DAU</option>
-            <option value="PAD" {{ $dpa->sumber_dana == 'PAD' ? 'selected' : '' }}>PAD</option>
-            <option value="DBH Pemerintah Provinsi" {{ $dpa->sumber_dana == 'DBH Pemerintah Provinsi' ? 'selected' : '' }}>DBH Pemerintah Provinsi</option>
-            <option value="DBH Provinsi" {{ $dpa->sumber_dana == 'DBH Provinsi' ? 'selected' : '' }}>DBH Provinsi</option>
-        </select>
+                @php
+                    $sumberDanaList = DB::table('sumberdana')->select('Sumber_Dana')->get();
+                @endphp
+                @foreach($sumberDanaList as $sumberDana)
+                    <option value="{{ $sumberDana->Sumber_Dana }}" {{ $dpa->sumber_dana == $sumberDana->Sumber_Dana ? 'selected' : '' }}>
+                        {{ $sumberDana->Sumber_Dana }}
+                    </option>
+                @endforeach
+            </select>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    
+    
+    
 
-    <form method="POST" action="{{ route('submitSumberDana', ['dpaId' => $dpa->id]) }}">
+    {{-- <form method="POST" action="{{ route('submitSumberDana', ['dpaId' => $dpa->id]) }}">
         @csrf
         <div class="form-group">
             <label for="other-{{ $dpa->id }}">Other:</label>
             <input type="text" id="other-{{ $dpa->id }}" name="other" class="form-control" value="{{ $dpa->sumber_dana }}">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+    </form> --}}
 
 </td>
 @endhasrole
@@ -679,7 +734,10 @@ Lihat Keterangan Disposisi
             @endforeach
             </tbody>
             </table>
-            {{-- {{ $dpaData->links() }} --}}
+            <!-- Pagination Links -->
+            <div>
+                {{ $dpaData->links() }}
+            </div>
         </div>
     </div>
 </div>
@@ -774,11 +832,17 @@ Lihat Keterangan Disposisi
             </div>
             <div class="modal-body">
                 <h6>Progress Status:</h6>
+                {{-- @if (dpa->user_id4)
+                <br><span class="badge badge-success">Completed</span> Finish
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh Bendahara
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh PPTK Dan Sudah Diverifikasi 
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh Penjabat Pengadaan
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh PPTK
+                <br><span class="badge badge-success">Has Assigned</span> Start --}}
                 @if ($dpa->user_id4)
                 <br><span class="badge badge-warning">Not Yet</span> Finish
                 <br><span class="badge badge-info">In Progress</span> Dikerjakan Oleh Bendahara
-                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh PPTK Dan Sudah Diverifikasi oleh
-                Penjabat Pengadaan
+                <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh PPTK Dan Sudah Diverifikasi 
                 <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh Penjabat Pengadaan
                 <br><span class="badge badge-success">Completed</span> Dikerjakan Oleh PPTK
                 <br><span class="badge badge-success">Has Assigned</span> Start
@@ -807,8 +871,7 @@ Lihat Keterangan Disposisi
                 {{-- <div style="border-left: 16px solid purple"> --}}
                     <br><span class="badge badge-warning text-warning">Not Assigned</span> Finish
                     <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh Bendahara
-                    <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh PPTK Dan Sudah
-                    Diverifikasi
+                    <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh PPTK Dan Sudah Diverifikasi
                     <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh Penjabat Pengadaan
                     <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh Penjabat Pengadaan
                     <br><span class="badge badge-warning">Not Assigned</span> Dikerjakan Oleh PPTK
@@ -830,6 +893,7 @@ Lihat Keterangan Disposisi
 {{--
 <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 <script src="{{ asset('js/app.js') }}"></script> --}}
+@if(isset($dpa))
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     const rows = document.querySelectorAll('.row-clickable');
@@ -897,62 +961,12 @@ Lihat Keterangan Disposisi
         form.submit();
     }
 
-    document.querySelector('#bendahara-{{ $dpa->id_dpa }}').addEventListener('change', function(event) {
-    // Get the selected value and text
-    var selectedValue = event.target.value;
-    var selectedText = event.target.options[event.target.selectedIndex].text;
-
-    // Update the hidden input with the selected value
-    document.querySelector('#bendahara-value-{{ $dpa->id_dpa }}').value = selectedValue;
-
-    // Replace the dropdown with a readonly input displaying the selected text
-    var input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'bendahara-{{ $dpa->id_dpa }}';
-    input.className = 'form-control';
-    input.value = selectedText;
-    input.readOnly = true;
-    event.target.parentNode.replaceChild(input, event.target);
-});
-
-document.querySelector('#ppptk-{{ $dpa->id_dpa }}').addEventListener('change', function(event) {
-    // Get the selected value and text
-    var selectedValue = event.target.value;
-    var selectedText = event.target.options[event.target.selectedIndex].text;
-
-    // Update the hidden input with the selected value
-    document.querySelector('#ppptk-value-{{ $dpa->id_dpa }}').value = selectedValue;
-
-    // Replace the dropdown with a readonly input displaying the selected text
-    var input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'ppptk-{{ $dpa->id_dpa }}';
-    input.className = 'form-control';
-    input.value = selectedText;
-    input.readOnly = true;
-    event.target.parentNode.replaceChild(input, event.target);
-});
-
-document.querySelector('#pp-{{ $dpa->id_dpa }}').addEventListener('change', function(event) {
-    // Get the selected value and text
-    var selectedValue = event.target.value;
-    var selectedText = event.target.options[event.target.selectedIndex].text;
-
-    // Update the hidden input with the selected value
-    document.querySelector('#pp-value-{{ $dpa->id_dpa }}').value = selectedValue;
-
-    // Replace the dropdown with a readonly input displaying the selected text
-    var input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'pp-{{ $dpa->id_dpa }}';
-    input.className = 'form-control';
-    input.value = selectedText;
-    input.readOnly = true;
-    event.target.parentNode.replaceChild(input, event.target);
-});
 }
-
 </script>
+@else
+    <!-- Print a message or choose an alternative behavior when $dpa doesn't exist -->
+    <p>No DPA available.</p>
+@endif
 
 @endsection
 <style>

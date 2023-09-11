@@ -10,7 +10,7 @@ class CreateDpaTable extends Migration
     {
         Schema::create('dpa', function (Blueprint $table) {
             $table->id();
-            $table->string('id_dpa')->nullable();
+            $table->bigInteger('id_dpa')->nullable();
             $table->string('tahun')->nullable();
             $table->string('daerah')->nullable();
             $table->string('kode_urusan')->nullable();

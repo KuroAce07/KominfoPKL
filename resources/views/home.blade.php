@@ -28,7 +28,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                        Total Dokumen</div>
+                        Dokumen Yang Selesai</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $arsipCount }}</div>
                 </div>
                 <div class="col-auto">
@@ -73,7 +73,7 @@
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">DPA</div>
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Dokumen Yang Diproses</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $dpaCount }}</div>
                 </div>
                 <div class="col-auto">
@@ -105,20 +105,26 @@
         @php
     // Get all DPA records
     $dpas = \App\Models\DPA::all();
-
+    $reals = \App\Models\Realisasi::all();
     // Initialize the total nilai_rincian
     $totalDana = 0;
-
+    $totalreal = 0;
     // Loop through each DPA record and add its nilai_rincian value to the total
     foreach ($dpas as $dpa) {
         // Remove currency symbol and non-numeric characters from the string
-        $danaValue = preg_replace('/[^0-9]/', '', $dpa->nilai_rincian);
+        $danaValue = preg_replace('/[^0-9]/', '', $dpa->total_rak);
 
         // Convert the cleaned string value to a numeric value and add it to the total
         $totalDana += (int) $danaValue;
     }
-    $real = 10948000;
-    $sisa = $totalDana - $real;
+    foreach ($reals as $real) {
+        // Remove currency symbol and non-numeric characters from the string
+        $realvalue = preg_replace('/[^0-9]/', '', $real->total_rak);
+
+        // Convert the cleaned string value to a numeric value and add it to the total
+        $totalreal += (int) $realvalue;
+    }
+    $sisa = $totalDana - $totalreal;
 @endphp
 <div class="col-12 d-flex justify-content-center">
 <div class="col-xl-3 col-md-6 mb-4">
@@ -127,7 +133,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                        Anggaran Total</div>
+                        Pagu Anggaran</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                         Rp. {{ number_format($totalDana, 2, ',', '.') }}
                     </div>
@@ -148,7 +154,7 @@
                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                         Realisasi Anggaran</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                        Rp. {{ number_format( $real, 2, ',', '.') }}
+                        Rp. {{ number_format( $totalreal, 2, ',', '.') }}
                     </div>
                 </div>
                 <div class="col-auto">
@@ -165,7 +171,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                        Sisa Anggaran </div>
+                        Sisa Pagu </div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                         Rp. {{ number_format( $sisa, 2, ',', '.') }}
                     </div>
@@ -224,7 +230,7 @@
         var pieChartCanvas = document.getElementById('myPieChart').getContext('2d');
 
         var danaDibutuhkan = {{ $totalDana }};
-        var danaTerealisasi = {{ $real }};
+        var danaTerealisasi = {{ $totalreal }};
         var danaKurang = {{ $sisa }};
 
         var chartData = {

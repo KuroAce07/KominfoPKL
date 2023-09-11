@@ -11,19 +11,19 @@ class realisasi extends Migration
         Schema::create('realisasi', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('dpa_id')->nullable();
-            $table->decimal('bulan_1', 15, 2)->nullable();
-            $table->decimal('bulan_2', 15, 2)->nullable();
-            $table->decimal('bulan_3', 15, 2)->nullable();
-            $table->decimal('bulan_4', 15, 2)->nullable();
-            $table->decimal('bulan_5', 15, 2)->nullable();
-            $table->decimal('bulan_6', 15, 2)->nullable();
-            $table->decimal('bulan_7', 15, 2)->nullable();
-            $table->decimal('bulan_8', 15, 2)->nullable();
-            $table->decimal('bulan_9', 15, 2)->nullable();
-            $table->decimal('bulan_10', 15, 2)->nullable();
-            $table->decimal('bulan_11', 15, 2)->nullable();
-            $table->decimal('bulan_12', 15, 2)->nullable();
-            $table->decimal('total_rak', 15, 2)->nullable();
+            $table->bigInteger('bulan_1')->nullable();
+            $table->bigInteger('bulan_2')->nullable();
+            $table->bigInteger('bulan_3')->nullable();
+            $table->bigInteger('bulan_4')->nullable();
+            $table->bigInteger('bulan_5')->nullable();
+            $table->bigInteger('bulan_6')->nullable();
+            $table->bigInteger('bulan_7')->nullable();
+            $table->bigInteger('bulan_8')->nullable();
+            $table->bigInteger('bulan_9')->nullable();
+            $table->bigInteger('bulan_10')->nullable();
+            $table->bigInteger('bulan_11')->nullable();
+            $table->bigInteger('bulan_12')->nullable();
+            $table->bigInteger('total_rak')->nullable();
             // ... add other columns as needed
             $table->timestamps();
         });

@@ -56,9 +56,11 @@ Route::get('/Dokumen/Import-file', [ArsipController::class, 'importfile'])->name
 Route::post('/Dokumen/Import', [ArsipController::class, 'import'])->name('Arsip.import');
 Route::get('/Dokumen/{id}/Edit', [ArsipController::class, 'edit'])->name('Arsip.edit');
 Route::put('/Dokumen/{id}', [ArsipController::class, 'update'])->name('Arsip.update');
+Route::get('/Dokumen/{id}/File', [ArsipController::class, 'file'])->name('Arsip.file');
 Route::get('/Dokumen/Create', [ArsipController::class, 'create'])->name('Arsip.create');
 Route::post('/Dokumen/Store', [ArsipController::class, 'store'])->name('Arsip.store');
 Route::delete('/Dokumen/{id}', [ArsipController::class, 'destroy'])->name('Arsip.destroy');
+Route::get('/Dokumen/Export', [ArsipController::class, 'export'])->name('Arsip.export');
 // Permissions
 Route::resource('permissions', App\Http\Controllers\PermissionsController::class);
 //rekanan
@@ -195,12 +197,24 @@ Route::post('/UploadDpa', [UploadDPAController::class, 'store'])->name('UploadDp
 
 // View List DPA
 Route::resource('ViewDPA', App\Http\Controllers\ViewDPAController::class);
+//export
+Route::get('/DPA/Export', [ViewDPAController::class, 'export'])->name('ViewDPA.export');
 //view sub DPA
 Route::get('/DPA/Lama/{id_dpa}', [ViewDPAController::class, 'dppa'])->name('ViewDPA.dppa');
 Route::get('/RAK', [ViewDPAController::class, 'rak'])->name('ViewDPA.rak');
 Route::get('/RAK/Edit/{id}', [ViewDPAController::class, 'rak'])->name('ViewDPA.editrak');
+//realisasi
 Route::get('/RAK/Realisasi/{id}', [ViewDPAController::class, 'realrak'])->name('ViewDPA.realrak');
 Route::put('/RAK/Realisasi/{id}', [ViewDPAController::class, 'updateRealisasi'])->name('ViewDPA.updateRealisasi');
+//sumber dana dan pengadaan
+Route::get('/sumberdana', [ViewDPAController::class, 'sumberdana'])->name('ViewDPA.sumberdana');
+Route::post('/sumberdana', [ViewDPAController::class, 'addsumberdana'])->name('ViewDPA.sumberdana');
+Route::delete('/sumberdana/{id}', [ViewDPAController::class, 'deletesumberdana'])->name('ViewDPA.deletesumberdana');
+Route::get('/metodepengadaan', [ViewDPAController::class, 'metodepengadaan'])->name('ViewDPA.metodepengadaan');
+Route::post('/metodepengadaan', [ViewDPAController::class, 'addmetodepengadaan'])->name('ViewDPA.metodepengadaan');
+Route::delete('/metodepengadaan/{id}', [ViewDPAController::class, 'deleteMetodePengadaan'])->name('ViewDPA.deleteMetodePengadaan');
+
+
 Route::delete('/deleteDPA/{id}', [ViewDPAController::class, 'destroy'])->name('ViewDPA.destroy');
 Route::put('/RAK/{dpa}', [ViewDPAController::class, 'update'])->name('updaterak');
 Route::get('/EditDPA/{id}', [ViewDPAController::class, 'edit'])->name('editDPA');
@@ -219,10 +233,8 @@ Route::get('/assignBendahara/{dpaId}/{userId}', [ViewDPAController::class, 'assi
         Route::get('/view-dpa', [ViewDPAController::class, 'index'])->name('viewDPA');
 Route::post('/submit-sumber-dana/{dpaId}', [ViewDPAController::class, 'submitSumberDana'])->name('submitSumberDana');
 Route::get('/Track', [ViewDPAController::class, 'tracking'])->name('ViewDPA.track');
-// Route to view the uploaded PDF data (ViewDPA site)
-//Route::get('/View', [ViewDPAController::class, 'index']);
-//dpa and user
 Route::get('/ViewDPA/{dpaId}/{userId}', [ViewDPAController::class, 'assignDpa'])->name('ViewDPA.assignDpa');
+
 //Bendahara
 Route::get('/form/create_spp/{id}', [BendaharaController::class, 'create_spp'])->name('bendahara.create_spp');
 Route::get('/form/create_spm/{id}', [BendaharaController::class, 'create_spm'])->name('bendahara.create_spm');

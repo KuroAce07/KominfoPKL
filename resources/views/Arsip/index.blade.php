@@ -9,11 +9,11 @@
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Dokumen Keuangan</h1>
             <div class="row">
-                <div class="col-md-6">
+                <div>
+                    <a href="{{ route('Arsip.export') }}" class="btn btn-success ml-auto">Export to Excel</a>
                 </div>
             </div>
         </div>
-
         {{-- Alert Messages --}}
         @include('common.alert')
 
@@ -81,7 +81,10 @@
                                                     <i class="fa fa-trash"></i> Delete
                                                 </button>
                                             </form>
-                                        </div>
+                                            <a href="{{ route('Arsip.file', $arsip->id) }}" class="btn btn-success mr-2"> <!-- Use btn-success for a green color -->
+                                                <i class="fa fa-eye"></i> Lihat File <!-- Change the icon to an eye icon for "View File" -->
+                                            </a>
+                                        </div>                                        
                                     </td>
                                 </tr>
                             @endforeach

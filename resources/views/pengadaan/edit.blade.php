@@ -25,13 +25,16 @@
         <div class="form-group">
             <label for="pilihan">Pilih Jenis Dokumen:</label>
             <select class="form-control" name="pilihan" id="pilihan">
-                <option value="Kontrak">Kontrak</option>
-                <option value="Pemesanan">Pemesanan</option>
-                <option value="E-Purchasing">E-Purchasing</option>
-                <option value="Lainnya">Lainnya</option>
-                <!-- Tambahkan pilihan lainnya sesuai kebutuhan -->
+                @php
+                    $metodePengadaanList = \App\Models\AddMetodePengadaan::pluck('metode_pengadaan', 'id');
+                @endphp
+        
+                @foreach($metodePengadaanList as $id => $metode)
+                    <option value="{{ $id }}">{{ $metode }}</option>
+                @endforeach
             </select>
         </div>
+        
 
         <div class="form-group">
             <label for="keterangan">Keterangan</label>

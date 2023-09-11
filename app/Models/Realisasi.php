@@ -12,6 +12,7 @@ class Realisasi extends Model
     protected $table = 'realisasi'; // Specify the table name if it's different
 
     protected $fillable = [
+        'dpa_id',
         'bulan_1',
         'bulan_2',
         'bulan_3',
